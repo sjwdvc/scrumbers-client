@@ -6,10 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test:unit": "vue-cli-service test:unit",
-    "postinstall": "if test \"$NODE_ENV\" = \"production\" ; then npm run build ; fi ",
-    "start": "node server.js",
-    "preinstall": "npm install --save express serve-static"
+    "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
     "core-js": "^2.6.5",
@@ -28,6 +25,8 @@
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "lint-staged": "^8.1.5",
+    "node-sass": "^6.0.1",
+    "sass-loader": "^10",
     "vue-template-compiler": "^2.6.10"
   },
   "gitHooks": {

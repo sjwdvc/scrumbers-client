@@ -1,0 +1,26 @@
+@import "core/colors";
+@import "core/spacing";
+@import "core/typography";
+
+
+*{
+    margin: 0;
+    padding: 0;
+    font-family: "Maven Pro", sans-serif;
+    box-sizing: border-box;
+}
+
+#app{
+    background-image: url('/img/bg.png');
+    background-size: cover;
+    width: 100vw;
+    height: 100vh;
+}
+
+.interface{
+    padding: 50px 75px;
+    background-color: rgba($blue-dark, 0.9);
+    max-width: fit-content;
+    border-radius: 10px;
+    margin: 0 auto;
+}
