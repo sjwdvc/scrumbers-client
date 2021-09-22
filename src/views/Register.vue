@@ -58,7 +58,7 @@ export default {
     submitData() {
       axios
         .post(this.$server, this.form)
-        .then()
+        .then(document.querySelector("button").setAttribute("disabled", ""))
         .catch(function(error) {
           console.log(error.response.data.errors);
         });

@@ -30,5 +30,9 @@ button {
   &:hover {
     transform: translateY(-5px);
   }
+  &:disabled {
+    background-color: $button-disabled;
+    border-bottom: 5px solid darken($button-disabled, 10%);
+  }
 }
 </style>
