@@ -9,6 +9,7 @@
           placeholder="Naam"
           required
           v-model="form.name"
+          ref="name"
         />
         <Input
           type="email"
@@ -16,6 +17,7 @@
           placeholder="Email"
           required
           v-model="form.email"
+          ref="email"
         />
         <Input
           type="password"
@@ -23,12 +25,14 @@
           placeholder="Wachtwoord"
           required
           v-model="form.password"
+          ref="password"
         />
+        <p>{{ error }}</p>
         <Button type="submit" content="Registreren" ref="button" />
       </form>
     </div>
 
-    <p>
+    <p class="login-link">
       Heb je al een account ?
       <router-link to="login">Klik hier om in te loggen</router-link>
     </p>
@@ -50,18 +54,39 @@ export default {
         name: "",
         email: "",
         password: ""
-      }
+      },
+      error: ""
     };
   },
   methods: {
     // Submit the formdata to the server url defined in main.js using a post request
     submitData() {
-      axios
-        .post(this.$server, this.form)
-        .then(document.querySelector("button").setAttribute("disabled", ""))
-        .catch(function(error) {
-          console.log(error.response.data.errors);
+      axios.post(this.$server, this.form).then(res => {
+        // Initiate/reset an empty error message
+        this.error = "";
+
+        // Reset all input border styling to none
+        document.querySelectorAll("input").forEach(input => {
+          input.style.border = "none";
         });
+
+        if (res.data.error) {
+          // Highlight the input field containing the error
+          res.data.field !== "global"
+            ? (document.querySelector(
+                "input[name=" + res.data.field + "]"
+              ).style.border = "2px solid #A03A3C")
+            : "";
+
+          // Comment the error under the form
+          this.error = res.data.error;
+        } else {
+          document.querySelector("button").setAttribute("disabled", "");
+          this.error = "Inloggen...";
+
+          // Router push to logged-in homescreen
+        }
+      });
     }
   }
 };
@@ -90,6 +115,8 @@ export default {
   p {
     color: $white;
     text-align: center;
+  }
+  .login-link {
     margin-top: 25px;
   }
 }
