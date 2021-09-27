@@ -48,8 +48,9 @@ export default {
   methods: {
     // Submit the formdata to the server url defined in main.js using a post request
     submitData() {
+      console.log(this.$server + 'login');
       axios
-        .post(this.$server, this.form)
+        .post(this.$server + 'login', this.form)
         .then()
         .catch(function(error) {
           console.log(error.response.data.errors);
