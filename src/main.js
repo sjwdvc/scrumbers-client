@@ -1,10 +1,12 @@
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
+import axios from "axios";
 
 Vue.config.productionTip = false;
 Vue.prototype.$server = 'https://scrumbers-server.herokuapp.com/api/'
-//Vue.prototype.$server = 'http://localhost:4000/api/'
+// Vue.prototype.$server = 'http://localhost:4000/api/'
+
 Vue.filter('capitalize', value => value.toUpperCase())
 
 new Vue({
