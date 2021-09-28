@@ -29,5 +29,10 @@ export default {
 		&:hover{
 			transform: translateY(-5px);
 		}
+		&:disabled{
+			background-color: rgba($white, 0.5);
+			border-bottom: 5px solid #606469;
+			cursor: not-allowed;
+		}
 	}
 </style>

@@ -11,13 +11,16 @@
 import DisplayHeader from "../components/text/DisplayHeader";
 import Button from "../components/Button";
 import axios from "axios";
+import {SERVER} from "../constants";
 
 export default {
 	name : "Home",
 	components : {Button, DisplayHeader},
 	methods : {
 		logout() {
-			axios.post(this.$server + 'logout')
+			axios.post(this.$server + 'session/logout')
+
+			this.$router.go()
 		}
 	}
 }

@@ -28,6 +28,12 @@
 					ref="password"
 				/>
 				<p>{{ error }}</p>
+				<ul class="password-reqs">
+					<li>Wachtwoord moet voldoen aan de volgende eisen:</li>
+					<li>Ten minste 8 karakters</li>
+					<li>Ten minste 1 hoofdletter</li>
+					<li>Ten minste 1 cijfer</li>
+				</ul>
 				<Button type="submit" content="Registreren" ref="button" />
 			</form>
 		</div>
@@ -44,6 +50,7 @@ import axios from "axios";
 import DisplayHeader from "../components/text/DisplayHeader";
 import Input from "../components/Input";
 import Button from "../components/Button";
+import {SERVER} from "../constants";
 
 export default {
 	name: "Register",
@@ -61,7 +68,7 @@ export default {
 	methods: {
 		// Submit the formdata to the server url defined in main.js using a post request
 		submitData() {
-			axios.post(this.$server + '/register', this.form)
+			axios.post(SERVER + 'user/register', this.form)
 			 .then(res => {
 				 // Initiate/reset an empty error message
 				 this.error = "";
@@ -82,10 +89,14 @@ export default {
 					 // Comment the error under the form
 					 this.error = res.data.error;
 				 } else {
+					 // Disable submit button to prevent double submits
 					 document.querySelector('button').setAttribute('disabled', '');
-					 this.error = 'Inloggen...';
 
-					 // Router push to logged-in homescreen
+					 // Notify user that registration was succesfull
+					 this.error = "Geslaagd! Je wordt doorgestuurd..."
+
+					 // Redirect after 2 seconds
+					 setTimeout(() => this.$router.push({name: 'home'}), 2000)
 				 }
 			 })
 			 .catch(function(error) {
@@ -118,10 +129,22 @@ export default {
 	}
 	p {
 		color: $white;
-		text-align: center;
+		text-align: left;
+		margin: 20px 0;
 	}
 	.login-link {
 		margin-top: 25px;
+	}
+	.password-reqs{
+			li{
+				font-size: 12px;
+				color: $white;
+				margin-left: 25px;
+				&:first-child{
+					list-style: none;
+					margin-left: 0px;
+				}
+			}
 	}
 }
 </style>

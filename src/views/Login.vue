@@ -1,6 +1,5 @@
 <template>
 	<section class="login">
-		<Logo />
 		<div class="interface">
 			<DisplayHeader content="INLOGGEN" />
 			<form action="" class="login-form" @submit.prevent="submitData">
@@ -34,6 +33,7 @@ import axios from "axios";
 import DisplayHeader from "../components/text/DisplayHeader";
 import Input from "../components/Input";
 import Button from "../components/Button";
+import {SERVER} from "../constants";
 
 export default {
 	name: "login",
@@ -50,7 +50,7 @@ export default {
 	methods: {
 		// Submit the formdata to the server url defined in main.js using a post request
 		submitData() {
-			axios.post(this.$server + 'login', this.form)
+			axios.post(SERVER + 'user/login', this.form)
 			.then(res => {
 				this.error = "";
 
@@ -59,8 +59,6 @@ export default {
 				});
 
 				if (res.data.error) {
-
-
 					// Highlight the input field containing the error
 					res.data.field !== "global"
 						? (document.querySelector(
@@ -71,10 +69,14 @@ export default {
 					// Comment the error under the form
 					this.error = res.data.error;
 				} else {
-					// document.querySelector("button").setAttribute("disabled", "");
-					this.error = "Inloggen...";
+					// Disable the submit button to prevent double submits
+					document.querySelector("button").setAttribute("disabled", "");
 
-					// Router push to logged-in homescreen
+					// Notify user that registration was succesful
+					this.error = "Geslaagd! Je wordt doorgestuurd..."
+
+					// Redirect after 2 seconds
+					setTimeout(() => this.$router.push({name: 'home'}), 2000)
 				}
 			})
 			.catch(function(error) {
