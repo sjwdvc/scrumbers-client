@@ -18,7 +18,7 @@ export default {
 	components : {Button, DisplayHeader},
 	methods : {
 		logout() {
-			axios.post(this.$server + 'session/logout')
+			axios.post(SERVER + 'session/logout')
 
 			this.$router.go()
 		}

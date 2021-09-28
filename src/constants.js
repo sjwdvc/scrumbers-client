@@ -1,1 +1,1 @@
-export const SERVER = 'http://localhost:4000/api/'
+export const SERVER = 'https://scrumbers-server.herokuapp.com/api/'
