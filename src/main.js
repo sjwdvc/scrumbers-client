@@ -9,7 +9,8 @@ axios.defaults.withCredentials = true
 
 // Method to run before visiting any route ( Middleware )
 router.beforeEach((to, from, next) => {
-    checkLogin().then(data => {
+    checkLogin()
+        .then(data => {
         switch(true)
         {
             // If user is not logged in, and next route is not login or register
@@ -28,8 +29,6 @@ router.beforeEach((to, from, next) => {
 })
 
 Vue.config.productionTip = false;
-// Vue.prototype.$server = 'https://scrumbers-server.herokuapp.com/api/'
-Vue.prototype.$server = 'http://localhost:4000/api/'
 
 Vue.filter('capitalize', value => value.toUpperCase())
 
