@@ -1,19 +1,20 @@
 <template>
-	<button :type="$props.type">{{ $props.content | capitalize }}</button>
+  <button :type="$props.type">{{ $props.content | capitalize }}</button>
 </template>
 
 <script>
 export default {
-	name : "Button",
-	props: {
-		type: String,
-		content: String
-	}
-}
+  name: "Button",
+  props: {
+    type: String,
+    content: String
+  }
+};
 </script>
 
 <style scoped lang="scss">
-	@import "../../src/scss/main.scss";
+@import "../../src/scss/main.scss";
+
 
 	button{
 		background-color: $gold;
@@ -36,3 +37,4 @@ export default {
 		}
 	}
 </style>
+
