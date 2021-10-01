@@ -25,10 +25,6 @@ export default {
 		}
 	},
 	methods: {
-		generateRoom()
-		{
-			console.log('room generated with url:' + this.url)
-		},
 		copyLink()
 		{
 			this.$refs.inputwrapper.classList.add('animate__rubberBand')

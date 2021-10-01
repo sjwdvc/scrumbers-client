@@ -5,6 +5,7 @@ import Register from "./views/Register";
 import Login from "./views/Login";
 import CreateRoom from "./views/CreateRoom";
 import ShareLink from "./views/ShareLink";
+import Session from "./views/Session";
 
 Vue.use(Router);
 
@@ -36,6 +37,11 @@ export default new Router({
             path: "/share-link/:id",
             component: ShareLink,
             name: 'sharelink'
+        },
+        {
+            path: "/session/:id",
+            component: Session,
+            name: 'session'
         }
     ]
 });

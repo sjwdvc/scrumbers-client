@@ -1,0 +1,44 @@
+<template>
+	<section class="session">
+		<div class="interface" v-if="!joined">
+			<DisplayHeader content="Welkom" />
+			<Input type="text" name="username" placeholder="Gebruikersnaam" ref="enterUsername"/>
+			<div @click="setUserName">
+				<Button content="Beginnen >"/>
+			</div>
+		</div>
+
+		<div class="interface" v-if="joined">
+			<DisplayHeader content="Game screen comes heres" />
+		</div>
+	</section>
+</template>
+
+<script>
+import DisplayHeader from "../components/text/DisplayHeader";
+import Input from "../components/Input";
+import Button from "../components/Button";
+export default {
+	name : "Session",
+	components : {Button, Input, DisplayHeader},
+	data() {
+		return {
+			joined  : false,
+			name 	: ''
+		}
+	},
+	methods: {
+		setUserName()
+		{
+			this.name = this.$refs.enterUsername.value
+			this.joined = true
+		}
+	}
+}
+</script>
+
+<style scoped>
+	input{
+		margin: 2rem 0;
+	}
+</style>
