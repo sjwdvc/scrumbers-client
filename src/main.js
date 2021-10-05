@@ -7,6 +7,7 @@ import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
 
 Vue.use(VueToast)
+Vue.prototype.login = false
 
 // Allow axios CORS
 axios.defaults.withCredentials = true
@@ -15,6 +16,9 @@ axios.defaults.withCredentials = true
 router.beforeEach((to, from, next) => {
     checkLogin()
         .then(data => {
+
+        data.data.login ? Vue.prototype.login = true : Vue.prototype.login = false
+
         switch(true)
         {
             // If user is not logged in, and next route is not login or register

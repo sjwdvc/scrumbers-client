@@ -2,7 +2,7 @@
 	<section class="session">
 		<div class="interface" v-if="!joined">
 			<DisplayHeader content="Welkom" />
-			<Input type="text" name="username" placeholder="Gebruikersnaam" ref="enterUsername"/>
+			<Input type="text" name="username" placeholder="Gebruikersnaam" ref="enterUsername" required="required"/>
 			<div @click="setUserName">
 				<Button content="Beginnen >"/>
 			</div>
