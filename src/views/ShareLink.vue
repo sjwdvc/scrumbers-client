@@ -33,7 +33,7 @@ export default {
 		}
 	},
 	mounted() {
-		this.link = CLIENT + this.$route.params.id
+		this.link = CLIENT + '/session/' + this.$route.params.key
 	}
 }
 </script>

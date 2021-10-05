@@ -33,7 +33,7 @@ import axios from "axios";
 import DisplayHeader from "../components/text/DisplayHeader";
 import Input from "../components/Input";
 import Button from "../components/Button";
-import {SERVER} from "../constants";
+import {SERVER, SOCKET} from "../constants";
 
 export default {
 	name: "login",
@@ -83,6 +83,11 @@ export default {
 				console.log(error);
 			});
 		}
+	},
+	mounted() {
+		SOCKET.emit('session', {event: 'create'})
+
+		SOCKET.on('createRoom', args => console.log(args))
 	}
 };
 </script>

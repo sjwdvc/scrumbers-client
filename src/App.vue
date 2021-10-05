@@ -22,9 +22,11 @@ export default {
 		Button
 	},
 	methods : {
+		// Logs out the user
 		logout() {
 			axios.post(SERVER + 'session/logout')
 
+			// Refresh the page to activate the automatic re-route based on the login status
 			this.$router.go()
 		}
 	}

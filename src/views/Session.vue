@@ -2,14 +2,13 @@
 	<section class="session">
 		<div class="interface" v-if="!joined">
 			<DisplayHeader content="Welkom" />
-			<Input type="text" name="username" placeholder="Gebruikersnaam" ref="enterUsername" required="required"/>
+			<Input type="text" name="username" placeholder="Gebruikersnaam" ref="username" required="required" v-model="name"/>
 			<div @click="setUserName">
 				<Button content="Beginnen >"/>
 			</div>
 		</div>
-
 		<div class="interface" v-if="joined">
-			<DisplayHeader content="Game screen comes heres" />
+			<DisplayHeader content="Game screen comes here" />
 		</div>
 	</section>
 </template>
@@ -23,16 +22,21 @@ export default {
 	components : {Button, Input, DisplayHeader},
 	data() {
 		return {
-			joined  : false,
-			name 	: ''
+			joined  	: false,
+			name 		: '',
+			sessionId 	: null
 		}
 	},
 	methods: {
 		setUserName()
 		{
-			this.name = this.$refs.enterUsername.value
+			this.name = this.$refs.username.value
 			this.joined = true
 		}
+	},
+	mounted()
+	{
+		this.sessionId = parseInt(this.$route.params.key)
 	}
 }
 </script>
