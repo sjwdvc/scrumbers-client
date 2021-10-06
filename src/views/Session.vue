@@ -17,6 +17,8 @@
 import DisplayHeader from "../components/text/DisplayHeader";
 import Input from "../components/Input";
 import Button from "../components/Button";
+import {SOCKET} from "../constants";
+
 export default {
 	name : "Session",
 	components : {Button, Input, DisplayHeader},
@@ -36,7 +38,7 @@ export default {
 	},
 	mounted()
 	{
-		this.sessionId = parseInt(this.$route.params.key)
+		SOCKET.emit('session', {event: 'join', key: parseInt(this.$route.params.key)})
 	}
 }
 </script>

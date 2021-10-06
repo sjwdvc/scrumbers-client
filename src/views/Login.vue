@@ -83,11 +83,6 @@ export default {
 				console.log(error);
 			});
 		}
-	},
-	mounted() {
-		SOCKET.emit('session', {event: 'create'})
-
-		SOCKET.on('createRoom', args => console.log(args))
 	}
 };
 </script>
