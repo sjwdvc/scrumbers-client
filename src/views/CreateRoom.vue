@@ -5,6 +5,9 @@
 			<form action="" class="createroom-form" @submit.prevent="generateRoom">
 				<Label for="url" content="Trello URL" />
 				<Input id="url" type="text" name="link" placeholder="bijv. https://trello.com/b/12345678/project-naam" v-model="url"/>
+
+				<Input type="text" name="name" placeholder="Naam (admin )" v-model="name"/>
+
 				<p class="error">{{error}}</p>
 				<Button content="Genereer link"/>
 			</form>
@@ -27,6 +30,7 @@ export default {
 	data(){
 		return {
 			url: '',
+			name: '',
 			error: ''
 		}
 	},
@@ -34,8 +38,9 @@ export default {
 		generateRoom()
 		{
 
-			SOCKET.emit('session', {url: this.url, event: 'create'})
+			SOCKET.emit('session', {url: this.url, event: 'create', username: this.name})
 			SOCKET.on('createRoom', data => {
+				console.log(data)
 				this.$router.push({name: 'sharelink', params: {key: data.key}})
 			})
 		},
@@ -69,6 +74,14 @@ export default {
 		width: 750px;
 	}
 	input{
-		margin: 2rem 0;
+		margin: 10px 0;
+	}
+
+	form{
+		margin: 2rem 0 0 0;
+	}
+
+	button{
+		margin-top: 2rem;
 	}
 </style>

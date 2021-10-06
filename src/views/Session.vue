@@ -8,7 +8,7 @@
 			</div>
 		</div>
 		<div class="interface" v-if="joined">
-			<DisplayHeader content="Game screen comes here" />
+			<p class="user" v-for="user in users" :key="user">{{user}}</p>
 		</div>
 	</section>
 </template>
@@ -26,7 +26,8 @@ export default {
 		return {
 			joined  	: false,
 			name 		: '',
-			sessionId 	: null
+			sessionId 	: null,
+			users 		: null
 		}
 	},
 	methods: {
@@ -34,17 +35,36 @@ export default {
 		{
 			this.name = this.$refs.username.value
 			this.joined = true
+
+			SOCKET.emit('session', {event: 'join', key: parseInt(this.$route.params.key), username: this.name})
+
+
+			SOCKET.on('session', args => {
+				if(args.event === 'join') {
+					this.users = args.users
+				}
+			})
 		}
-	},
-	mounted()
-	{
-		SOCKET.emit('session', {event: 'join', key: parseInt(this.$route.params.key)})
 	}
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+
+	@import "../../src/scss/main";
+
 	input{
 		margin: 2rem 0;
+	}
+
+	.user{
+		color: $white;
+		&:first-child{
+			&:before{
+				content: "👑";
+				width: 10px;
+				height: 10px;
+			}
+		}
 	}
 </style>

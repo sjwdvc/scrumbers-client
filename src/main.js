@@ -12,7 +12,7 @@ Vue.prototype.login = false
 // Allow axios CORS
 axios.defaults.withCredentials = true
 
-// Method to run before visiting any route ( Middleware )
+// // Method to run before visiting any route ( Middleware )
 router.beforeEach((to, from, next) => {
     checkLogin()
         .then(data => {

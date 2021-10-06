@@ -18,7 +18,6 @@ export default {
 label{
 	text-align: left;
 	display: block;
-	transform: translateY(20px);
 	color: $white;
 }
 </style>
