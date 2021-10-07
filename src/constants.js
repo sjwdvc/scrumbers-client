@@ -8,3 +8,5 @@ export const CLIENT  = 'https://scrumbers-client.herokuapp.com'
 
 export const SOCKET     = io('https://scrumbers-server.herokuapp.com');
 // export const SOCKET     = io('https://localhost:5555/');
+
+export let USER         = {}

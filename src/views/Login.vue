@@ -33,7 +33,8 @@ import axios from "axios";
 import DisplayHeader from "../components/text/DisplayHeader";
 import Input from "../components/Input";
 import Button from "../components/Button";
-import {SERVER, SOCKET} from "../constants";
+import Vue from 'vue'
+import {SERVER, SOCKET, USER} from "../constants";
 
 export default {
 	name: "login",

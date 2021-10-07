@@ -1,50 +1,38 @@
 <template>
 	<section class="session">
-		<div class="interface" v-if="!joined">
-			<DisplayHeader content="Welkom" />
-			<Input type="text" name="username" placeholder="Gebruikersnaam" ref="username" required="required" v-model="name"/>
-			<div @click="setUserName">
-				<Button content="Beginnen >"/>
-			</div>
-		</div>
-		<div class="interface" v-if="joined">
-			<p class="user" v-for="user in users" :key="user">{{user}}</p>
+		<div class="interface">
+			<p class="user" v-for="user in users" :key="user" :class=" user === admin ? 'admin' : ''">{{user}}</p>
 		</div>
 	</section>
 </template>
 
 <script>
-import DisplayHeader from "../components/text/DisplayHeader";
-import Input from "../components/Input";
-import Button from "../components/Button";
-import {SOCKET} from "../constants";
+import {SOCKET, USER} from "../constants";
 
 export default {
 	name : "Session",
-	components : {Button, Input, DisplayHeader},
-	data() {
+	components : {},
+	data()
+	{
 		return {
-			joined  	: false,
 			name 		: '',
 			sessionId 	: null,
-			users 		: null
+			users 		: null,
+			admin 		: ''
 		}
 	},
-	methods: {
-		setUserName()
-		{
-			this.name = this.$refs.username.value
-			this.joined = true
+	mounted()
+	{
 
-			SOCKET.emit('session', {event: 'join', key: parseInt(this.$route.params.key), username: this.name})
+		SOCKET.emit('session', {event: 'join', key: parseInt(this.$route.params.key), name: USER.name, email: USER.email})
 
+		SOCKET.on('joined', args => {
 
-			SOCKET.on('session', args => {
-				if(args.event === 'join') {
-					this.users = args.users
-				}
-			})
-		}
+			console.log(args.name, args.admin, args.event)
+
+			this.users = args.users
+			this.admin = args.admin
+		})
 	}
 }
 </script>
@@ -59,6 +47,7 @@ export default {
 
 	.user{
 		color: $white;
+		width: 200px;
 		&:first-child{
 			&:before{
 				content: "👑";
