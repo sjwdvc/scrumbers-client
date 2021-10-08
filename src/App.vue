@@ -14,7 +14,7 @@
 import Logo from "./components/Logo";
 import axios from "axios";
 import Button from "./components/Button";
-import {SERVER} from "./constants";
+import {SERVER} from "./constants-example";
 
 export default {
 	components : {

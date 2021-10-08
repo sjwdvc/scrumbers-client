@@ -14,7 +14,7 @@
 <script>
 import DisplayHeader from "../components/text/DisplayHeader";
 import Input from "../components/Input";
-import {CLIENT} from "../constants";
+import {CLIENT} from "../constants-example";
 
 export default {
 	name : "ShareLink",
