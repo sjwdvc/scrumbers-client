@@ -50,7 +50,8 @@ router.beforeEach((to, from, next) => {
         .catch(err => console.log(err))
 })
 
-Vue.config.productionTip = false;
+Vue.config.productionTip = false
+Vue.config.devtools = true
 
 Vue.filter('capitalize', value => value.toUpperCase())
 
