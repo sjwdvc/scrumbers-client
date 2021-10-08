@@ -45,7 +45,8 @@ export default {
 				email: "",
 				password: ""
 			},
-			error: ""
+			error: "",
+			session: null
 		};
 	},
 	methods: {
@@ -77,13 +78,19 @@ export default {
 					this.error = "Geslaagd! Je wordt doorgestuurd..."
 
 					// Redirect after 2 seconds
-					setTimeout(() => this.$router.push({name: 'createroom'}), 2000)
+					setTimeout(() => {
+						this.session === null || this.session === undefined ? this.$router.push({name : 'createroom'}) : this.$router.push({name : 'session', params: {key: this.session}})
+					}, 2000)
 				}
 			})
 			.catch(function(error) {
 				console.log(error);
 			});
 		}
+	},
+	mounted()
+	{
+		this.$route.params.key !== null ? this.session = this.$route.params.key : this.session = null
 	}
 };
 </script>

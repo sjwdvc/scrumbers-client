@@ -16,6 +16,7 @@ axios.defaults.withCredentials = true
 
 // // Method to run before visiting any route ( Middleware )
 router.beforeEach((to, from, next) => {
+
     checkLogin()
         .then(data => {
             Vue.prototype.login = !!data.data.login
@@ -28,9 +29,10 @@ router.beforeEach((to, from, next) => {
 
             switch(true)
             {
+
                 // If user is not logged in, and next route is not login or register
                 case (!data.data.login && to.name !== 'login' && to.name !== 'register'):
-                    next({name: 'login'})
+                    to.name === 'session' ? next({name: 'login', params: {key: to.params.key}}) : next({name: 'login'})
                     break;
 
                 // If user logged in and trying to access login screen
