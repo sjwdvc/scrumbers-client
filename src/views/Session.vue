@@ -9,9 +9,9 @@
 <script>
 import {SOCKET, USER} from "../constants";
 
-export default {
+export default
+{
 	name : "Session",
-	components : {},
 	data()
 	{
 		return {
@@ -23,13 +23,16 @@ export default {
 	},
 	mounted()
 	{
+		// Join the session when you load the page and send the key from the url to define which session to join
+		SOCKET.emit('session', {
+			event: 'join',
+			key: parseInt(this.$route.params.key),
+			name: USER.name,
+			email: USER.email
+		})
 
-		SOCKET.emit('session', {event: 'join', key: parseInt(this.$route.params.key), name: USER.name, email: USER.email})
-
+		// Define the session users and admin
 		SOCKET.on('joined', args => {
-
-			console.log(args.name, args.admin, args.event)
-
 			this.users = args.users
 			this.admin = args.admin
 		})
@@ -38,18 +41,21 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 	@import "../../src/scss/main";
 
-	input{
+	input
+	{
 		margin: 2rem 0;
 	}
 
-	.user{
+	.user
+	{
 		color: $white;
 		width: 200px;
-		&:first-child{
-			&:before{
+		&:first-child
+		{
+			&:before
+			{
 				content: "👑";
 				width: 10px;
 				height: 10px;

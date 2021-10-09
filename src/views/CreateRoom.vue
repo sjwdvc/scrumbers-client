@@ -19,17 +19,26 @@ import Label from "../components/Label";
 import Button from "../components/Button";
 import {SOCKET, USER} from "../constants";
 
-export default {
+export default
+{
 	name : "CreateRoom",
-	components : {Button, Input, DisplayHeader, Label},
-	data(){
+	components :
+	{
+		Button,
+		Input,
+		DisplayHeader,
+		Label
+	},
+	data()
+	{
 		return {
 			url: '',
 			name: '',
 			error: ''
 		}
 	},
-	methods: {
+	methods:
+	{
 		generateRoom()
 		{
 			SOCKET.emit('session', {url: this.url, event: 'create', name: USER.name, email: USER.email})
@@ -39,41 +48,39 @@ export default {
 				url.style.border = '2px solid #A03A3C'
 			})
 
-
-
 			SOCKET.on('createRoom', data => {
-				console.log(data)
 				this.$router.push({name: 'sharelink', params: {key: data.key}})
 			})
 		}
-	},
-	mounted()
-	{
-		console.log(USER)
 	}
 }
 </script>
 
 <style scoped lang="scss">
-
 	@import "../../src/scss/main.scss";
 
-	section{
+	section
+	{
 		width: 750px;
 	}
-	input{
+
+	input
+	{
 		margin: 10px 0;
 	}
 
-	form{
+	form
+	{
 		margin: 2rem 0 0 0;
 	}
 
-	button{
+	button
+	{
 		margin-top: 2rem;
 	}
 
-	.error{
+	.error
+	{
 		color: $white;
 	}
 </style>
