@@ -1,21 +1,23 @@
 <template>
-	<button :type="$props.type">{{ $props.content | capitalize }}</button>
+  <button :type="$props.type">{{ $props.content | capitalize }}</button>
 </template>
 
 <script>
 export default {
-	name : "Button",
-	props: {
+	name: "Button",
+	props:
+	{
 		type: String,
 		content: String
 	}
-}
+};
 </script>
 
 <style scoped lang="scss">
-	@import "../../src/scss/main.scss";
+@import "../../src/scss/main.scss";
 
-	button{
+	button
+	{
 		background-color: $gold;
 		color: $blue-dark;
 		font-weight: 800;
@@ -26,8 +28,16 @@ export default {
 		border-bottom: 5px solid darken($gold, 10%);
 		transition: 0.3s ease;
 		cursor: pointer;
-		&:hover{
+		&:hover
+		{
 			transform: translateY(-5px);
+		}
+		&:disabled
+		{
+			background-color: rgba($white, 0.5);
+			border-bottom: 5px solid #606469;
+			cursor: not-allowed;
 		}
 	}
 </style>
+

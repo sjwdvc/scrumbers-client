@@ -1,3 +1,19 @@
 section{
     padding: 50px 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.relative{
+    position: relative;
+}
+
+.flex{
+    display: flex;
+}
+
+.space-between{
+    justify-content: space-between;
 }

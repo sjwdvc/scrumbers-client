@@ -1,7 +1,7 @@
 @import "core/colors";
 @import "core/spacing";
 @import "core/typography";
-
+@import "core/animations";
 
 *{
     margin: 0;
@@ -23,4 +23,5 @@
     max-width: fit-content;
     border-radius: 10px;
     margin: 0 auto;
+    text-align: center;
 }
