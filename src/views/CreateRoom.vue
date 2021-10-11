@@ -6,6 +6,7 @@
 				<Input type="text" name="link" placeholder="Trello bord URL" v-model="url"/>
 				<Button content="Genereer link"/>
 			</form>
+			
 		</div>
 	</section>
 </template>
