@@ -25,7 +25,7 @@ export default new Router({
             name: 'register'
         },
         {
-            path: "/login",
+            path: "/login/:key?",
             component: Login,
             name: 'login'
         },
@@ -35,12 +35,12 @@ export default new Router({
             name: 'createroom'
         },
         {
-            path: "/share-link/:id",
+            path: "/share-link/:key",
             component: ShareLink,
             name: 'sharelink'
         },
         {
-            path: "/session/:id",
+            path: "/session/:key",
             component: Session,
             name: 'session'
         },

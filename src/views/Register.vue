@@ -6,7 +6,7 @@
 				<Input
 					type="text"
 					name="name"
-					placeholder="Naam"
+					placeholder="Gebruikersnaam"
 					required
 					v-model="form.name"
 					ref="name"
@@ -136,6 +136,7 @@ export default {
 		margin-top: 25px;
 	}
 	.password-reqs{
+		text-align: left;
 			li{
 				font-size: 12px;
 				color: $white;
@@ -143,6 +144,7 @@ export default {
 				&:first-child{
 					list-style: none;
 					margin-left: 0px;
+					margin-bottom: 10px;
 				}
 			}
 	}

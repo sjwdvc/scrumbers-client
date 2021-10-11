@@ -1,44 +1,65 @@
 <template>
 	<section class="session">
-		<div class="interface" v-if="!joined">
-			<DisplayHeader content="Welkom" />
-			<Input type="text" name="username" placeholder="Gebruikersnaam" ref="enterUsername" required="required"/>
-			<div @click="setUserName">
-				<Button content="Beginnen >"/>
-			</div>
-		</div>
-
-		<div class="interface" v-if="joined">
-			<DisplayHeader content="Game screen comes heres" />
+		<div class="interface">
+			<p class="user" v-for="user in users" :key="user" :class=" user === admin ? 'admin' : ''">{{user}}</p>
 		</div>
 	</section>
 </template>
 
 <script>
-import DisplayHeader from "../components/text/DisplayHeader";
-import Input from "../components/Input";
-import Button from "../components/Button";
-export default {
+import {SOCKET, USER} from "../constants";
+
+export default
+{
 	name : "Session",
-	components : {Button, Input, DisplayHeader},
-	data() {
+	data()
+	{
 		return {
-			joined  : false,
-			name 	: ''
+			name 		: '',
+			sessionId 	: null,
+			users 		: null,
+			admin 		: ''
 		}
 	},
-	methods: {
-		setUserName()
-		{
-			this.name = this.$refs.enterUsername.value
-			this.joined = true
-		}
+	mounted()
+	{
+		// Join the session when you load the page and send the key from the url to define which session to join
+		SOCKET.emit('session', {
+			event: 'join',
+			key: parseInt(this.$route.params.key),
+			name: USER.name,
+			email: USER.email
+		})
+
+		// Define the session users and admin
+		SOCKET.on('joined', args => {
+			this.users = args.users
+			this.admin = args.admin
+		})
 	}
 }
 </script>
 
-<style scoped>
-	input{
+<style scoped lang="scss">
+	@import "../../src/scss/main";
+
+	input
+	{
 		margin: 2rem 0;
+	}
+
+	.user
+	{
+		color: $white;
+		width: 200px;
+		&:first-child
+		{
+			&:before
+			{
+				content: "👑";
+				width: 10px;
+				height: 10px;
+			}
+		}
 	}
 </style>

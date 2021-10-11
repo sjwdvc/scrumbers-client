@@ -7,6 +7,7 @@
 				<Input type="text" name="link" placeholder="Trello bord URL" v-model="link" disabled ref="input"/>
 				<img src="/img/copy.svg" alt="" class="copy">
 			</div>
+			<Button content="Deelnemen" @click.native="$router.push({name: 'session', params: {key: $route.params.key}})"/>
 		</div>
 	</section>
 </template>
@@ -15,16 +16,19 @@
 import DisplayHeader from "../components/text/DisplayHeader";
 import Input from "../components/Input";
 import {CLIENT} from "../constants";
+import Button from "../components/Button";
 
 export default {
 	name : "ShareLink",
-	components : {Input, DisplayHeader},
-	data(){
+	components : {Button, Input, DisplayHeader},
+	data()
+	{
 		return {
 			link: ''
 		}
 	},
-	methods: {
+	methods:
+	{
 		copyLink()
 		{
 			this.$refs.inputwrapper.classList.add('animate__rubberBand')
@@ -32,33 +36,41 @@ export default {
 			navigator.clipboard.writeText(this.link);
 		}
 	},
-	mounted() {
-		this.link = CLIENT + this.$route.params.id
+	mounted()
+	{
+		this.link = CLIENT + '/session/' + this.$route.params.key
 	}
 }
 </script>
 
 <style scoped lang="scss">
 
-@import "../../src/scss/main.scss";
-@import "../../node_modules/animate.css/animate.min.css";
+	@import "../../src/scss/main.scss";
+	@import "../../node_modules/animate.css/animate.min.css";
 
-section{
-	width: 750px;
-}
-input{
-	margin: 2rem 0;
-	font-size: 18px;
-}
-p{
-	color: $white;
-}
-.copy{
-	position: absolute;
-	right: 1em;
-	top: 50%;
-	transform: translateY(-50%);
-	width: 20px;
-	cursor: pointer;
-}
+	section
+	{
+		width: 750px;
+	}
+
+	input
+	{
+		margin: 2rem 0;
+		font-size: 18px;
+	}
+
+	p
+	{
+		color: $white;
+	}
+
+	.copy
+	{
+		position: absolute;
+		right: 1em;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 20px;
+		cursor: pointer;
+	}
 </style>
