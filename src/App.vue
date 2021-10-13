@@ -1,7 +1,11 @@
 <template>
 	<div id="app">
-		<div class="nav">
-			<Logo />
+		<div class="nav" :class="{'nav-shareLink': shareLink.show}">
+			<Logo :class="{'logoLeft': shareLink.show}"/>
+			<div v-if="shareLink.show" class="shareLink relative animate__animated" @click="copyLink" ref="inputwrapper">
+				<Input class="shareLink" type="text" name="link" placeholder="Trello bord URL" v-model="shareLink.url" disabled ref="input"/>
+				<img src="/img/copy.svg" alt="" class="copy">
+			</div>
 			<div v-if='this.$router.currentRoute.name != "profile"'>
 				<div @click="toProfile" class="logout-wrapper" v-if="this.login">
 				
@@ -15,20 +19,34 @@
 
 <script>
 import Logo from "./components/Logo";
+import Input from "./components/Input";
 import axios from "axios";
-import {SERVER} from "./constants";
+import {SERVER, CLIENT} from "./constants";
+import store from './store';
 
 export default {
+	data() {
+		return {
+			shareLink: store.shareLink,
+		}
+	},
 	components : {
-		Logo
+		Logo,
+		Input
 	},
 	methods : {
 		toProfile() {
 			this.$router.push({name: "profile"})
 		
+		},
+		copyLink()
+		{
+			this.$refs.inputwrapper.classList.add('animate__rubberBand')
+			this.$toast.open({message: 'Link gekopieerd!', type: "success", position: "top-right"});
+			navigator.clipboard.writeText(this.link);
 		}
-	
 	}
+
 }
 </script>
 
@@ -41,6 +59,10 @@ export default {
 		padding-top: 50px;
 		position: relative;
 	}
+	.nav-shareLink {
+		display: flex;
+		align-items: center;
+	}
 
 	.logout-wrapper{
 		position: absolute;
@@ -49,5 +71,27 @@ export default {
 	}
 	svg{
 		cursor: pointer;
+	}
+	input{
+		margin: auto 0 !important;
+		font-size: 18px;
+	}
+	.copy{
+		position: absolute;
+		right: 1em;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 20px;
+		cursor: pointer;
+	}
+	.logoLeft {
+		float: left;
+		display: inline;
+		margin-left: 2em;
+		margin-right: 2em;
+	}
+	.shareLink {
+		display: inline-block;
+		width: 60%;
 	}
 </style>
