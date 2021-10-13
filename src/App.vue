@@ -43,7 +43,7 @@ export default {
 		{
 			this.$refs.inputwrapper.classList.add('animate__rubberBand')
 			this.$toast.open({message: 'Link gekopieerd!', type: "success", position: "top-right"});
-			navigator.clipboard.writeText(this.link);
+			navigator.clipboard.writeText(this.shareLink.url);
 		}
 	}
 
