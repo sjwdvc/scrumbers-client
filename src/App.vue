@@ -3,7 +3,7 @@
 		<div class="nav" :class="{'nav-shareLink': shareLink.show}">
 			<Logo :class="{'logoLeft': shareLink.show}"/>
 			<div v-if="shareLink.show" class="shareLink relative animate__animated" @click="copyLink" ref="inputwrapper">
-				<Input class="shareLink" type="text" name="link" placeholder="Trello bord URL" v-model="shareLink.url" disabled ref="input"/>
+				<Input id="shareLinkInput" class="shareLink" type="text" name="link" placeholder="Trello bord URL" v-model="shareLink.url" disabled ref="input"/>
 				<img src="/img/copy.svg" alt="" class="copy">
 			</div>
 			<div v-if='this.$router.currentRoute.name != "profile"'>
@@ -71,7 +71,7 @@ export default {
 	svg{
 		cursor: pointer;
 	}
-	input{
+	#shareLinkInput{
 		margin: auto 0 !important;
 		font-size: 18px;
 	}
