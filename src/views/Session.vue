@@ -7,7 +7,8 @@
 </template>
 
 <script>
-import {SOCKET, USER} from "../constants";
+import {SOCKET, USER, CLIENT} from "../constants";
+import store from "../store";
 
 export default
 {
@@ -36,6 +37,9 @@ export default
 			this.users = args.users
 			this.admin = args.admin
 		})
+
+		store.shareLink.url = this.link = CLIENT + '/session/' + this.$route.params.key
+		store.shareLink.show = true;
 	}
 }
 </script>
