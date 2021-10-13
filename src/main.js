@@ -5,7 +5,7 @@ import router from "./router";
 import check from './middleware/auth'
 import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
-import {TOKEN, USER, LOGIN} from "./constants";
+import {TOKEN, USER} from "./constants";
 import axios from "axios";
 
 // Vue configuration

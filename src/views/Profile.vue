@@ -27,7 +27,7 @@
 
 <script>
 import axios from "axios";
-import {SERVER} from "../constants";	
+import {SERVER, TOKEN} from "../constants";
 import Button from "../components/Button";
 import DisplayHeader from "../components/text/DisplayHeader";
 
@@ -53,19 +53,25 @@ export default {
 	},
 	mounted()
 	{
-		axios.get(SERVER + 'user/profile').then(response => this.profile = response.data);
+		axios.get(SERVER + 'user/profile', {
+			headers: {
+				Authorization: TOKEN
+			}
+		}).then(response => this.profile = response.data);
 	},
 	methods: {
 		logout()
 		{
-			axios.post(SERVER + 'session/logout').then(() => {
+			axios.post(SERVER + 'session/logout', {
+				headers: {
+					Authorization: TOKEN
+				}
+			}).then(() => {
 				setTimeout(() => {
 					this.$router.push({name: 'login'})
 				}, 200)
-
 			})
 		},
-
 		// Submit the formdata to the server url defined in main.js using a post request
 		submitData()
 		{

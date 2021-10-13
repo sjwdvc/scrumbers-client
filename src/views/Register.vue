@@ -75,7 +75,7 @@ export default {
 					 // Disable submit button to prevent double submits
 					 document.querySelector('button').setAttribute('disabled', '');
 
-					 this.$toast.open({message: 'Registration succesfull', type: "success", position: "top-right"});
+					 this.$toast.open({message: 'Registration successful', type: "success", position: "top-right"});
 
 					 // Notify user that registration was succesfull
 					 this.error = "Redirecting you..."
