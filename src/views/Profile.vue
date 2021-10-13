@@ -1,11 +1,11 @@
 <template>
 	<section>
 		<div class="interface">
-			<DisplayHeader class="header" content="PROFIEL" />
+			<DisplayHeader class="header" content="PROFILE" />
 			<form action="" class="profile-form">
-				<input type="text" name="name" placeholder="Naam" v-model="profile.name" ref="name"/>
-				<input type="number" name="age" placeholder="Leeftijd" ref="age" v-model="profile.age"/>
-				<input type="text" name="function" placeholder="Functie" ref="function" v-model="profile.function"/>
+				<input type="text" name="name" placeholder="Name" v-model="profile.name" ref="name"/>
+				<input type="number" name="age" placeholder="Age" ref="age" v-model="profile.age"/>
+				<input type="text" name="function" placeholder="Job title" ref="function" v-model="profile.function"/>
 
 				<div class="profile-list">
 					<p> Email : </p>
@@ -16,11 +16,11 @@
 		
 				<p class="error">{{ this.error }}</p>
 				<div class="flex space-between">
-					<Button @click.native="submitData" type="submit" content="Opslaan" ref="button" />
-					<Button @click.native="logout" content="Logout" ref="button" />
+					<Button @click.native="submitData" type="submit" content="Update" ref="button" />
+					<Button @click.native="logout" content="Log out" ref="button" />
 				</div>
 			</form>
-			<a>Wachtwoord veranderen</a>
+			<a>Change password</a>
 		</div>
 	</section>
 </template>
@@ -51,27 +51,36 @@ export default {
 			spinner: {}
 		}
 	},
-	created()
+	mounted()
 	{
 		axios.get(SERVER + 'user/profile').then(response => this.profile = response.data);
 	},
 	methods: {
-		logout(){
-			axios.post(SERVER + 'session/logout')
-			
-			this.$router.go()
+		logout()
+		{
+			axios.post(SERVER + 'session/logout').then(() => {
+				setTimeout(() => {
+					this.$router.push({name: 'login'})
+				}, 200)
+
+			})
 		},
+
 		// Submit the formdata to the server url defined in main.js using a post request
-		submitData() {
+		submitData()
+		{
 			axios.post(SERVER + 'user/update', {name : this.profile.name, age : this.profile.age, function : this.profile.function})
 			 	.then(res => {
-				 	if (res.data.error !== "") {
+				 	if (res.data.error !== "")
+				 	{
 						// Comment the error under the form
 						this.error = res.data.error;
-				 	} else {
+				 	}
+				 	else
+				 	{
 						// Notify user that registration was succesfull
 						this.spinner = true;
-						this.error = "Opslaan... Je wordt doorgestuurd"
+						this.error = "Updating..."
 
 						document.querySelector(".error").classList.add("succes");
 

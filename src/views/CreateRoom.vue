@@ -1,12 +1,12 @@
 <template>
 	<section class="createroom">
 		<div class="interface">
-			<DisplayHeader content="NIEUW BORD" />
+			<DisplayHeader content="NEW SESSION" />
 			<form action="" class="createroom-form" @submit.prevent="generateRoom">
 				<Label for="url" content="Trello URL" />
-				<Input id="url" type="text" name="link" placeholder="bijv. https://trello.com/b/12345678/project-naam" v-model="url" ref="url"/>
+				<Input id="url" type="text" name="link" placeholder="eg. https://trello.com/b/12345678/project-name" v-model="url" ref="url"/>
 				<p class="error">{{error}}</p>
-				<Button content="Genereer link"/>
+				<Button content="Generate link"/>
 			</form>
 			
 		</div>

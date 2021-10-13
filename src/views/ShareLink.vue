@@ -2,12 +2,12 @@
 	<section class="sharelink">
 		<div class="interface">
 			<DisplayHeader content="GELUKT!" />
-			<p>Deel deze link met je collega’s om deel te nemen aan de poker sessie</p>
+			<p>Share this link with your colleagues to grant them access to the session</p>
 			<div class="relative animate__animated" @click="copyLink" ref="inputwrapper">
-				<Input type="text" name="link" placeholder="Trello bord URL" v-model="link" disabled ref="input"/>
+				<Input type="text" name="link" placeholder="Trello board URL" v-model="link" disabled ref="input"/>
 				<img src="/img/copy.svg" alt="" class="copy">
 			</div>
-			<Button content="Deelnemen" @click.native="$router.push({name: 'session', params: {key: $route.params.key}})"/>
+			<Button content="Enter room" @click.native="$router.push({name: 'session', params: {key: $route.params.key}})"/>
 		</div>
 	</section>
 </template>
@@ -18,9 +18,15 @@ import Input from "../components/Input";
 import {CLIENT} from "../constants";
 import Button from "../components/Button";
 
-export default {
+export default
+{
 	name : "ShareLink",
-	components : {Button, Input, DisplayHeader},
+	components :
+		{
+			Button,
+			Input,
+			DisplayHeader
+		},
 	data()
 	{
 		return {
@@ -32,7 +38,7 @@ export default {
 		copyLink()
 		{
 			this.$refs.inputwrapper.classList.add('animate__rubberBand')
-			this.$toast.open({message: 'Link gekopieerd!', type: "success", position: "top-right"});
+			this.$toast.open({message: 'Link copied', type: "success", position: "top-right"});
 			navigator.clipboard.writeText(this.link);
 		}
 	},
@@ -66,11 +72,14 @@ export default {
 
 	.copy
 	{
+		padding: 1em;
 		position: absolute;
-		right: 1em;
+		right: 5px;
 		top: 50%;
 		transform: translateY(-50%);
-		width: 20px;
+		width: 50px;
 		cursor: pointer;
+		background-color: $blue-light;
+		box-shadow: -20px 0px 20px $blue-light;
 	}
 </style>

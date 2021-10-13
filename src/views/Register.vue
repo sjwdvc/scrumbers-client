@@ -1,46 +1,28 @@
 <template>
 	<div class="register">
 		<div class="interface">
-			<DisplayHeader content="WELKOM" />
+			<DisplayHeader content="WELCOME" />
 			<form action="" class="register-form" @submit.prevent="submitData">
-				<Input
-					type="text"
-					name="name"
-					placeholder="Gebruikersnaam"
-					required
-					v-model="form.name"
-					ref="name"
-				/>
-				<Input
-					type="email"
-					name="email"
-					placeholder="Email"
-					required
-					v-model="form.email"
-					ref="email"
-				/>
-				<Input
-					type="password"
-					name="password"
-					placeholder="Wachtwoord"
-					required
-					v-model="form.password"
-					ref="password"
-				/>
+				<Input type="text" name="name" placeholder="Username" required v-model="form.name" ref="name"/>
+				<Input type="email" name="email" placeholder="Email" required v-model="form.email" ref="email"/>
+				<div class="relative">
+					<Input :type="passwordType" name="password" placeholder="Password" required v-model="form.password" ref="password-input"/>
+					<img src="/img/eye.svg" alt="" class="password-show" @mousedown="showPassword" @mouseup="hidePassword">
+				</div>
 				<p>{{ error }}</p>
 				<ul class="password-reqs">
-					<li>Wachtwoord moet voldoen aan de volgende eisen:</li>
-					<li>Ten minste 8 karakters</li>
-					<li>Ten minste 1 hoofdletter</li>
-					<li>Ten minste 1 cijfer</li>
+					<li>Password must contain one of the following :</li>
+					<li>At least 8 characters</li>
+					<li>At least 1 capital letter</li>
+					<li>Atleast 1 number</li>
 				</ul>
-				<Button type="submit" content="Registreren" ref="button" />
+				<Button type="submit" content="Register" ref="button" />
 			</form>
 		</div>
 
 		<p class="login-link">
-			Heb je al een account ?
-			<router-link to="login">Klik hier om in te loggen</router-link>
+			Allready a member?
+			<router-link to="login">Click here to login</router-link>
 		</p>
 	</div>
 </template>
@@ -62,7 +44,8 @@ export default {
 				email: "",
 				password: ""
 			},
-			error: ""
+			error: "",
+			passwordType: 'password'
 		};
 	},
 	methods: {
@@ -92,8 +75,10 @@ export default {
 					 // Disable submit button to prevent double submits
 					 document.querySelector('button').setAttribute('disabled', '');
 
+					 this.$toast.open({message: 'Registration succesfull', type: "success", position: "top-right"});
+
 					 // Notify user that registration was succesfull
-					 this.error = "Geslaagd! Je wordt doorgestuurd..."
+					 this.error = "Redirecting you..."
 
 					 // Redirect after 2 seconds
 					 setTimeout(() => this.$router.push({name: 'createroom'}), 2000)
@@ -102,52 +87,79 @@ export default {
 			 .catch(function(error) {
 					 console.log(error);
 			 });
+		},
+		showPassword()
+		{
+			this.passwordType = 'text'
+		},
+		hidePassword()
+		{
+			this.passwordType = 'password'
 		}
 	}
 };
 </script>
 
 <style scoped lang='scss'>
-@import '../../src/scss/main';
+	@import '../../src/scss/main';
 
-.register {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	h1 {
-		margin: 0 auto 50px;
-		text-align: center;
-	}
-	&-form {
-		display: flex;
-		justify-content: center;
-		flex-direction: column;
-		button {
-			margin: 25px auto 0;
+	.register
+	{
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		h1
+		{
+			margin: 0 auto 50px;
+			text-align: center;
+		}
+		&-form
+		{
+			display: flex;
+			justify-content: center;
+			flex-direction: column;
+			button
+			{
+				margin: 25px auto 0;
+			}
+		}
+		p
+		{
+			color: $white;
+			text-align: left;
+			margin: 20px 0;
+		}
+		.login-link
+		{
+			margin-top: 25px;
+			text-align: center;
+		}
+		.password-reqs
+		{
+			text-align: left;
+				li
+				{
+					font-size: 12px;
+					color: $white;
+					margin-left: 25px;
+					&:first-child
+					{
+						list-style: none;
+						margin-left: 0px;
+						margin-bottom: 10px;
+					}
+				}
+		}
+
+		.password-show
+		{
+			position: absolute;
+			right: 10px;
+			top: 50%;
+			bottom: 50%;
+			transform: translateY(-80%);
+			height: 15px;
 		}
 	}
-	p {
-		color: $white;
-		text-align: left;
-		margin: 20px 0;
-	}
-	.login-link {
-		margin-top: 25px;
-	}
-	.password-reqs{
-		text-align: left;
-			li{
-				font-size: 12px;
-				color: $white;
-				margin-left: 25px;
-				&:first-child{
-					list-style: none;
-					margin-left: 0px;
-					margin-bottom: 10px;
-				}
-			}
-	}
-
-}
 </style>

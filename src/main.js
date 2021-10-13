@@ -5,7 +5,7 @@ import router from "./router";
 import check from './middleware/auth'
 import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
-import {TOKEN, USER} from "./constants";
+import {TOKEN, USER, LOGIN} from "./constants";
 import axios from "axios";
 
 // Vue configuration
@@ -21,6 +21,7 @@ axios.defaults.headers = { Authorization: TOKEN }
 
 // // Method to run before visiting any route ( Middleware )
 router.beforeEach((to, from, next) => {
+
     check()
         .then(data => {
             Vue.prototype.login = !!data.data.login
