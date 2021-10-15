@@ -43,7 +43,7 @@ export default
 	{
 		// Check if we authenticated with trello 
 		if (!location.hash.startsWith('#token='))
-			location.replace(`https://trello.com/1/authorize?key=c6f2658e8bbe5ac486d18c13e49f1abb&name=Scrumbers&scope=read,write&expiration=1day&response_type=token&return_url=${CLIENT}/create-room}`);
+			location.replace(`https://trello.com/1/authorize?key=c6f2658e8bbe5ac486d18c13e49f1abb&name=Scrumbers&scope=read,write&expiration=1day&response_type=token&return_url=${CLIENT}/create-room`);
 		else
 		{
 			// Get the token
