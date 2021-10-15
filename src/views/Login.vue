@@ -81,10 +81,10 @@ export default
 					// Disable the submit button to prevent double submits
 					document.querySelector("button").setAttribute("disabled", "");
 
-					// Save token globally in constants
+					// Save token globally in localstorage
 					localStorage.setItem('TOKEN', res.data.data[0].token)
 
-					// Notify user that registration was succesfull
+					// Notify user that registration was successful
 					this.error = "Success! Redirecting you..."
 
 					// Redirect after 2 seconds
