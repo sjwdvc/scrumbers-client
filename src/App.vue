@@ -2,7 +2,7 @@
 	<div id="app">
 		<div class="nav" :class="{'nav-shareLink': shareLink.show}">
 			<Logo :class="{'logoLeft': shareLink.show}"/>
-			<div v-if="shareLink.show" class="shareLink relative animate__animated" @click="copyLink" ref="inputwrapper">
+			<div v-if="shareLink.show" id="shareLink-wrapper" class="shareLink relative animate__animated" @click="copyLink" ref="inputwrapper">
 				<Input id="shareLinkInput" class="shareLink" type="text" name="link" placeholder="Trello bord URL" v-model="shareLink.url" disabled ref="input"/>
 				<img src="/img/copy.svg" alt="" class="copy">
 			</div>
@@ -71,6 +71,10 @@ export default {
 	}
 	svg{
 		cursor: pointer;
+	}
+	#shareLink-wrapper {
+		margin: 0 auto;
+		left: -7%;
 	}
 	#shareLinkInput{
 		margin: auto 0 !important;
