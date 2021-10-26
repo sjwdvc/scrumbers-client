@@ -5,11 +5,14 @@ import router from "./router";
 import check from './middleware/auth'
 import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
+import VueLottiePlayer from "vue-lottie-player";
 import {TOKEN, USER} from "./constants";
 import axios from "axios";
 
 // Vue configuration
 Vue.use(VueToast)
+Vue.use(VueLottiePlayer)
+
 Vue.prototype.login     = false
 Vue.prototype.user      = {}
 Vue.config.productionTip = false
@@ -54,6 +57,8 @@ router.beforeEach((to, from, next) => {
 
         })
         .catch(err => console.log(err))
+
+
 })
 
 // Global capitalize filter -- example: {{ value | capitalize }}

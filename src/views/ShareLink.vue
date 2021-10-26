@@ -17,6 +17,7 @@ import DisplayHeader from "../components/text/DisplayHeader";
 import Input from "../components/Input";
 import {CLIENT} from "../constants";
 import Button from "../components/Button";
+import store from "../store";
 
 export default
 {
@@ -45,6 +46,7 @@ export default
 	mounted()
 	{
 		this.link = CLIENT + '/session/' + this.$route.params.key
+		store.shareLink.show = false;
 	}
 }
 </script>

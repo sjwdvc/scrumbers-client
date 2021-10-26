@@ -9,7 +9,7 @@
 					<img src="/img/eye.svg" alt="" class="password-show" @mousedown="showPassword" @mouseup="hidePassword">
 				</div>
 				<p>{{ error }}</p>
-				<Button type="submit" content="Log in" />
+				<Button type="submit" content="Log in" class="login-form-button" />
 			</form>
 		</div>
 		<p> No account yet?
@@ -79,7 +79,7 @@ export default
 				else
 				{
 					// Disable the submit button to prevent double submits
-					document.querySelector("button").setAttribute("disabled", "");
+					document.querySelector(".login-form-button").setAttribute("disabled", "");
 
 					// Save token globally in localstorage
 					localStorage.setItem('TOKEN', res.data.data[0].token)
