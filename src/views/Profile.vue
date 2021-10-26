@@ -4,11 +4,11 @@
 			<DisplayHeader class="header" content="PROFILE" />
 			<form action="" class="profile-form" @submit.prevent="submitData">
 				<label for="name">Naam :</label>
-				<input type="text" name="name" placeholder="Name" v-model="profile.name" ref="name"/>
+				<input id="name" type="text" name="name" placeholder="Name" v-model="profile.name" ref="name"/>
 				<label for="age">Leeftijd :</label>
-				<input type="number" name="age" placeholder="Age" ref="age" v-model="profile.age"/>
+				<input id="age" type="number" name="age" placeholder="Age" ref="age" v-model="profile.age"/>
 				<label for="function">Functie :</label>
-				<input type="text" name="function" placeholder="Job title" ref="function" v-model="profile.function"/>
+				<input id="function" type="text" name="function" placeholder="Job title" ref="function" v-model="profile.function"/>
 
 				<div class="profile-list">
 					<p> Email : </p>
