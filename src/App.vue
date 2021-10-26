@@ -4,7 +4,10 @@
 			<ul>
 				<li v-for="(link, index) in menuLinks" :key="index" @click="menuOpen = false"><router-link :to="{name: link.link}"><img :src="'/img/' + link.icon + '.svg'" alt="">{{ link.text }}</router-link></li>
 			</ul>
-			<Button content="Logout" @click.native="logout"/>
+			<div class="flex flex-col space-between button-container">
+				<Button content="Leave session" @click.native="leaveSession" v-if="currentComponent() === 'session'"/>
+				<Button content="Logout" @click.native="logout"/>
+			</div>
 		</nav>
 		<div id="app">
 			<div class="container">
@@ -17,7 +20,7 @@
 						<img src="/img/copy.svg" alt="" class="copy">
 					</div>
 
-					<div class="nav-profile flex space-between items-center">
+					<div class="nav-profile flex space-between items-center" v-if="this.login">
 						<svg xmlns="http://www.w3.org/2000/svg" width="62.842" height="36.658" viewBox="0 0 62.842 36.658" @click="toggleMenu">
 							<g id="Icon_ionic-ios-menu" data-name="Icon ionic-ios-menu" transform="translate(-4.5 -10.125)">
 								<path id="Path_38" data-name="Path 38" d="M64.723,15.362H7.118A2.626,2.626,0,0,1,4.5,12.743h0a2.626,2.626,0,0,1,2.618-2.618h57.6a2.626,2.626,0,0,1,2.618,2.618h0A2.626,2.626,0,0,1,64.723,15.362Z" fill="#d0bb7e"/>
@@ -40,7 +43,7 @@ import Input from "./components/Input";
 import store from './store';
 import Button from "./components/Button";
 import axios from "axios";
-import {SERVER, TOKEN, USER} from "./constants";
+import {SERVER, SOCKET, TOKEN, USER} from "./constants";
 
 export default {
 	data()
@@ -98,8 +101,13 @@ export default {
 				this.menuOpen = false
 				this.$router.push({name: 'login'})
 			})
+		},
+		leaveSession()
+		{
+			SOCKET.emit('session', {event: 'leave', email: USER.email, name: USER.name, key: this.$route.params.key})
 
-
+			this.$router.push({name: 'profile'})
+			this.menuOpen = false
 		}
 	}
 
@@ -176,6 +184,10 @@ export default {
 				}
 			}
 		}
+	}
+
+	.button-container{
+		height: 150px;
 	}
 
 	svg{

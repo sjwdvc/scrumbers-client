@@ -7,7 +7,10 @@
 					<v-lottie-player name="cards" loop path="https://assets8.lottiefiles.com/private_files/lf30_klsv8ygt.json" height="100px" style="margin: 0 auto"/>
 					<DisplayHeader content="Waiting..." />
 
-					<p class="user" v-for="user in users" :key="user.index" :class=" {'admin' : user.name === admin}">{{user.name}}</p>
+					<div class="waitingroom-users">
+						<p class="user" v-for="user in users" :key="user.index" :class=" {'admin' : user.name === admin}">{{user.name}}</p>
+					</div>
+
 					<Button content="Starten" v-if="admin === name" @click.native="startSession"/>
 				</div>
 			</div>
@@ -85,16 +88,9 @@ export default
 			this.name  				= USER.name
 			this.session.started 	= args.started
 
-			console.log(args)
+			this.$toast.open({message: args.name + ' has joined the game', type: "success", position: "top-right"});
 
-			this.users 		= []
-			args.users.forEach(user => {
-				this.users.push(
-					{
-						name: user,
-						status: 'waiting'
-					})
-			})
+			this.refreshUserList(args)
 		})
 
 		SOCKET.on('started', () => {
@@ -106,6 +102,11 @@ export default
 				{
 					message: "Oops.. This session can't be found. Please double check your URL or contact the room administrator"
 				}})
+		})
+
+		SOCKET.on('leftSession', args => {
+			this.$toast.open({message: args.userLeft + ' has left the game', type: "warning", position: "top-right"});
+			this.refreshUserList(args)
 		})
 
 		store.shareLink.url = this.link = CLIENT + '/session/' + this.$route.params.key
@@ -140,6 +141,17 @@ export default
 					sessionUser.status = 'ready'
 
 				e.target.classList.add('selected')
+			},
+			refreshUserList(args)
+			{
+				this.users 		= []
+				args.users.forEach(user => {
+					this.users.push(
+						{
+							name: user,
+							status: 'waiting'
+						})
+				})
 			}
 		}
 }
@@ -178,6 +190,9 @@ export default
 		margin-bottom: 20px;
 		&-header {
 			color: $white;
+		}
+		&-users{
+			padding: 25px 0;
 		}
 	}
 

@@ -57,6 +57,8 @@ router.beforeEach((to, from, next) => {
 
         })
         .catch(err => console.log(err))
+
+
 })
 
 // Global capitalize filter -- example: {{ value | capitalize }}
