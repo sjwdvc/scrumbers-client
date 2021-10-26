@@ -3,8 +3,11 @@
 		<div class="interface">
 			<DisplayHeader class="header" content="PROFILE" />
 			<form action="" class="profile-form">
+				<label for="name">Naam :</label>
 				<input type="text" name="name" placeholder="Name" v-model="profile.name" ref="name"/>
+				<label for="age">Leeftijd :</label>
 				<input type="number" name="age" placeholder="Age" ref="age" v-model="profile.age"/>
+				<label for="function">Functie :</label>
 				<input type="text" name="function" placeholder="Job title" ref="function" v-model="profile.function"/>
 
 				<div class="profile-list">
@@ -48,11 +51,13 @@ export default {
 				age: "",
 			},
 			error: "",
-			spinner: {}
+			spinner: {},
+			token: localStorage.getItem('TOKEN')
 		}
 	},
 	mounted()
 	{
+		axios.defaults.headers = { Authorization: this.token }
 		axios.get(SERVER + 'user/profile', {
 			headers: {
 				Authorization: TOKEN
@@ -113,6 +118,12 @@ export default {
 		margin: 20px;
 	}
 
+	label
+	{
+		color: $white;
+		padding: 2px;
+	}
+	
 	h1
 	{
 		text-align: center;
