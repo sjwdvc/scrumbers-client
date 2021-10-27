@@ -15,6 +15,11 @@
 				</div>
 			</div>
 
+			<div class="session-progress">
+				<div class="session-progress-background"></div>
+				<div class="session-progress-bar"></div>
+			</div>
+
 			<div class="session-game flex" v-if="session.started">
 				<div class="session-game-users">
 					<p class="session-game-header">Users</p>
@@ -26,7 +31,7 @@
 					<p class="session-game-header">Feature</p>
 					<h1 class="session-game-features-feature">{{feature}}</h1>
 					<div class="session-game-features-cards">
-						<div class="session-game-features-cards-card" v-for="(card, index) in session.cards" @mouseenter="activeCard" @mouseleave="staticCard" @click="selectCard" :key="index">
+						<div class="session-game-features-cards-card" v-for="(card, index) in session.cards" :data-card="card" @mouseenter="activeCard" @mouseleave="staticCard" @click="selectCard" :key="index">
 							<p v-if="card !== 'coffee'">{{card}}</p>
 							<img src="/img/coffee.svg" alt="" v-else>
 						</div>
@@ -140,6 +145,11 @@ export default
 				if(sessionUser.status === 'waiting')
 					sessionUser.status = 'ready'
 
+				console.log(USER.email, e.target.dataset.card)
+
+				// Send choice to server
+				SOCKET.emit('cardSelection', {user: USER.email, choice: e.target.dataset.card})
+
 				e.target.classList.add('selected')
 			},
 			refreshUserList(args)
@@ -197,6 +207,32 @@ export default
 	}
 
 	.session{
+
+		&-progress{
+			height: 10px;
+			position: relative;
+			margin: 20px auto;
+			div{
+				border-radius: 50px;
+				height: 15px;
+			}
+			&-bar{
+				width: 100px;
+				background-color: $gold;
+				position: absolute;
+				left: 0;
+				background-image: url('/img/progress.svg');
+			}
+
+			&-background{
+				width: 100%;
+				background-color: grey;
+				position: absolute;
+			}
+		}
+
+
+
 		&-started{
 			position: relative;
 			transform: none;
@@ -327,5 +363,10 @@ export default
 				}
 			}
 		}
+	}
+
+	@keyframes scrollbg {
+		from { background-position: 0 }
+		to {background-position: 100% }
 	}
 </style>

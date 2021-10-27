@@ -1,7 +1,7 @@
 <template>
 	<section class="sharelink">
 		<div class="interface">
-			<DisplayHeader content="GELUKT!" />
+			<DisplayHeader content="SUCCESS!" />
 			<p>Share this link with your colleagues to grant them access to the session</p>
 			<div class="relative animate__animated" @click="copyLink" ref="inputwrapper">
 				<Input type="text" name="link" placeholder="Trello board URL" v-model="link" disabled ref="input"/>
