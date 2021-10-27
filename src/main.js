@@ -44,12 +44,7 @@ router.beforeEach((to, from, next) => {
 
                 // If user logged in and trying to access login screen
                 case (data.data.login && to.name === 'login'):
-                    next({name: 'createroom'})
-                    break;
-
-                // If user logged in, change new home to create room
-                case (data.data.login && to.name === 'home'):
-                    next({name: 'createroom'})
+                    next({ name: 'home' })
                     break;
 
                 default: next()
