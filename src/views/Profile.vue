@@ -2,21 +2,29 @@
 	<section>
 		<div class="interface">
 			<DisplayHeader class="header" content="PROFILE" />
-			<form action="" class="profile-form">
-				<input type="text" name="name" placeholder="Name" v-model="profile.name" ref="name"/>
+			<form action="" class="profile-form" @submit.prevent="submitData">
+				<label for="name">Naam :</label>
+				<input id="name" type="text" name="name" placeholder="Name" v-model="profile.name" ref="name"/>
+
+				<label for="age">Leeftijd :</label>
+				<input id="age" type="number" name="age" placeholder="Age" ref="age" v-model="profile.age"/>
+
+				<label for="age">Leeftijd :</label>
 				<input type="number" name="age" placeholder="Age" ref="age" v-model="profile.age"/>
-				<input type="text" name="function" placeholder="Job title" ref="function" v-model="profile.function"/>
+
+				<label for="function">Functie :</label>
+				<input id="function" type="text" name="function" placeholder="Job title" ref="function" v-model="profile.function"/>
 
 				<div class="profile-list">
 					<p> Email : </p>
 					<p> {{ profile.email }} </p>
 				</div>
-			
+
 				<div v-if="this.spinner === true" class="loader"></div>
-		
+
 				<p class="error">{{ this.error }}</p>
 				<div class="flex space-between">
-					<Button @click.native="submitData" type="submit" content="Update" ref="button" />
+					<Button type="submit" content="Update" ref="button" />
 					<Button @click.native="logout" content="Log out" ref="button" />
 				</div>
 			</form>
@@ -48,11 +56,13 @@ export default {
 				age: "",
 			},
 			error: "",
-			spinner: {}
+			spinner: {},
+			token: localStorage.getItem('TOKEN')
 		}
 	},
 	mounted()
 	{
+		axios.defaults.headers = { Authorization: this.token }
 		axios.get(SERVER + 'user/profile', {
 			headers: {
 				Authorization: TOKEN
@@ -111,6 +121,12 @@ export default {
 	.header
 	{
 		margin: 20px;
+	}
+
+	label
+	{
+		color: $white;
+		padding: 2px;
 	}
 
 	h1

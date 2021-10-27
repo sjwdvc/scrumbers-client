@@ -5,10 +5,12 @@
 			<form action="" class="createroom-form" @submit.prevent="generateRoom">
 				<Label for="url" content="Trello URL" />
 				<Input id="url" type="text" name="link" placeholder="eg. https://trello.com/b/12345678/project-name" v-model="url" ref="url"/>
+				<Input value="coffee-timeout" type="number" placeholder="Coffee-timeout minutes" />
+				<Select name="adminRules" :options="adminRules" />
+
 				<p class="error">{{error}}</p>
 				<Button content="Generate link"/>
 			</form>
-			
 		</div>
 	</section>
 </template>
@@ -18,6 +20,7 @@ import DisplayHeader from "../components/text/DisplayHeader";
 import Input from "../components/Input";
 import Label from "../components/Label";
 import Button from "../components/Button";
+import Select from "../components/Select";
 import {CLIENT, SOCKET, USER} from "../constants";
 
 export default
@@ -28,7 +31,8 @@ export default
 		Button,
 		Input,
 		DisplayHeader,
-		Label
+		Label,
+		Select
 	},
 	data()
 	{
@@ -36,7 +40,21 @@ export default
 			url: '',
 			name: '',
 			token: '',
-			error: ''
+			error: '',
+			adminRules: [
+				{
+					content: 'Lowest number',
+					value: 'lowest'
+				},
+				{
+					content: 'Most common',
+					value: 'mostcommon'
+				},
+				{
+					content: 'Admin decides',
+					value: 'admin'
+				},
+			]
 		}
 	},
 	beforeMount()
@@ -78,11 +96,6 @@ export default
 	section
 	{
 		width: 750px;
-	}
-
-	input
-	{
-		margin: 10px 0;
 	}
 
 	form

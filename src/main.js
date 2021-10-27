@@ -16,7 +16,7 @@ Vue.use(VueLottiePlayer)
 Vue.prototype.login     = false
 Vue.prototype.user      = {}
 Vue.config.productionTip = false
-Vue.config.devtools = true
+Vue.config.devtools     = true
 
 // global axios CORS fix -- Do not delete
 axios.defaults.withCredentials = true
@@ -24,7 +24,6 @@ axios.defaults.headers = { Authorization: TOKEN }
 
 // // Method to run before visiting any route ( Middleware )
 router.beforeEach((to, from, next) => {
-
     check()
         .then(data => {
             Vue.prototype.login = !!data.data.login
@@ -44,7 +43,7 @@ router.beforeEach((to, from, next) => {
 
                 // If user logged in and trying to access login screen
                 case (data.data.login && to.name === 'login'):
-                    next({ name: 'home' })
+                    next({name: 'home'})
                     break;
 
                 default: next()
