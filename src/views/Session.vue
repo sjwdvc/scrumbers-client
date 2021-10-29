@@ -15,7 +15,7 @@
 				</div>
 			</div>
 
-			<div class="session-progress">
+			<div class="session-progress" v-if="session.started">
 				<div class="session-progress-background"></div>
 				<div class="session-progress-bar"></div>
 			</div>
@@ -29,7 +29,10 @@
 				</div>
 				<div class="session-game-features">
 					<p class="session-game-header">Feature</p>
-					<h1 class="session-game-features-feature">{{feature}}</h1>
+					<h1 class="session-game-features-feature">
+						{{session.feature.name}}
+						<span>1/16</span>
+					</h1>
 					<div class="session-game-features-cards">
 						<div class="session-game-features-cards-card" v-for="(card, index) in session.cards" :data-card="card" @mouseenter="activeCard" @mouseleave="staticCard" @click="selectCard" :key="index">
 							<p v-if="card !== 'coffee'">{{card}}</p>
@@ -37,9 +40,9 @@
 						</div>
 					</div>
 					<div class="session-game-features-reason">
-						<div class="flex items-start space-between">
-							<TextArea name="description" placeholder="Explain your decision" />
-							<Button content="Continue" />
+						<div class="relative">
+							<TextArea name="description" placeholder="Explain your choice (max. 250 chars)" v-model="session.decision.desc" max="200"/>
+							<Button content="Submit" />
 						</div>
 					</div>
 				</div>
@@ -66,15 +69,24 @@ export default
 	data()
 	{
 		return {
-			name 		: '',
-			sessionId 	: this.$route.params.key,
-			users 		: [],
-			admin 		: false,
-			session 	: {
+			name : '',
+			sessionId : this.$route.params.key,
+			users : [],
+			admin : false,
+			session : {
 				started : false,
-				cards 	: ['coffee', '0', '1/2', '1', '2', '3', '5', '8', '13', '20', '40', '100']
-			},
-			feature 	: 'Als gebruiker kan ik inloggen om de applicatie te kunnen gebruiken'
+				cards : ['coffee', '0', '1/2', '1', '2', '3', '5', '8', '13', '20', '40', '100'],
+				feature :
+					{
+						name: '',
+						desc: ''
+					},
+				decision :
+					{
+						number: 0,
+						desc  : ''
+					}
+			}
 		}
 	},
 	mounted()
@@ -89,32 +101,57 @@ export default
 
 		// Define the session users and admin
 		SOCKET.on('joined', args => {
-			this.admin 				= args.admin
-			this.name  				= USER.name
-			this.session.started 	= args.started
+			this.admin 				= args.admin;
+			this.name  				= USER.name;
+			this.session.started 	= args.started;
 
 			this.$toast.open({message: args.name + ' has joined the game', type: "success", position: "top-right"});
 
-			this.refreshUserList(args)
+			this.refreshUserList(args);
 		})
+
+		SOCKET.emit('feature', {
+			key		: this.$route.params.key,
+			event	: 'next'
+		});
+
+		SOCKET.emit('feature', {
+			key		: this.$route.params.key,
+			event	: 'submit',
+			number	: this.session.decision.number,
+			desc 	: this.session.decision.desc
+		})
+
+		SOCKET.on('nextFeature', data => this.session.feature = data.feature);
+
+
+
+
+
+
 
 		SOCKET.on('started', () => {
 			this.session.started = true
-		})
+		});
 
 		SOCKET.on('undefinedSession', () => {
-			this.$router.push({name: 'Error', params:
+			this.$router.push(
 				{
-					message: "Oops.. This session can't be found. Please double check your URL or contact the room administrator"
-				}})
-		})
+					name: 'Error',
+					params:
+						{
+							message: "Oops.. This session can't be found. Please double check your URL or contact the room administrator"
+						}
+					}
+				);
+		});
 
 		SOCKET.on('leftSession', args => {
 			this.$toast.open({message: args.userLeft + ' has left the game', type: "warning", position: "top-right"});
-			this.refreshUserList(args)
-		})
+			this.refreshUserList(args);
+		});
 
-		store.shareLink.url = this.link = CLIENT + '/session/' + this.$route.params.key
+		store.shareLink.url = this.link = CLIENT + '/session/' + this.$route.params.key;
 		store.shareLink.show = true;
 	},
 	methods:
@@ -125,43 +162,43 @@ export default
 			},
 			startSession()
 			{
-				this.$refs.session.classList.add('session-started')
-				SOCKET.emit('session', {event: 'start', key: this.$route.params.key})
+				this.$refs.session.classList.add('session-started');
+				SOCKET.emit('session', {event: 'start', key: this.$route.params.key});
 			},
 			activeCard(e)
 			{
-				e.target.classList.add('active')
+				e.target.classList.add('active');
 			},
 			staticCard(e)
 			{
-				e.target.classList.remove('active')
+				e.target.classList.remove('active');
 			},
 			selectCard(e)
 			{
-				document.querySelectorAll('.selected').forEach(selected => selected.classList.remove('selected'))
+				document.querySelectorAll('.selected').forEach(selected => selected.classList.remove('selected'));
 
-				let sessionUser = this.users.find(user => user.name === this.name)
+				let sessionUser = this.users.find(user => user.name === this.name);
 
 				if(sessionUser.status === 'waiting')
-					sessionUser.status = 'ready'
+					sessionUser.status = 'ready';
 
-				console.log(USER.email, e.target.dataset.card)
+				this.session.decision.number = e.target.dataset.card;
 
 				// Send choice to server
-				SOCKET.emit('cardSelection', {user: USER.email, choice: e.target.dataset.card})
+				SOCKET.emit('cardSelection', {user: USER.email, choice: e.target.dataset.card});
 
-				e.target.classList.add('selected')
+				e.target.classList.add('selected');
 			},
 			refreshUserList(args)
 			{
-				this.users 		= []
+				this.users 		= [];
 				args.users.forEach(user => {
 					this.users.push(
 						{
 							name: user,
 							status: 'waiting'
 						})
-				})
+				});
 			}
 		}
 }
@@ -292,6 +329,17 @@ export default
 					font-size: 30px;
 					padding: 30px 100px 30px 25px;
 					color: $white;
+					position: relative;
+					span{
+						position: absolute;
+						right: 10px;
+						top: 50%;
+						transform: translateY(-50%);
+						color: $white;
+						opacity: 0.5;
+						font-weight: 100;
+						font-size: 24px;
+					}
 				}
 				&-cards{
 					display: inline-flex;
@@ -357,8 +405,17 @@ export default
 					margin-top: 25px;
 					textarea{
 						font-size: 24px;
-						max-width: 700px;
+						min-height: 200px;
 						max-height: 200px;
+						width: 100%;
+						max-width: 100%;
+						min-width: 100%;
+						padding-right: 100px;
+					}
+					button{
+						position: absolute;
+						top: 10px;
+						right: 10px;
 					}
 				}
 			}
