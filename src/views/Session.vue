@@ -42,7 +42,7 @@
 					<div class="session-game-features-reason">
 						<div class="relative">
 							<TextArea name="description" placeholder="Explain your choice (max. 250 chars)" v-model="session.decision.desc" max="200"/>
-							<Button content="Submit" />
+							<Button content="Submit" @click.native="submit" id="btn-submit" />
 						</div>
 					</div>
 				</div>
@@ -74,6 +74,7 @@ export default
 			users : [],
 			admin : false,
 			session : {
+				submitted: false,
 				started : false,
 				cards : ['coffee', '0', '1/2', '1', '2', '3', '5', '8', '13', '20', '40', '100'],
 				feature :
@@ -181,6 +182,20 @@ export default
 							status: 'waiting'
 						})
 				});
+			},
+			submit()
+			{
+				if (!this.session.submitted)
+				{
+					SOCKET.emit('feature', {
+						key  	: this.$route.params.key,
+						event	: 'submit',
+						number 	: this.session.decision.number,
+						desc 	: this.session.decision.desc
+					});
+					document.getElementById('btn-submit').style.opacity = .05;
+					this.session.submitted = true;
+				}
 			}
 		}
 }
