@@ -110,26 +110,8 @@ export default
 			this.refreshUserList(args);
 		})
 
-		SOCKET.emit('feature', {
-			key		: this.$route.params.key,
-			event	: 'next'
-		});
-
-		SOCKET.emit('feature', {
-			key		: this.$route.params.key,
-			event	: 'submit',
-			number	: this.session.decision.number,
-			desc 	: this.session.decision.desc
-		})
-
 		SOCKET.on('nextFeature', data => this.session.feature = data.feature);
-
-
-
-
-
-
-
+		
 		SOCKET.on('started', () => {
 			this.session.started = true
 		});
