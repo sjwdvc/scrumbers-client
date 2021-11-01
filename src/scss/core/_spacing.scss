@@ -6,6 +6,11 @@ section{
     transform: translate(-50%, -50%);
 }
 
+.container{
+    width: 1200px;
+    margin: 0 auto;
+}
+
 .relative{
     position: relative;
 }
@@ -14,6 +19,22 @@ section{
     display: flex;
 }
 
+.flex-row{
+    flex-direction: row;
+}
+
+.flex-col{
+    flex-direction: column;
+}
+
 .space-between{
     justify-content: space-between;
+}
+
+.items-center{
+    align-items: center;
+}
+
+.items-start{
+    align-items: flex-start;
 }

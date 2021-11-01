@@ -5,15 +5,18 @@ import router from "./router";
 import check from './middleware/auth'
 import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
+import VueLottiePlayer from "vue-lottie-player";
 import {TOKEN, USER} from "./constants";
 import axios from "axios";
 
 // Vue configuration
 Vue.use(VueToast)
+Vue.use(VueLottiePlayer)
+
 Vue.prototype.login     = false
 Vue.prototype.user      = {}
 Vue.config.productionTip = false
-Vue.config.devtools = true
+Vue.config.devtools     = true
 
 // global axios CORS fix -- Do not delete
 axios.defaults.withCredentials = true
@@ -40,12 +43,7 @@ router.beforeEach((to, from, next) => {
 
                 // If user logged in and trying to access login screen
                 case (data.data.login && to.name === 'login'):
-                    next({name: 'createroom'})
-                    break;
-
-                // If user logged in, change new home to create room
-                case (data.data.login && to.name === 'home'):
-                    next({name: 'createroom'})
+                    next({name: 'home'})
                     break;
 
                 default: next()
@@ -53,6 +51,8 @@ router.beforeEach((to, from, next) => {
 
         })
         .catch(err => console.log(err))
+
+
 })
 
 // Global capitalize filter -- example: {{ value | capitalize }}

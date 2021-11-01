@@ -1,20 +1,19 @@
 <template>
 	<section class="login">
 		<div class="interface">
-			<DisplayHeader content="INLOGGEN" />
+			<DisplayHeader content="LOG IN" />
 			<form action="" class="login-form" @submit.prevent="submitData">
 				<Input type="email" name="email" placeholder="Email" required v-model="form.email"/>
 				<div class="relative">
-					<Input :type="passwordType" name="password" placeholder="Wachtwoord" required v-model="form.password" ref="password-input"/>
+					<Input :type="passwordType" name="password" placeholder="Password" required v-model="form.password" ref="password-input"/>
 					<img src="/img/eye.svg" alt="" class="password-show" @mousedown="showPassword" @mouseup="hidePassword">
 				</div>
-
 				<p>{{ error }}</p>
-				<Button type="submit" content="Inloggen" />
+				<Button type="submit" content="Log in" class="login-form-button" />
 			</form>
 		</div>
-		<p> Heb je nog geen account ?
-			<router-link to="register">Klik hier om te registreren</router-link>
+		<p> No account yet?
+			<router-link to="register">Click here to register</router-link>
 		</p>
 	</section>
 </template>
@@ -80,17 +79,17 @@ export default
 				else
 				{
 					// Disable the submit button to prevent double submits
-					document.querySelector("button").setAttribute("disabled", "");
+					document.querySelector(".login-form-button").setAttribute("disabled", "");
 
-					// Save token globally in constants
+					// Save token globally in localstorage
 					localStorage.setItem('TOKEN', res.data.data[0].token)
 
-					// Notify user that registration was succesfull
-					this.error = "Geslaagd! Je wordt doorgestuurd..."
+					// Notify user that registration was successful
+					this.error = "Success! Redirecting you..."
 
 					// Redirect after 2 seconds
 					setTimeout(() => {
-						this.session === null || this.session === undefined ? this.$router.push({name : 'createroom'}) : this.$router.push({name : 'session', params: {key: this.session}})
+						this.session === null || this.session === undefined ? this.$router.push({name : 'home'}) : this.$router.push({name : 'session', params: {key: this.session}})
 					}, 2000)
 				}
 			})
@@ -116,6 +115,10 @@ export default
 	
 <style scoped lang="scss">
 	@import "../../src/scss/main";
+
+	.interface{
+		min-width: 500px;
+	}
 
 	.login
 	{
