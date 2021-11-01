@@ -81,7 +81,7 @@ export default {
 					 this.error = "Redirecting you..."
 
 					 // Redirect after 2 seconds
-					 setTimeout(() => this.$router.push({name: 'createroom'}), 2000)
+					 setTimeout(() => this.$router.push({name: 'home'}), 2000)
 				 }
 			 })
 			 .catch(function(error) {
