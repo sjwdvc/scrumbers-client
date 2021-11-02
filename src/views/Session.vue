@@ -112,7 +112,7 @@ export default
 		})
 
 		SOCKET.on('nextFeature', data => this.session.feature = data.feature);
-		
+
 		SOCKET.on('started', () => {
 			this.session.started = true
 		});
@@ -125,8 +125,8 @@ export default
 						{
 							message: "Oops.. This session can't be found. Please double check your URL or contact the room administrator"
 						}
-					}
-				);
+				}
+			);
 		});
 
 		SOCKET.on('leftSession', args => {
@@ -202,225 +202,225 @@ export default
 </script>
 
 <style scoped lang="scss">
-	@import "../../src/scss/main";
+@import "../../src/scss/main";
 
-	#app{
-		overflow: scroll;
+#app{
+	overflow: scroll;
+}
+
+input {
+	margin: 2rem 0;
+}
+
+h1 {
+	margin-bottom: 25px;
+}
+
+.user {
+	color: $white;
+	width: 200px;
+	margin: 0 auto;
+}
+
+.admin {
+	&:before {
+		content: "👑";
+		width: 10px;
+		height: 10px;
 	}
+}
 
-	input {
-		margin: 2rem 0;
-	}
-
-	h1 {
-		margin-bottom: 25px;
-	}
-
-	.user {
+.waitingroom {
+	margin-bottom: 20px;
+	&-header {
 		color: $white;
-		width: 200px;
-		margin: 0 auto;
 	}
+	&-users{
+		padding: 25px 0;
+	}
+}
 
-	.admin {
-		&:before {
-			content: "👑";
-			width: 10px;
-			height: 10px;
+.session{
+
+	&-progress{
+		height: 10px;
+		position: relative;
+		margin: 20px auto;
+		div{
+			border-radius: 50px;
+			height: 15px;
+		}
+		&-bar{
+			width: 100px;
+			background-color: $gold;
+			position: absolute;
+			left: 0;
+			background-image: url('/img/progress.svg');
+		}
+
+		&-background{
+			width: 100%;
+			background-color: grey;
+			position: absolute;
 		}
 	}
 
-	.waitingroom {
-		margin-bottom: 20px;
-		&-header {
+
+
+	&-started{
+		position: relative;
+		transform: none;
+		top: 0;
+		left: 0;
+	}
+	&-game{
+		height: fit-content;
+		min-height: 500px;
+		&-header{
+			font-size: 24px;
+			border-bottom: 1px solid $white;
 			color: $white;
+			padding: 10px 0;
+			margin-bottom: 50px;
 		}
 		&-users{
-			padding: 25px 0;
-		}
-	}
-
-	.session{
-
-		&-progress{
-			height: 10px;
-			position: relative;
-			margin: 20px auto;
-			div{
-				border-radius: 50px;
-				height: 15px;
-			}
-			&-bar{
-				width: 100px;
-				background-color: $gold;
-				position: absolute;
-				left: 0;
-				background-image: url('/img/progress.svg');
-			}
-
-			&-background{
-				width: 100%;
-				background-color: grey;
-				position: absolute;
-			}
-		}
-
-
-
-		&-started{
-			position: relative;
-			transform: none;
-			top: 0;
-			left: 0;
-		}
-		&-game{
-			height: fit-content;
-			min-height: 500px;
-			&-header{
-				font-size: 24px;
-				border-bottom: 1px solid $white;
+			width: 25%;
+			margin-right: 50px;
+			&-user{
+				padding: 25px;
+				margin: 25px 0;
 				color: $white;
-				padding: 10px 0;
-				margin-bottom: 50px;
+				background-color: $blue-light;
+				border-radius: 10px;
+				border: 1px solid rgba($white, 0.5);
+				position: relative;
+				font-size: 24px;
+				&:after{
+					content: '';
+					position: absolute;
+					right: 10px;
+					top: 50%;
+					width: 25px;
+					height: 25px;
+					transform: translateY(-50%);
+					background-size: contain;
+					background-repeat: no-repeat;
+				}
 			}
-			&-users{
-				width: 25%;
-				margin-right: 50px;
-				&-user{
-					padding: 25px;
-					margin: 25px 0;
+
+			.waiting:after{
+				background-image: url('/img/waiting.svg');
+			}
+
+			.ready:after{
+				background-image: url('/img/ready.svg');
+			}
+		}
+
+		&-features{
+			width: 75%;
+			&-feature{
+				border: 5px solid rgba($white, 0.5);
+				background-color: $blue-light;
+				border-radius: 10px;
+				font-size: 30px;
+				padding: 30px 100px 30px 25px;
+				color: $white;
+				position: relative;
+				span{
+					position: absolute;
+					right: 10px;
+					top: 50%;
+					transform: translateY(-50%);
 					color: $white;
-					background-color: $blue-light;
-					border-radius: 10px;
-					border: 1px solid rgba($white, 0.5);
-					position: relative;
+					opacity: 0.5;
+					font-weight: 100;
 					font-size: 24px;
-					&:after{
-						content: '';
-						position: absolute;
-						right: 10px;
-						top: 50%;
-						width: 25px;
-						height: 25px;
-						transform: translateY(-50%);
-						background-size: contain;
-						background-repeat: no-repeat;
-					}
-				}
-
-				.waiting:after{
-					background-image: url('/img/waiting.svg');
-				}
-
-				.ready:after{
-					background-image: url('/img/ready.svg');
 				}
 			}
+			&-cards{
+				display: inline-flex;
+				align-items: center;
+				overflow: scroll;
+				max-width: 100%;
+				padding: 20px 0;
+				gap: 20px;
+				overflow-y: hidden;
 
-			&-features{
-				width: 75%;
-				&-feature{
-					border: 5px solid rgba($white, 0.5);
-					background-color: $blue-light;
+				&::-webkit-scrollbar {
+					width:  10px;
+					height: 10px;
+					border-radius: 50px;
+				}
+
+				&::-webkit-scrollbar-thumb {
+					background: $gold;
+					border-radius: 50px;
+				}
+
+				&::-webkit-scrollbar-track {
+					background: $blue-dark;
+					border-radius: 50px;
+				}
+
+				// For Internet Explorer
+				& {
+					scrollbar-face-color: $gold;
+					scrollbar-track-color: $blue-dark;
+				}
+
+				&-card{
+					$inactive-card : darken($white, 25%);
+
+					font-size: 42px;
+					min-width: 75px;
+					max-width: 75px;
+					padding: 25px 0;
+					color: $blue-dark;
 					border-radius: 10px;
-					font-size: 30px;
-					padding: 30px 100px 30px 25px;
-					color: $white;
-					position: relative;
-					span{
-						position: absolute;
-						right: 10px;
-						top: 50%;
-						transform: translateY(-50%);
-						color: $white;
-						opacity: 0.5;
-						font-weight: 100;
-						font-size: 24px;
+					font-weight: 900;
+					background-color: $inactive-card;
+					text-align: center;
+					transition: 0.3s ease;
+					cursor: pointer;
+					border-bottom: 5px solid darken($inactive-card, 25%);
+
+					p, img{
+						pointer-events: none;
 					}
 				}
-				&-cards{
-					display: inline-flex;
-					align-items: center;
-					overflow: scroll;
+				.active, .selected{
+					background-color: $white;
+					border-bottom: 5px solid darken($white, 25%);
+					transform: translateY(-10px);
+					&:not(:first-child):not(:last-child){
+						transform: translateY(-10px) rotate(5deg);
+					}
+				}
+			}
+			&-reason{
+				margin-top: 25px;
+				textarea{
+					font-size: 24px;
+					min-height: 200px;
+					max-height: 200px;
+					width: 100%;
 					max-width: 100%;
-					padding: 20px 0;
-					gap: 20px;
-					overflow-y: hidden;
-
-					&::-webkit-scrollbar {
-						width:  10px;
-						height: 10px;
-						border-radius: 50px;
-					}
-
-					&::-webkit-scrollbar-thumb {
-						background: $gold;
-						border-radius: 50px;
-					}
-
-					&::-webkit-scrollbar-track {
-						background: $blue-dark;
-						border-radius: 50px;
-					}
-
-					// For Internet Explorer
-					& {
-						scrollbar-face-color: $gold;
-						scrollbar-track-color: $blue-dark;
-					}
-
-					&-card{
-						$inactive-card : darken($white, 25%);
-
-						font-size: 42px;
-						min-width: 75px;
-						max-width: 75px;
-						padding: 25px 0;
-						color: $blue-dark;
-						border-radius: 10px;
-						font-weight: 900;
-						background-color: $inactive-card;
-						text-align: center;
-						transition: 0.3s ease;
-						cursor: pointer;
-						border-bottom: 5px solid darken($inactive-card, 25%);
-
-						p, img{
-							pointer-events: none;
-						}
-					}
-					.active, .selected{
-						background-color: $white;
-						border-bottom: 5px solid darken($white, 25%);
-						transform: translateY(-10px);
-						&:not(:first-child):not(:last-child){
-							transform: translateY(-10px) rotate(5deg);
-						}
-					}
+					min-width: 100%;
+					padding-right: 100px;
 				}
-				&-reason{
-					margin-top: 25px;
-					textarea{
-						font-size: 24px;
-						min-height: 200px;
-						max-height: 200px;
-						width: 100%;
-						max-width: 100%;
-						min-width: 100%;
-						padding-right: 100px;
-					}
-					button{
-						position: absolute;
-						top: 10px;
-						right: 10px;
-					}
+				button{
+					position: absolute;
+					top: 10px;
+					right: 10px;
 				}
 			}
 		}
 	}
+}
 
-	@keyframes scrollbg {
-		from { background-position: 0 }
-		to {background-position: 100% }
-	}
+@keyframes scrollbg {
+	from { background-position: 0 }
+	to {background-position: 100% }
+}
 </style>
