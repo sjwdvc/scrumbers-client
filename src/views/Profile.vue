@@ -1,33 +1,41 @@
 <template>
 	<section>
 		<div class="interface">
-			<DisplayHeader class="header" content="PROFIEL" />
-			<form action="" class="profile-form">
-				<input type="text" name="name" placeholder="Naam" v-model="profile.name" ref="name"/>
-				<input type="number" name="age" placeholder="Leeftijd" ref="age" v-model="profile.age"/>
-				<input type="text" name="function" placeholder="Functie" ref="function" v-model="profile.function"/>
+			<DisplayHeader class="header" content="PROFILE" />
+			<form action="" class="profile-form" @submit.prevent="submitData">
+				<label for="name">Naam :</label>
+				<input id="name" type="text" name="name" placeholder="Name" v-model="profile.name" ref="name"/>
+
+				<label for="age">Leeftijd :</label>
+				<input id="age" type="number" name="age" placeholder="Age" ref="age" v-model="profile.age"/>
+
+				<label for="age">Leeftijd :</label>
+				<input type="number" name="age" placeholder="Age" ref="age" v-model="profile.age"/>
+
+				<label for="function">Functie :</label>
+				<input id="function" type="text" name="function" placeholder="Job title" ref="function" v-model="profile.function"/>
 
 				<div class="profile-list">
 					<p> Email : </p>
 					<p> {{ profile.email }} </p>
 				</div>
-			
+
 				<div v-if="this.spinner === true" class="loader"></div>
-		
+
 				<p class="error">{{ this.error }}</p>
 				<div class="flex space-between">
-					<Button @click.native="submitData" type="submit" content="Opslaan" ref="button" />
-					<Button @click.native="logout" content="Logout" ref="button" />
+					<Button type="submit" content="Update" ref="button" />
+					<Button @click.native="logout" content="Log out" ref="button" />
 				</div>
 			</form>
-			<a>Wachtwoord veranderen</a>
+			<a>Change password</a>
 		</div>
 	</section>
 </template>
 
 <script>
 import axios from "axios";
-import {SERVER} from "../constants";	
+import {SERVER, TOKEN} from "../constants";
 import Button from "../components/Button";
 import DisplayHeader from "../components/text/DisplayHeader";
 
@@ -48,30 +56,47 @@ export default {
 				age: "",
 			},
 			error: "",
-			spinner: {}
+			spinner: {},
+			token: localStorage.getItem('TOKEN')
 		}
 	},
-	created()
+	mounted()
 	{
-		axios.get(SERVER + 'user/profile').then(response => this.profile = response.data);
+		axios.defaults.headers = { Authorization: this.token }
+		axios.get(SERVER + 'user/profile', {
+			headers: {
+				Authorization: TOKEN
+			}
+		}).then(response => this.profile = response.data);
 	},
 	methods: {
-		logout(){
-			axios.post(SERVER + 'session/logout')
-			
-			this.$router.go()
+		logout()
+		{
+			axios.post(SERVER + 'session/logout', {
+				headers: {
+					Authorization: TOKEN
+				}
+			}).then(() => {
+				setTimeout(() => {
+					this.$router.push({name: 'login'})
+				}, 200)
+			})
 		},
 		// Submit the formdata to the server url defined in main.js using a post request
-		submitData() {
+		submitData()
+		{
 			axios.post(SERVER + 'user/update', {name : this.profile.name, age : this.profile.age, function : this.profile.function})
 			 	.then(res => {
-				 	if (res.data.error !== "") {
+				 	if (res.data.error !== "")
+				 	{
 						// Comment the error under the form
 						this.error = res.data.error;
-				 	} else {
+				 	}
+				 	else
+				 	{
 						// Notify user that registration was succesfull
 						this.spinner = true;
-						this.error = "Opslaan... Je wordt doorgestuurd"
+						this.error = "Updating..."
 
 						document.querySelector(".error").classList.add("succes");
 
@@ -96,6 +121,12 @@ export default {
 	.header
 	{
 		margin: 20px;
+	}
+
+	label
+	{
+		color: $white;
+		padding: 2px;
 	}
 
 	h1
