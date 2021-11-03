@@ -107,7 +107,13 @@ export default {
 						document.querySelector('button').setAttribute('disabled', '');
 
 						// Redirect after 1.5 seconds
-						//  setTimeout(() => this.$router.push({name: 'createroom'}), 1500)
+						setTimeout(() => 
+						{
+							this.error = "";
+							this.spinner = false;
+							this.$toast.open({message:'Profile details updated', type: "success", position: "top-right"});
+
+						}, 1000);
 				 	}
 			 	})
 			 	.catch(function(error) {
