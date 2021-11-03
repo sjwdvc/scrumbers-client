@@ -222,7 +222,12 @@ export default {
 		},
 		sendChat()
 		{
-			// SOCKET.emit('chat', {user, message, feature})
+			SOCKET.emit("chat", {
+                event: "send",
+				key: this.$route.params.key,
+                sender: USER.name,
+                message: this.chatmessage,
+            });
 		},
 		openChecklist(index){
 			this.checklists[index].open = !this.checklists[index].open
@@ -234,16 +239,24 @@ export default {
 		window.addEventListener('keydown', e => {
 			if(e.key === 'Enter' && this.chatmessage !== "")
 			{
-				this.chats.push(
-					{
-						sender: USER.name,
-						message: this.chatmessage
-					})
+				this.sendChat();
 
-				console.log('chat send:' + this.chatmessage)
+				console.log('chat send: ' + this.chatmessage)
 				this.chatmessage = ""
 			}
 		})
+
+		SOCKET.on("chat", args => {
+			switch (args.event) {
+				case "receive":
+					this.chats.push(
+					{
+						sender: args.sender,
+						message: args.message
+					})
+					break;
+			}
+		});
 
 
 	}
