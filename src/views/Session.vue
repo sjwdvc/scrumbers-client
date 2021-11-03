@@ -112,6 +112,11 @@ export default
 		})
 
 		SOCKET.on('nextFeature', data => this.session.feature = data.feature);
+		// Activates when a client submits a value
+		SOCKET.on('submit', data => {
+			console.log(data);
+			this.users.find(user => user.name === data.user).status = 'ready';
+		});
 
 		SOCKET.on('started', () => {
 			this.session.started = true
