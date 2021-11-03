@@ -9,9 +9,6 @@
 				<label for="age">Leeftijd :</label>
 				<input id="age" type="number" name="age" placeholder="Age" ref="age" v-model="profile.age"/>
 
-				<label for="age">Leeftijd :</label>
-				<input type="number" name="age" placeholder="Age" ref="age" v-model="profile.age"/>
-
 				<label for="function">Functie :</label>
 				<input id="function" type="text" name="function" placeholder="Job title" ref="function" v-model="profile.function"/>
 
