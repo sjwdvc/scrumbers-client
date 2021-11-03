@@ -104,7 +104,7 @@ export default {
 						document.querySelector('button').setAttribute('disabled', '');
 
 						// Redirect after 1.5 seconds
-						 setTimeout(() => this.$router.push({name: 'createroom'}), 1500)
+						//  setTimeout(() => this.$router.push({name: 'createroom'}), 1500)
 				 	}
 			 	})
 			 	.catch(function(error) {

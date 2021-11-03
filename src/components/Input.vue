@@ -1,5 +1,5 @@
 <template>
-	<input :type="$props.type" :name="$props.name" :placeholder="$props.placeholder" v-bind="attrs" :value="value" @input="updateValue($event.target.value)">
+	<input :type="$props.type" :name="$props.name" :placeholder="$props.placeholder" v-bind="attrs" :value="value" @input="updateValue($event.target.value)" :emoji="emoji">
 </template>
 
 <script>
@@ -10,7 +10,8 @@ export default {
 		name: String,
 		placeholder: String,
 		required: Boolean,
-		value: String
+		value: String,
+		emoji: Boolean
 	},
 	methods : {
 		updateValue(value)

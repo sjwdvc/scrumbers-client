@@ -30,6 +30,7 @@ router.beforeEach((to, from, next) => {
 
             if(data.data.login)
             {
+                console.log(data)
                 USER.name = data.data.name;
                 USER.email = data.data.email;
             }
@@ -48,12 +49,29 @@ router.beforeEach((to, from, next) => {
 
                 default: next()
             }
-
         })
         .catch(err => console.log(err))
-
-
 })
+
+/**
+ * Converts a string to a hex color
+ * @param {string} string input string
+ * @returns Color in hex
+ */
+function stringToColor(string)
+{
+    let hash = 0;
+
+    for (let i = 0; i < string.length; i++) {
+        hash = string.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    var colour = '#';
+    for (var i = 0; i < 3; i++) {
+        var value = (hash >> (i * 8)) & 0xFF;
+        colour += ('00' + value.toString(16)).substr(-2);
+    }
+    return colour;
+}
 
 // Global capitalize filter -- example: {{ value | capitalize }}
 Vue.filter('capitalize', value => value.toUpperCase())

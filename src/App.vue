@@ -1,6 +1,6 @@
 <template>
-	<main :class="{'menuOpen': menuOpen}">
-		<nav>
+	<main :class="{'menu': menu, 'info': info}">
+		<nav class="menu-content">
 			<ul>
 				<li v-for="(link, index) in menuLinks" :key="index" @click="menuOpen = false"><router-link :to="{name: link.link}"><img :src="'/img/' + link.icon + '.svg'" alt="">{{ link.text }}</router-link></li>
 			</ul>
@@ -9,7 +9,50 @@
 				<Button content="Logout" @click.native="logout"/>
 			</div>
 		</nav>
-		<div id="app">
+		<div class="info-content">
+			<div class="info-content-feature" v-if="sessionStatus === 'voting'">
+				<h2>Description</h2>
+				<div class="info-content-feature-description">
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+					Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+				</div>
+
+				<h2>Checklists</h2>
+				<div class="info-content-feature-checklists">
+					<div class="info-content-feature-checklists-checklist" v-for="(list, index) in checklists" :key="index" @click="openChecklist(index)" :class="{'checklist-open': list.open}">
+						<div class="checklist-header">
+							<h3>{{list.title}}</h3>
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+								<g id="Icon_feather-plus" data-name="Icon feather-plus" transform="translate(-6 -6)">
+									<path id="Path_57" data-name="Path 57" d="M18,7.5v21" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" v-if="!checklists[index].open"/>
+									<path id="Path_58" data-name="Path 58" d="M7.5,18h21" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+								</g>
+							</svg>
+						</div>
+						<div class="checklist-content">
+							<ul>
+								<li class="checklist-item" v-for="(item, index) in list.checklist" :key="index" :class="{checked: item.checked}">{{item.title}}</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<div class="info-content-chat" v-if="sessionStatus === 'chatting'">
+				<h2>Chats</h2>
+				<div class="info-content-chat-wrapper">
+					<ChatMessage :sender="chat.sender" :message="chat.message" v-for="(chat, index) in chats" :key="index" />
+
+				</div>
+				<div class="info-content-chat-input">
+					<Input type="message" name="message" placeholder="Type something" v-model="chatmessage" :emoji="true"/>
+					<svg xmlns="http://www.w3.org/2000/svg" width="34.875" height="34.875" viewBox="0 0 34.875 34.875">
+						<path id="Icon_awesome-arrow-circle-up" data-name="Icon awesome-arrow-circle-up" d="M.563,18A17.438,17.438,0,1,1,18,35.438,17.434,17.434,0,0,1,.563,18Zm10.1,2.032,5.091-5.309V27.563a1.683,1.683,0,0,0,1.688,1.688h1.125a1.683,1.683,0,0,0,1.688-1.687V14.723l5.091,5.309a1.689,1.689,0,0,0,2.412.028l.766-.773a1.681,1.681,0,0,0,0-2.384L19.2,7.573a1.681,1.681,0,0,0-2.384,0L7.474,16.9a1.681,1.681,0,0,0,0,2.384l.766.773A1.7,1.7,0,0,0,10.659,20.032Z" transform="translate(-0.563 -0.563)" fill="#d0bb7e"/>
+					</svg>
+				</div>
+			</div>
+		</div>
+		<div id="app" >
 			<div class="container">
 				<div class="nav" :class="{'nav-shareLink': shareLink.show}">
 
@@ -21,18 +64,28 @@
 					</div>
 
 					<div class="nav-profile flex space-between items-center" v-if="this.login">
-						<svg xmlns="http://www.w3.org/2000/svg" width="62.842" height="36.658" viewBox="0 0 62.842 36.658" @click="toggleMenu">
-							<g id="Icon_ionic-ios-menu" data-name="Icon ionic-ios-menu" transform="translate(-4.5 -10.125)">
-								<path id="Path_38" data-name="Path 38" d="M64.723,15.362H7.118A2.626,2.626,0,0,1,4.5,12.743h0a2.626,2.626,0,0,1,2.618-2.618h57.6a2.626,2.626,0,0,1,2.618,2.618h0A2.626,2.626,0,0,1,64.723,15.362Z" fill="#d0bb7e"/>
-								<path id="Path_39" data-name="Path 39" d="M64.723,22.112H7.118A2.626,2.626,0,0,1,4.5,19.493h0a2.626,2.626,0,0,1,2.618-2.618h57.6a2.626,2.626,0,0,1,2.618,2.618h0A2.626,2.626,0,0,1,64.723,22.112Z" transform="translate(0 8.96)" fill="#d0bb7e"/>
-								<path id="Path_40" data-name="Path 40" d="M64.723,28.862H7.118A2.626,2.626,0,0,1,4.5,26.243h0a2.626,2.626,0,0,1,2.618-2.618h57.6a2.626,2.626,0,0,1,2.618,2.618h0A2.626,2.626,0,0,1,64.723,28.862Z" transform="translate(0 17.921)" fill="#d0bb7e"/>
+						<div @click="toggleMenu">
+							<svg xmlns="http://www.w3.org/2000/svg" width="62.842" height="36.658" viewBox="0 0 62.842 36.658" >
+								<g id="Icon_ionic-ios-menu" data-name="Icon ionic-ios-menu" transform="translate(-4.5 -10.125)">
+									<path id="Path_38" data-name="Path 38" d="M64.723,15.362H7.118A2.626,2.626,0,0,1,4.5,12.743h0a2.626,2.626,0,0,1,2.618-2.618h57.6a2.626,2.626,0,0,1,2.618,2.618h0A2.626,2.626,0,0,1,64.723,15.362Z" fill="#d0bb7e"/>
+									<path id="Path_39" data-name="Path 39" d="M64.723,22.112H7.118A2.626,2.626,0,0,1,4.5,19.493h0a2.626,2.626,0,0,1,2.618-2.618h57.6a2.626,2.626,0,0,1,2.618,2.618h0A2.626,2.626,0,0,1,64.723,22.112Z" transform="translate(0 8.96)" fill="#d0bb7e"/>
+									<path id="Path_40" data-name="Path 40" d="M64.723,28.862H7.118A2.626,2.626,0,0,1,4.5,26.243h0a2.626,2.626,0,0,1,2.618-2.618h57.6a2.626,2.626,0,0,1,2.618,2.618h0A2.626,2.626,0,0,1,64.723,28.862Z" transform="translate(0 17.921)" fill="#d0bb7e"/>
+								</g>
+							</svg>
+						</div>
+
+						<svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" @click="toggleInfo">
+							<g id="Icon_feather-info" data-name="Icon feather-info" transform="translate(-1.5 -1.5)">
+								<path id="Path_54" data-name="Path 54" d="M33,18A15,15,0,1,1,18,3,15,15,0,0,1,33,18Z" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+								<path id="Path_55" data-name="Path 55" d="M18,24V18" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+								<path id="Path_56" data-name="Path 56" d="M18,12h0" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
 							</g>
 						</svg>
 					</div>
 				</div>
 
 			</div>
-			<router-view />
+			<router-view @session:status="updateSessionStatus" />
 		</div>
 	</main>
 </template>
@@ -44,15 +97,19 @@ import store from './store';
 import Button from "./components/Button";
 import axios from "axios";
 import {SERVER, SOCKET, TOKEN, USER} from "./constants";
+import ChatMessage from "./components/ChatMessage"
 
 export default {
 	data()
 	{
 		return {
-			shareLink	: store.shareLink,
-			menuOpen	: false,
-			menuUser 	: USER,
-			menuLinks 	: [
+			shareLink		: store.shareLink,
+			menu			: false,
+			info 			: false,
+			menuUser 		: USER,
+			sessionStatus 	: '',
+			menuLinks 		:
+			[
 				{
 					icon: 'user',
 					text: 'Profile',
@@ -63,19 +120,67 @@ export default {
 					text: 'Create room',
 					link: 'createroom'
 				}
+			],
+			chats:
+			[
+				{
+					sender: 'Remynijsten515',
+					message: "Yeah let's go!"
+				},
+				{
+					sender: 'Stefano',
+					message: "Cool let's go"
+				},
+				{
+					sender: 'Rick',
+					message: "Agreed"
+				},
+				{
+					sender: 'Remynijsten515',
+					message: "Nice!"
+				},
+				{
+					sender: 'Giovanni',
+					message: "I will do it!"
+				},
+			],
+			chatmessage: "",
+			checklists :
+			[
+				{
+					title	: 'Technische eisen',
+					open	: false,
+					checklist :
+					[
+						{
+							title : 'Backend maken',
+							checked: false,
+						},
+						{
+							title: 'View updaten',
+							checked: true,
+
+						}
+					]
+				}
 			]
 		}
 	},
 	components :
 	{
+		ChatMessage,
 		Button,
 		Logo,
 		Input
 	},
 	methods : {
+		updateSessionStatus(e)
+		{
+			this.sessionStatus = e.status
+		},
 		toProfile() {
 			this.$router.push({name: "profile"})
-		
+
 		},
 		copyLink()
 		{
@@ -85,7 +190,13 @@ export default {
 		},
 		toggleMenu()
 		{
-			this.menuOpen = !this.menuOpen
+			this.menu = !this.menu
+			this.info = false
+		},
+		toggleInfo()
+		{
+			this.info = !this.info
+			this.menu = false
 		},
 		currentComponent()
 		{
@@ -108,9 +219,34 @@ export default {
 
 			this.$router.push({name: 'profile'})
 			this.menuOpen = false
+		},
+		sendChat()
+		{
+			// SOCKET.emit('chat', {user, message, feature})
+		},
+		openChecklist(index){
+			this.checklists[index].open = !this.checklists[index].open
 		}
-	}
+	},
+	mounted()
+	{
+		// Event listener to send a chat by pressing enter
+		window.addEventListener('keydown', e => {
+			if(e.key === 'Enter' && this.chatmessage !== "")
+			{
+				this.chats.push(
+					{
+						sender: USER.name,
+						message: this.chatmessage
+					})
 
+				console.log('chat send:' + this.chatmessage)
+				this.chatmessage = ""
+			}
+		})
+
+
+	}
 }
 </script>
 
@@ -124,7 +260,6 @@ export default {
 	}
 
 	.nav{
-		//padding-top: 50px;
 		position: relative;
 		padding: 50px 0 0;
 		display: flex;
@@ -139,7 +274,7 @@ export default {
 		}
 	}
 
-	.menuOpen{
+	.menu{
 		#app{
 			transform: scale(0.8) translateX(15%);
 		}
@@ -147,7 +282,102 @@ export default {
 			left: 0;
 			transition: 0.75s ease;
 		}
+	}
 
+	.info-content{
+		height: 100%;
+		width: 35%;
+		position: fixed;
+		right: -1000px;
+	}
+
+	.info{
+		#app{
+			transform: scale(0.8) translateX(-35%);
+		}
+		.info-content{
+			right: 0;
+			transition: 0.75s ease;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			h2{
+				margin-bottom: 10px;
+				color: $white;
+			}
+			&-feature{
+				width: 90%;
+				&-checklists{
+					&-checklist{
+						cursor: pointer;
+						padding: 20px;
+						border: 2px solid $blue-light;
+						border-radius: $border;
+						color: $white;
+						overflow: hidden;
+						max-height: 65px;
+						transition: 0.3s ease;
+					}
+					.checklist-header{
+						position: relative;
+						svg{
+							position: absolute;
+							right: 10px;
+							top: 50%;
+							transform: translateY(-50%);
+						}
+					}
+
+					.checklist-content{
+						padding: 20px;
+					}
+				}
+				&-description{
+					padding: 20px;
+					background: $blue-light;
+					border-radius: $border;
+					height: 200px;
+					margin-bottom: 20px;
+					max-height: 200px;
+					overflow-y: scroll;
+				}
+			}
+
+			&-chat{
+				background-color: $blue-dark;
+				height: calc(100vh * 0.8);
+				position: relative;
+				width: 90%;
+				&-wrapper{
+					display: flex;
+					flex-direction: column;
+				}
+				h2{
+					color: $white;
+					margin-bottom: 25px;
+				}
+				&-input{
+					position: absolute;
+					display: flex;
+					align-items: center;
+					width: 100%;
+					bottom: 0;
+					left: 0;
+					input{
+						margin-bottom: 0;
+						padding-right: 50px;
+					}
+					svg{
+						position: absolute;
+						right: 5px;
+						transition: 0.3s ease;
+						&:hover{
+							transform: translateY(-10px);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	main{
@@ -215,5 +445,9 @@ export default {
 	.shareLink {
 		display: inline-block;
 		width: 60%;
+	}
+
+	.checklist-open{
+		max-height: 300px!important;
 	}
 </style>

@@ -29,9 +29,18 @@
 				</div>
 				<div class="session-game-features">
 					<p class="session-game-header">Feature</p>
-					<h1 class="session-game-features-feature">
+					<h1 class="session-game-features-feature flex">
 						{{session.feature.name}}
-						<span>1/16</span>
+						<div class="session-game-features-feature-controls flex flex-row space-between">
+							<span>1/16</span>
+							<svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" >
+								<g id="Icon_feather-info" data-name="Icon feather-info" transform="translate(-1.5 -1.5)">
+									<path id="Path_54" data-name="Path 54" d="M33,18A15,15,0,1,1,18,3,15,15,0,0,1,33,18Z" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+									<path id="Path_55" data-name="Path 55" d="M18,24V18" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+									<path id="Path_56" data-name="Path 56" d="M18,12h0" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+								</g>
+							</svg>
+						</div>
 					</h1>
 					<div class="session-game-features-cards">
 						<div class="session-game-features-cards-card" v-for="(card, index) in session.cards" :data-card="card" @mouseenter="activeCard" @mouseleave="staticCard" @click="selectCard" :key="index">
@@ -74,6 +83,7 @@ export default
 			users : [],
 			admin : false,
 			session : {
+				status: 'chatting',
 				submitted: false,
 				started : false,
 				cards : ['coffee', '0', '1/2', '1', '2', '3', '5', '8', '13', '20', '40', '100'],
@@ -92,6 +102,8 @@ export default
 	},
 	mounted()
 	{
+		this.$emit('session:status', {status: this.session.status})
+
 		// Join the session when you load the page and send the key from the url to define which session to join
 		SOCKET.emit('session', {
 			event: 'join',
@@ -111,7 +123,9 @@ export default
 			this.refreshUserList(args);
 		})
 
-		SOCKET.on('nextFeature', data => this.session.feature = data.feature);
+		// SOCKET.on('nextFeature', data => this.session.feature = data.feature);
+
+		SOCKET.emit('nextFeature');
 
 		SOCKET.on('started', () => {
 			this.session.started = true
@@ -400,27 +414,32 @@ h1 {
 			}
 			&-reason{
 				margin-top: 25px;
+				.relative{
+					display: flex;
+					flex-direction: row;
+					align-items: flex-start;
+					justify-content: space-between;
+				}
 				textarea{
 					font-size: 24px;
 					min-height: 200px;
 					max-height: 200px;
-					width: 100%;
-					max-width: 100%;
-					min-width: 100%;
+					width: 80%;
 					padding-right: 100px;
-				}
-				button{
-					position: absolute;
-					top: 10px;
-					right: 10px;
 				}
 			}
 		}
 	}
+
+
 }
 
 @keyframes scrollbg {
 	from { background-position: 0 }
 	to {background-position: 100% }
 }
+</style>
+
+<style>
+
 </style>
