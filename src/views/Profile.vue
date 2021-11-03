@@ -35,7 +35,7 @@
 
 <script>
 import axios from "axios";
-import {SERVER, TOKEN} from "../constants";
+import {SERVER, TOKEN, USER} from "../constants";
 import Button from "../components/Button";
 import DisplayHeader from "../components/text/DisplayHeader";
 
@@ -85,6 +85,9 @@ export default {
 		// Submit the formdata to the server url defined in main.js using a post request
 		submitData()
 		{
+			console.log(USER);
+			USER.name = this.profile.name;
+			console.log(USER);
 			axios.post(SERVER + 'user/update', {name : this.profile.name, age : this.profile.age, function : this.profile.function})
 			 	.then(res => {
 				 	if (res.data.error !== "")
@@ -104,7 +107,7 @@ export default {
 						document.querySelector('button').setAttribute('disabled', '');
 
 						// Redirect after 1.5 seconds
-						 setTimeout(() => this.$router.push({name: 'createroom'}), 1500)
+						//  setTimeout(() => this.$router.push({name: 'createroom'}), 1500)
 				 	}
 			 	})
 			 	.catch(function(error) {

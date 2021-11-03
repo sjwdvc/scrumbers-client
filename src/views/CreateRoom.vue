@@ -23,6 +23,8 @@ import Button from "../components/Button";
 import Select from "../components/Select";
 import {CLIENT, SOCKET, USER} from "../constants";
 
+
+
 export default
 {
 	name : "CreateRoom",
@@ -59,6 +61,7 @@ export default
 	},
 	beforeMount()
 	{
+		console.log(USER);
 		// Check if we authenticated with trello 
 		if (!location.hash.startsWith('#token='))
 			location.replace(`https://trello.com/1/authorize?key=c6f2658e8bbe5ac486d18c13e49f1abb&name=Scrumbers&scope=read,write&expiration=1day&response_type=token&return_url=${CLIENT}/create-room`);
@@ -71,10 +74,12 @@ export default
 			history.pushState("", document.title, window.location.pathname);
 		}
 	},
+
 	methods:
 	{
 		generateRoom()
 		{
+			
 			SOCKET.emit('session', {url: this.url, event: 'create', name: USER.name, email: USER.email, token: this.token})
 
 			SOCKET.on('urlError', args => {
