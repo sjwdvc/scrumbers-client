@@ -95,7 +95,7 @@ export default
 		// Join the session when you load the page and send the key from the url to define which session to join
 		SOCKET.emit('session', {
 			event: 'join',
-			key: parseInt(this.$route.params.key),
+			key: this.$route.params.key,
 			name: USER.name,
 			email: USER.email
 		})
