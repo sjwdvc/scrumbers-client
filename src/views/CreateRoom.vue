@@ -5,8 +5,10 @@
 			<form action="" class="createroom-form" @submit.prevent="generateRoom">
 				<Label for="url" content="Trello URL" />
 				<Input id="url" type="text" name="link" placeholder="eg. https://trello.com/b/12345678/project-name" v-model="url" ref="url"/>
-				<Input value="coffee-timeout" type="number" placeholder="Coffee-timeout minutes" />
-				<Select name="adminRules" :options="adminRules" />
+				<Label for="coffee" content="Coffee Timeout Length" />
+				<Input id="coffee" value="coffee-timeout" type="number" placeholder="Coffee-timeout minutes" />
+				<Label for="rules" content="Admin rules" />
+				<Select id="rules" name="adminRules" :options="adminRules" />
 
 				<p class="error">{{error}}</p>
 				<Button content="Generate link"/>

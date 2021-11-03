@@ -3,13 +3,13 @@
 		<div class="interface">
 			<DisplayHeader class="header" content="PROFILE" />
 			<form action="" class="profile-form" @submit.prevent="submitData">
-				<label for="name">Naam :</label>
+				<label for="name">Name :</label>
 				<input id="name" type="text" name="name" placeholder="Name" v-model="profile.name" ref="name"/>
 
-				<label for="age">Leeftijd :</label>
+				<label for="age">Age :</label>
 				<input id="age" type="number" name="age" placeholder="Age" ref="age" v-model="profile.age"/>
 
-				<label for="function">Functie :</label>
+				<label for="function">Function :</label>
 				<input id="function" type="text" name="function" placeholder="Job title" ref="function" v-model="profile.function"/>
 
 				<div class="profile-list">
