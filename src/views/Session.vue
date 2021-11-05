@@ -195,7 +195,7 @@ export default
 					SOCKET.emit('feature', {
 						key  	: this.$route.params.key,
 						event	: 'submit',
-						number 	: this.session.decision.number,
+						number 	: this.session.decision.number == '1/2' ? .5 : this.session.decision.number,
 						desc 	: this.session.decision.desc
 					});
 					document.getElementById('btn-submit').style.opacity = .05;
