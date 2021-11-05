@@ -364,6 +364,8 @@ export default {
 				&-wrapper{
 					display: flex;
 					flex-direction: column;
+					max-height: 85%;
+					overflow: scroll;
 				}
 				h2{
 					color: $white;
