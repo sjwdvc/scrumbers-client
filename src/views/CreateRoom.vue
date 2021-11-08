@@ -68,15 +68,22 @@ export default
 		{
 			// Get the token
 			this.token = location.hash.replace('#token=', '');
-
-			// Set the token in local storage so we can remember it
-			// TODO:
-			// Use httpOnly cookies for security
-			let expire = Date.now() + (3600 * 1000 * 24);
-			localStorage.setItem('OAUTH_TOKEN', expire + '@' + this.token);
-			
-			// Remove the hash(token) for security
-			history.pushState("", document.title, window.location.pathname);
+			// Check if there is an error (when you reject the oAuth)
+			if (this.token.startsWith('&error'))
+			{
+				this.$router.push({name : 'home'});
+			}
+			else
+			{
+				// Set the token in local storage so we can remember it
+				// TODO:
+				// Use httpOnly cookies for security
+				let expire = Date.now() + (3600 * 1000 * 24);
+				localStorage.setItem('OAUTH_TOKEN', expire + '@' + this.token);
+				
+				// Remove the hash(token) for security
+				history.pushState("", document.title, window.location.pathname);
+			}
 		}
 		else 
 		{
