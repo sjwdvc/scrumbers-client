@@ -10,18 +10,17 @@
 			</div>
 		</nav>
 		<div class="info-content">
-			<div class="info-content-feature" v-if="sessionStatus === 'voting'">
+			<div class="info-content-feature" v-if="sessionStatus === 'round1'">
 				<h2>Description</h2>
 				<div class="info-content-feature-description">
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-					Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+					{{ description }}
 				</div>
 
 				<h2>Checklists</h2>
 				<div class="info-content-feature-checklists">
-					<div class="info-content-feature-checklists-checklist" v-for="(list, index) in checklists" :key="index" @click="openChecklist(index)" :class="{'checklist-open': list.open}">
+					<div class="info-content-feature-checklists-checklist" v-for="(list, index) in checklists" :key="index" :class="{'checklist-open': list.open}" @click="openChecklist(index)">
 						<div class="checklist-header">
-							<h3>{{list.title}}</h3>
+							<h3>{{list.name}}</h3>
 							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 								<g id="Icon_feather-plus" data-name="Icon feather-plus" transform="translate(-6 -6)">
 									<path id="Path_57" data-name="Path 57" d="M18,7.5v21" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" v-if="!checklists[index].open"/>
@@ -31,18 +30,16 @@
 						</div>
 						<div class="checklist-content">
 							<ul>
-								<li class="checklist-item" v-for="(item, index) in list.checklist" :key="index" :class="{checked: item.checked}">{{item.title}}</li>
+								<li class="checklist-item" v-for="(item, index) in list.checkItems" :key="index" :class="{checked: item.state === 'complete'}">{{item.name}}</li>
 							</ul>
 						</div>
 					</div>
 				</div>
-
 			</div>
-			<div class="info-content-chat" v-if="sessionStatus === 'chatting'">
+			<div class="info-content-chat" v-if="sessionStatus === 'chat'">
 				<h2>Chats</h2>
 				<div class="info-content-chat-wrapper">
 					<ChatMessage :sender="chat.sender" :message="chat.message" v-for="(chat, index) in chats" :key="index" />
-
 				</div>
 				<div class="info-content-chat-input">
 					<Input type="message" name="message" placeholder="Type something" v-model="chatmessage" :emoji="true"/>
@@ -73,19 +70,11 @@
 								</g>
 							</svg>
 						</div>
-
-						<svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" @click="toggleInfo">
-							<g id="Icon_feather-info" data-name="Icon feather-info" transform="translate(-1.5 -1.5)">
-								<path id="Path_54" data-name="Path 54" d="M33,18A15,15,0,1,1,18,3,15,15,0,0,1,33,18Z" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
-								<path id="Path_55" data-name="Path 55" d="M18,24V18" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
-								<path id="Path_56" data-name="Path 56" d="M18,12h0" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
-							</g>
-						</svg>
 					</div>
 				</div>
 
 			</div>
-			<router-view @session:status="updateSessionStatus" />
+			<router-view @session:status="updateSessionStatus" @session:checklists="updateSessionChecklists" @session:description="updateSessionDescription" @toggleInfo="toggleInfo"/>
 		</div>
 	</main>
 </template>
@@ -97,7 +86,8 @@ import store from './store';
 import Button from "./components/Button";
 import axios from "axios";
 import {SERVER, SOCKET, TOKEN, USER} from "./constants";
-import ChatMessage from "./components/ChatMessage"
+import ChatMessage from "./components/ChatMessage";
+import $ from 'jquery';
 
 export default {
 	data()
@@ -145,25 +135,8 @@ export default {
 				},
 			],
 			chatmessage: "",
-			checklists :
-			[
-				{
-					title	: 'Technische eisen',
-					open	: false,
-					checklist :
-					[
-						{
-							title : 'Backend maken',
-							checked: false,
-						},
-						{
-							title: 'View updaten',
-							checked: true,
-
-						}
-					]
-				}
-			]
+			checklists : null,
+			description : ""
 		}
 	},
 	components :
@@ -173,15 +146,30 @@ export default {
 		Logo,
 		Input
 	},
-	methods : {
+	methods :
+	{
 		updateSessionStatus(e)
 		{
-			this.sessionStatus = e.status
+			this.sessionStatus = e.status;
 		},
-		toProfile() {
-			this.$router.push({name: "profile"})
 
+		updateSessionChecklists(data)
+		{
+			this.checklists = data;
+
+			// Set reactive property with $set
+			this.checklists.forEach((list, index) => {
+				this.$set(this.checklists[index], 'open', false);
+			})
 		},
+
+		updateSessionDescription(data)
+		{
+			this.description =  data;
+		},
+
+
+
 		copyLink()
 		{
 			this.$refs.inputwrapper.classList.add('animate__rubberBand')
@@ -229,7 +217,9 @@ export default {
                 message: this.chatmessage,
             });
 		},
-		openChecklist(index){
+		openChecklist(index)
+		{
+			index = parseInt(index)
 			this.checklists[index].open = !this.checklists[index].open
 		}
 	},
@@ -257,8 +247,6 @@ export default {
 					break;
 			}
 		});
-
-
 	}
 }
 </script>
@@ -324,6 +312,7 @@ export default {
 					&-checklist{
 						cursor: pointer;
 						padding: 20px;
+						margin-bottom: 20px;
 						border: 2px solid $blue-light;
 						border-radius: $border;
 						color: $white;
@@ -353,6 +342,7 @@ export default {
 					margin-bottom: 20px;
 					max-height: 200px;
 					overflow-y: scroll;
+					color: $white;
 				}
 			}
 

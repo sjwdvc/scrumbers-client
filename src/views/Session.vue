@@ -33,7 +33,7 @@
 						{{session.feature.name}}
 						<div class="session-game-features-feature-controls flex flex-row space-between">
 							<span>1/16</span>
-							<svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" >
+							<svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" @click="$emit('toggleInfo')">
 								<g id="Icon_feather-info" data-name="Icon feather-info" transform="translate(-1.5 -1.5)">
 									<path id="Path_54" data-name="Path 54" d="M33,18A15,15,0,1,1,18,3,15,15,0,0,1,33,18Z" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
 									<path id="Path_55" data-name="Path 55" d="M18,24V18" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
@@ -83,7 +83,7 @@ export default
 			users : [],
 			admin : false,
 			session : {
-				status: 'chatting',
+				status: 'round1',
 				submitted: false,
 				started : false,
 				cards : ['coffee', '0', '1/2', '1', '2', '3', '5', '8', '13', '20', '40', '100'],
@@ -102,8 +102,6 @@ export default
 	},
 	mounted()
 	{
-		this.$emit('session:status', {status: this.session.status})
-
 		// Join the session when you load the page and send the key from the url to define which session to join
 		SOCKET.emit('session', {
 			event: 'join',
@@ -123,7 +121,18 @@ export default
 			this.refreshUserList(args);
 		})
 
-		// SOCKET.on('nextFeature', data => this.session.feature = data.feature);
+		SOCKET.on('featureData', data => {
+			this.session.feature = data
+
+			// Emit session data to App.vue to update the config menu
+			this.$emit('session:status', {status: this.session.status})
+			this.$emit('session:checklists', this.session.feature.checklists)
+			this.$emit('session:description', this.session.feature.desc)
+
+
+			console.log(data)
+		})
+
 
 		SOCKET.emit('nextFeature');
 
@@ -341,6 +350,7 @@ h1 {
 				padding: 30px 100px 30px 25px;
 				color: $white;
 				position: relative;
+				align-items: center;
 				span{
 					position: absolute;
 					right: 10px;
@@ -350,6 +360,9 @@ h1 {
 					opacity: 0.5;
 					font-weight: 100;
 					font-size: 24px;
+				}
+				&-controls{
+					margin-left: 15px;
 				}
 			}
 			&-cards{
