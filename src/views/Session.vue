@@ -11,7 +11,7 @@
 						<p class="user" v-for="user in users" :key="user.index" :class=" {'admin' : user.name === admin}">{{user.name}}</p>
 					</div>
 
-					<Button content="Starten" v-if="admin === name" @click.native="startSession"/>
+					<Button content="Start session" v-if="admin === name" @click.native="startSession"/>
 				</div>
 			</div>
 
@@ -51,7 +51,7 @@
 					<div class="session-game-features-reason">
 						<div class="relative">
 							<TextArea name="description" placeholder="Explain your choice (max. 250 chars)" v-model="session.decision.desc" max="200"/>
-							<Button content="Submit" @click.native="submit" id="btn-submit" />
+							<Button content="Submit" @click.native="submit" ref="submitbutton" />
 						</div>
 					</div>
 				</div>
@@ -84,7 +84,6 @@ export default
 			admin : false,
 			session : {
 				status: 'round1',
-				submitted: false,
 				started : false,
 				cards : ['coffee', '0', '1/2', '1', '2', '3', '5', '8', '13', '20', '40', '100'],
 				feature :
@@ -121,23 +120,25 @@ export default
 			this.refreshUserList(args);
 		})
 
-		SOCKET.on('featureData', data => {
-			this.session.feature = data
-
-			// Emit session data to App.vue to update the config menu
-			this.$emit('session:status', {status: this.session.status})
-			this.$emit('session:checklists', this.session.feature.checklists)
-			this.$emit('session:description', this.session.feature.desc)
-
+		SOCKET.on('load', data => {
+			this.session.feature = data.data
 
 			console.log(data)
+
+			this.session.status = data.toLoad
+
+			// Emit session data to App.vue to update the config menu
+			this.$emit('session:status', {status: data.toLoad});
+			this.$emit('session:checklists', this.session.feature.checklists);
+			this.$emit('session:description', this.session.feature.desc);
 		})
 
 
 		SOCKET.emit('nextFeature');
 
 		SOCKET.on('started', () => {
-			this.session.started = true
+			this.session.started = true;
+			this.session.status = 'round1';
 		});
 
 		SOCKET.on('undefinedSession', () => {
@@ -164,7 +165,7 @@ export default
 		{
 			defineAdmin()
 			{
-				return this.name === USER.admin
+				return this.name === USER.admin;
 			},
 			startSession()
 			{
@@ -208,17 +209,12 @@ export default
 			},
 			submit()
 			{
-				if (!this.session.submitted)
-				{
-					SOCKET.emit('feature', {
-						key  	: this.$route.params.key,
-						event	: 'submit',
-						number 	: this.session.decision.number,
-						desc 	: this.session.decision.desc
-					});
-					document.getElementById('btn-submit').style.opacity = .05;
-					this.session.submitted = true;
-				}
+				SOCKET.emit('feature', {
+					key  	: this.$route.params.key,
+					event	: 'submit',
+					number 	: this.session.decision.number,
+					desc 	: this.session.decision.desc
+				});
 			}
 		}
 }

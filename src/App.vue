@@ -36,7 +36,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="info-content-chat" v-if="sessionStatus === 'chat'">
+			<div class="info-content-chat" v-if="sessionStatus === 'round2'">
 				<h2>Chats</h2>
 				<div class="info-content-chat-wrapper">
 					<ChatMessage :sender="chat.sender" :message="chat.message" v-for="(chat, index) in chats" :key="index" />
@@ -49,7 +49,7 @@
 				</div>
 			</div>
 		</div>
-		<div id="app" >
+		<div id="app">
 			<div class="container">
 				<div class="nav" :class="{'nav-shareLink': shareLink.show}">
 
@@ -150,6 +150,7 @@ export default {
 	{
 		updateSessionStatus(e)
 		{
+			console.log(e)
 			this.sessionStatus = e.status;
 		},
 
@@ -174,6 +175,8 @@ export default {
 		{
 			this.$refs.inputwrapper.classList.add('animate__rubberBand')
 			this.$toast.open({message: 'Link gekopieerd!', type: "success", position: "top-right"});
+
+			this.$refs.inputwrapper.addEventListener('animationend', e => e.currentTarget.classList.remove('animate__rubberBand'))
 			navigator.clipboard.writeText(this.shareLink.url);
 		},
 		toggleMenu()

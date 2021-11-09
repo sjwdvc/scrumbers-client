@@ -4,6 +4,7 @@
 		<p class="chat-message">
 			{{message}}
 		</p>
+
 	</div>
 </template>
 
