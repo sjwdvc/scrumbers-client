@@ -17,7 +17,7 @@
 
 			<div class="session-progress" v-if="session.started">
 				<div class="session-progress-background"></div>
-				<div class="session-progress-bar"></div>
+				<div class="session-progress-bar" v-bind:style="{ width: calculateWidth }"></div>
 			</div>
 
 			<div class="session-game flex" v-if="session.started">
@@ -31,7 +31,7 @@
 					<p class="session-game-header">Feature</p>
 					<h1 class="session-game-features-feature">
 						{{session.feature.name}}
-						<span>1/16</span>
+						<span>{{ featuresIndex }}/{{ featuresLength }}</span>
 					</h1>
 					<div class="session-game-features-cards">
 						<div class="session-game-features-cards-card" v-for="(card, index) in session.cards" :data-card="card" @mouseenter="activeCard" @mouseleave="staticCard" @click="selectCard" :key="index">
@@ -73,6 +73,9 @@ export default
 			sessionId : this.$route.params.key,
 			users : [],
 			admin : false,
+			featuresLength: 0,
+			featuresIndex: 1,
+			width: 0,
 			session : {
 				submitted: false,
 				started : false,
@@ -113,8 +116,9 @@ export default
 
 		SOCKET.on('nextFeature', data => this.session.feature = data.feature);
 
-		SOCKET.on('started', () => {
-			this.session.started = true
+		SOCKET.on('started', (data) => {
+			this.session.started = true;
+			this.featuresLength = data.featuresLength;
 		});
 
 		SOCKET.on('undefinedSession', () => {
@@ -169,7 +173,6 @@ export default
 
 				// Send choice to server
 				SOCKET.emit('cardSelection', {user: USER.email, choice: e.target.dataset.card});
-
 				e.target.classList.add('selected');
 			},
 			refreshUserList(args)
@@ -197,6 +200,18 @@ export default
 					this.session.submitted = true;
 				}
 			}
+		},
+	computed:
+		{	// Calculates the width for the progress bar
+			calculateWidth: function () {
+				let procent = 100/Number(this.featuresLength);
+				let calculatedWidth = Number(procent)*Number(this.featuresIndex);
+				console.log(calculatedWidth);
+				if(calculatedWidth > 100){
+					calculatedWidth = 100;
+				}
+      			return calculatedWidth+"%";
+    		}
 		}
 }
 </script>
