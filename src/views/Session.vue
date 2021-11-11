@@ -17,7 +17,7 @@
 
 			<div class="session-progress" v-if="session.started">
 				<div class="session-progress-background"></div>
-				<div class="session-progress-bar"></div>
+				<div class="session-progress-bar" v-bind:style="{ width: calculateWidth }"></div>
 			</div>
 
 			<div class="session-game flex" v-if="session.started">
@@ -32,7 +32,7 @@
 					<h1 class="session-game-features-feature flex">
 						{{session.feature.name}}
 						<div class="session-game-features-feature-controls flex flex-row space-between">
-							<span>1/16</span>
+							<span>{{ featuresIndex }}/{{ featuresLength }}</span>
 							<svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" @click="$emit('toggleInfo')">
 								<g id="Icon_feather-info" data-name="Icon feather-info" transform="translate(-1.5 -1.5)">
 									<path id="Path_54" data-name="Path 54" d="M33,18A15,15,0,1,1,18,3,15,15,0,0,1,33,18Z" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
@@ -82,6 +82,9 @@ export default
 			sessionId : this.$route.params.key,
 			users : [],
 			admin : false,
+			featuresLength: 0,
+			featuresIndex: 1,
+			width: 0,
 			session : {
 				status: 'round1',
 				started : false,
@@ -139,6 +142,7 @@ export default
 		SOCKET.on('started', () => {
 			this.session.started = true;
 			this.session.status = 'round1';
+			this.featuresLength = data.featuresLength;
 		});
 
 		SOCKET.on('undefinedSession', () => {
@@ -209,13 +213,31 @@ export default
 			},
 			submit()
 			{
-				SOCKET.emit('feature', {
-					key  	: this.$route.params.key,
-					event	: 'submit',
-					number 	: this.session.decision.number,
-					desc 	: this.session.decision.desc
-				});
+				if (!this.session.submitted)
+				{
+					SOCKET.emit('feature', {
+						key  	: this.$route.params.key,
+						event	: 'submit',
+						number 	: this.session.decision.number,
+						desc 	: this.session.decision.desc,
+						email 	: USER.email
+					});
+					this.$refs.submitbutton.setAttribute('disabled', true)
+					this.session.submitted = true;
+				}
 			}
+		},
+	computed:
+		{	// Calculates the width for the progress bar
+			calculateWidth: function () {
+				let procent = 100/Number(this.featuresLength);
+				let calculatedWidth = Number(procent)*Number(this.featuresIndex);
+
+				if(calculatedWidth > 100)
+					calculatedWidth = 100;
+
+      			return calculatedWidth+"%";
+    		}
 		}
 }
 </script>
@@ -436,19 +458,18 @@ h1 {
 					width: 80%;
 					padding-right: 100px;
 				}
+				button{
+					position: absolute;
+					top: 10px;
+					right: 10px;
+				}
 			}
 		}
 	}
-
-
 }
 
 @keyframes scrollbg {
 	from { background-position: 0 }
 	to {background-position: 100% }
 }
-</style>
-
-<style>
-
 </style>
