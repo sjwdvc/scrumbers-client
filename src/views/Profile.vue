@@ -3,16 +3,13 @@
 		<div class="interface">
 			<DisplayHeader class="header" content="PROFILE" />
 			<form action="" class="profile-form" @submit.prevent="submitData">
-				<label for="name">Naam :</label>
+				<label for="name">Name :</label>
 				<input id="name" type="text" name="name" placeholder="Name" v-model="profile.name" ref="name"/>
 
-				<label for="age">Leeftijd :</label>
+				<label for="age">Age :</label>
 				<input id="age" type="number" name="age" placeholder="Age" ref="age" v-model="profile.age"/>
 
-				<label for="age">Leeftijd :</label>
-				<input type="number" name="age" placeholder="Age" ref="age" v-model="profile.age"/>
-
-				<label for="function">Functie :</label>
+				<label for="function">Function :</label>
 				<input id="function" type="text" name="function" placeholder="Job title" ref="function" v-model="profile.function"/>
 
 				<div class="profile-list">
@@ -35,7 +32,7 @@
 
 <script>
 import axios from "axios";
-import {SERVER, TOKEN} from "../constants";
+import {SERVER, TOKEN, USER} from "../constants";
 import Button from "../components/Button";
 import DisplayHeader from "../components/text/DisplayHeader";
 
@@ -85,6 +82,7 @@ export default {
 		// Submit the formdata to the server url defined in main.js using a post request
 		submitData()
 		{
+			USER.name = this.profile.name;
 			axios.post(SERVER + 'user/update', {name : this.profile.name, age : this.profile.age, function : this.profile.function})
 			 	.then(res => {
 				 	if (res.data.error !== "")
@@ -104,7 +102,13 @@ export default {
 						document.querySelector('button').setAttribute('disabled', '');
 
 						// Redirect after 1.5 seconds
-						//  setTimeout(() => this.$router.push({name: 'createroom'}), 1500)
+						setTimeout(() =>
+						{
+							this.error = "";
+							this.spinner = false;
+							this.$toast.open({message:'Profile details updated', type: "success", position: "top-right"});
+
+						}, 1000);
 				 	}
 			 	})
 			 	.catch(function(error) {
