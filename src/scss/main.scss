@@ -1,7 +1,24 @@
+// Import core variables
 @import "core/colors";
 @import "core/spacing";
 @import "core/typography";
 @import "core/animations";
+
+// Import views & components
+@import "views/session";
+@import "views/home";
+@import "views/createroom";
+@import "views/sharelink";
+@import "views/login";
+@import "views/profile";
+
+@import "components/button";
+@import "components/chatmessage";
+@import "components/input";
+@import "components/label";
+@import "components/select";
+@import "components/displayheader";
+
 
 *{
     margin: 0;
@@ -25,4 +42,204 @@
     border-radius: 10px;
     margin: 0 auto;
     text-align: center;
+}
+
+#app{
+    transition: 0.3s ease;
+}
+
+.nav{
+    position: relative;
+    padding: 50px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    &-home, &-profile{
+        width: fit-content;
+        justify-content: flex-end;
+        svg{
+            width: 30px;
+        }
+    }
+}
+
+.menu{
+    #app{
+        transform: scale(0.8) translateX(15%);
+    }
+    nav{
+        left: 0;
+        transition: 0.75s ease;
+    }
+}
+
+.info-content{
+    height: 100%;
+    width: 35%;
+    position: fixed;
+    right: -1000px;
+}
+
+.info{
+    #app{
+        transform: scale(0.8) translateX(-35%);
+    }
+    .info-content{
+        right: 0;
+        transition: 0.75s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        h2{
+            margin-bottom: 10px;
+            color: $white;
+        }
+        &-feature{
+            width: 90%;
+            &-checklists{
+                &-checklist{
+                    cursor: pointer;
+                    padding: 20px;
+                    margin-bottom: 20px;
+                    border: 2px solid $blue-light;
+                    border-radius: $border;
+                    color: $white;
+                    overflow: hidden;
+                    max-height: 65px;
+                    transition: 0.3s ease;
+                }
+                .checklist-header{
+                    position: relative;
+                    svg{
+                        position: absolute;
+                        right: 10px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                    }
+                }
+
+                .checklist-content{
+                    padding: 20px;
+                }
+            }
+            &-description{
+                padding: 20px;
+                background: $blue-light;
+                border-radius: $border;
+                height: 200px;
+                margin-bottom: 20px;
+                max-height: 200px;
+                overflow-y: scroll;
+                color: $white;
+            }
+        }
+
+        &-chat{
+            background-color: $blue-dark;
+            height: calc(100vh * 0.8);
+            position: relative;
+            width: 90%;
+            &-wrapper{
+                display: flex;
+                flex-direction: column;
+                max-height: 85%;
+                overflow: scroll;
+            }
+            h2{
+                color: $white;
+                margin-bottom: 25px;
+            }
+            &-input{
+                position: absolute;
+                display: flex;
+                align-items: center;
+                width: 100%;
+                bottom: 0;
+                left: 0;
+                input{
+                    margin-bottom: 0;
+                    padding-right: 50px;
+                }
+                svg{
+                    position: absolute;
+                    right: 5px;
+                    transition: 0.3s ease;
+                    &:hover{
+                        transform: translateY(-10px);
+                    }
+                }
+            }
+        }
+    }
+}
+
+main{
+    background-color: $blue-dark;
+    overflow: hidden;
+}
+
+
+nav{
+    height: 100vh;
+    width: 300px;
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+    align-items: center;
+    position: fixed;
+    color: $white;
+    left: -300px;
+    transition: 0.3s ease;
+    ul{
+        list-style: none;
+        line-height: 50px;
+        li{
+            transition: 0.3s ease;
+            &:hover{
+                transform: translateX(10px);
+            }
+            a{
+                display: flex;
+            }
+            img{
+                width: 30px;
+                margin-right: 25px;
+            }
+        }
+    }
+}
+
+.button-container{
+    height: 150px;
+}
+
+svg{
+    cursor: pointer;
+}
+#shareLink-wrapper {
+    margin: 0 auto;
+}
+#shareLinkInput{
+    margin: auto 0 !important;
+    font-size: 18px;
+}
+.copy{
+    position: absolute;
+    right: 1em;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    cursor: pointer;
+}
+.logoLeft {
+    float: left;
+    display: inline;
+}
+.shareLink {
+    display: inline-block;
+    width: 600px;
+}
+
+.checklist-open{
+    max-height: 300px!important;
 }

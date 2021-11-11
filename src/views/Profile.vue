@@ -1,5 +1,5 @@
 <template>
-	<section>
+	<section class="profile">
 		<div class="interface">
 			<DisplayHeader class="header" content="PROFILE" />
 			<form action="" class="profile-form" @submit.prevent="submitData">
@@ -20,9 +20,10 @@
 				<div v-if="this.spinner === true" class="loader"></div>
 
 				<p class="error">{{ this.error }}</p>
+
 				<div class="flex space-between">
-					<Button type="submit" content="Update" ref="button" />
-					<Button @click.native="logout" content="Log out" ref="button" />
+					<Button type="submit" content="Update" ref="update" />
+					<Button @click.native="logout" content="Log out" ref="logout" />
 				</div>
 			</form>
 			<a>Change password</a>
@@ -59,7 +60,7 @@ export default {
 	},
 	mounted()
 	{
-		axios.defaults.headers = { Authorization: this.token }
+		axios.defaults.headers = { Authorization: this.token };
 		axios.get(SERVER + 'user/profile', {
 			headers: {
 				Authorization: TOKEN
@@ -75,7 +76,7 @@ export default {
 				}
 			}).then(() => {
 				setTimeout(() => {
-					this.$router.push({name: 'login'})
+					this.$router.push({name: 'login'});
 				}, 200)
 			})
 		},
@@ -94,19 +95,21 @@ export default {
 				 	{
 						// Notify user that registration was succesfull
 						this.spinner = true;
-						this.error = "Updating..."
+						this.error = "Updating...";
 
-						document.querySelector(".error").classList.add("succes");
+						//
+						document.querySelector(".error").classList.add("success");
 
 						// Disable submit button to prevent double submits
-						document.querySelector('button').setAttribute('disabled', '');
+						this.$refs.update.$el.setAttribute('disabled', '');
 
-						// Redirect after 1.5 seconds
 						setTimeout(() =>
 						{
 							this.error = "";
 							this.spinner = false;
 							this.$toast.open({message:'Profile details updated', type: "success", position: "top-right"});
+
+							this.$refs.update.$el.removeAttribute('disabled');
 
 						}, 1000);
 				 	}
@@ -118,106 +121,3 @@ export default {
 	}
 }
 </script>
-
-<style scoped lang="scss">
-	@import "../../src/scss/main";
-
-	.header
-	{
-		margin: 20px;
-	}
-
-	label
-	{
-		color: $white;
-		padding: 2px;
-	}
-
-	h1
-	{
-		text-align: center;
-	}
-
-	p
-	{
-		color: $white;
-		margin: 5px;
-	}
-
-	span
-	{
-		float: right;
-	}
-
-	.profile-list
-	{
-		display: inline-flex;
-	}
-
-	.interface
-	{
-		text-align: left;
-	}
-
-	Button
-	{
-		margin-top: 1rem;
-		margin-bottom: 1rem;
-	}
-
-	a
-	{
-		font-size: 12px;
-	}
-
-	a:hover
-	{
-		color: $white;
-	}
-
-	input
-	{
-		background-color: $blue-light;
-		margin-bottom: 10px;
-		border-radius: 10px;
-		padding: 1rem 10px;
-		color: $white;
-		border: none;
-		width: 100%;
-	}
-
-	.error
-	{
-		color: $red;
-	}
-
-	.succes
-	{
-		color: $white;
-	}
-
-	.loader
-	{
-		border: 3px solid $white;
-		border-radius: 70%;
-		border-top: 3px solid transparent;
-		-webkit-animation: spin 1.2s linear infinite; /* Safari */
-		animation: spin 1.2s linear infinite;
-		position: fixed;
-		z-index: 999;
-		overflow: show;
-		margin: auto;
-		top: 0;
-		left: 0;
-		bottom: 0;
-		right: 0;
-		width: 50px;
-		height: 50px;
-	}
-
-	@keyframes spin
-	{
-	  0% { transform: rotate(0deg); }
-	  100% { transform: rotate(360deg); }
-	}
-</style>

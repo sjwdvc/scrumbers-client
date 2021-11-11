@@ -3,7 +3,7 @@
 		<div class="interface">
 			<DisplayHeader content="SUCCESS!" />
 			<p>Share this link with your colleagues to grant them access to the session</p>
-			<div class="relative animate__animated" @click="copyLink" ref="inputwrapper">
+			<div class="relative animate__animated sharelink-input-wrapper" @click="copyLink" ref="inputwrapper">
 				<Input type="text" name="link" placeholder="Trello board URL" v-model="link" disabled ref="input"/>
 				<img src="/img/copy.svg" alt="" class="copy">
 			</div>
@@ -45,43 +45,8 @@ export default
 	},
 	mounted()
 	{
-		this.link = CLIENT + '/session/' + this.$route.params.key
+		this.link = CLIENT + '/session/' + this.$route.params.key;
 		store.shareLink.show = false;
 	}
 }
 </script>
-
-<style scoped lang="scss">
-
-	@import "../../src/scss/main.scss";
-	@import "../../node_modules/animate.css/animate.min.css";
-
-	section
-	{
-		width: 750px;
-	}
-
-	input
-	{
-		margin: 2rem 0;
-		font-size: 18px;
-	}
-
-	p
-	{
-		color: $white;
-	}
-
-	.copy
-	{
-		padding: 1em;
-		position: absolute;
-		right: 5px;
-		top: 50%;
-		transform: translateY(-50%);
-		width: 50px;
-		cursor: pointer;
-		background-color: $blue-light;
-		box-shadow: -20px 0px 20px $blue-light;
-	}
-</style>

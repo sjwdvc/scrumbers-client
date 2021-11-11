@@ -1,5 +1,5 @@
 <template>
-  <button :type="$props.type">{{ $props.content | capitalize }}</button>
+  <button :type="$props.type" ref="custombutton">{{ $props.content | capitalize }}</button>
 </template>
 
 <script>
@@ -9,35 +9,19 @@ export default {
 	{
 		type: String,
 		content: String
+	},
+	methods :
+	{
+		disableButton()
+		{
+			this.$refs.custombutton.setAttribute('disabled', '')
+		},
+
+		enableButton()
+		{
+			this.$refs.custombutton.removeAttribute('disabled')
+		}
 	}
 };
 </script>
-
-<style scoped lang="scss">
-@import "../../src/scss/main.scss";
-
-	button
-	{
-		background-color: $gold;
-		color: $blue-dark;
-		font-weight: 800;
-		padding: 1rem;
-		text-align: center;
-		border-radius: 10px;
-		border: none;
-		border-bottom: 5px solid darken($gold, 10%);
-		transition: 0.3s ease;
-		cursor: pointer;
-		&:hover
-		{
-			transform: translateY(-5px);
-		}
-		&:disabled
-		{
-			background-color: rgba($white, 0.5);
-			border-bottom: 5px solid #606469;
-			cursor: not-allowed;
-		}
-	}
-</style>
 

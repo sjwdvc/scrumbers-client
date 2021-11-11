@@ -1,5 +1,5 @@
 <template>
-	<div class="chat animate__animated bounceIn" :class="{sender: currentSender}">
+	<div class="chat animate__animated animate__bounceIn" :class="{sender: currentSender}">
 		<p class="chat-sender" :style="`color:` + senderColor">{{sender}}</p>
 		<p class="chat-message">
 			{{message}}
@@ -48,33 +48,3 @@ export default {
 	}
 }
 </script>
-
-<style scoped lang="scss">
-
-	@import "../../src/scss/main";
-	@import "../../node_modules/animate.css/animate.min.css";
-
-	.chat{
-		position: relative;
-		padding: 10px;
-		background-color: #3a3b3c;
-		width: 50%;
-		height: fit-content;
-		border-radius: 10px;
-		margin-bottom: 10px;
-		&-sender{
-			font-weight: bold;
-		}
-		&-message{
-			font-size: 14px;
-			color: $white;
-		}
-	}
-
-	.sender{
-		align-self: flex-end;
-		.chat-message{
-			text-align: right;
-		}
-	}
-</style>

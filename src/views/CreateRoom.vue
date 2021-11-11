@@ -5,8 +5,10 @@
 			<form action="" class="createroom-form" @submit.prevent="generateRoom">
 				<Label for="url" content="Trello URL" />
 				<Input id="url" type="text" name="link" placeholder="eg. https://trello.com/b/12345678/project-name" v-model="url" ref="url"/>
+
 				<Label for="coffee" content="Coffee Timeout Length" />
 				<Input id="coffee" value="coffee-timeout" type="number" placeholder="Coffee-timeout minutes" />
+
 				<Label for="rules" content="Admin rules" />
 				<Select id="rules" name="adminRules" :options="adminRules" />
 
@@ -96,41 +98,17 @@ export default
 	{
 		generateRoom()
 		{
-			SOCKET.emit('session', {url: this.url, event: 'create', name: USER.name, email: USER.email, token: this.token})
+			SOCKET.emit('session', {url: this.url, event: 'create', name: USER.name, email: USER.email, token: this.token});
 
 			SOCKET.on('urlError', args => {
-				this.error = args.error
-				url.style.border = '2px solid #A03A3C'
+				this.error = args.error;
+				url.style.border = '2px solid #A03A3C';
 			})
 
 			SOCKET.on('createRoom', data => {
-				this.$router.push({name: 'sharelink', params: {key: data.key}})
+				this.$router.push({name: 'sharelink', params: {key: data.key}});
 			})
 		}
 	}
 }
 </script>
-
-<style scoped lang="scss">
-	@import "../../src/scss/main.scss";
-
-	section
-	{
-		width: 750px;
-	}
-
-	form
-	{
-		margin: 2rem 0 0 0;
-	}
-
-	button
-	{
-		margin-top: 2rem;
-	}
-
-	.error
-	{
-		color: $white;
-	}
-</style>
