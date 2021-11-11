@@ -238,6 +238,19 @@ svg{
 .shareLink {
     display: inline-block;
     width: 600px;
+    padding-right: 50px;
+    .copy
+    {
+        padding: 1em;
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 50px;
+        cursor: pointer;
+        background-color: $blue-light;
+        box-shadow: -20px 0px 20px $blue-light;
+    }
 }
 
 .checklist-open{
