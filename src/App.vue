@@ -325,8 +325,11 @@ export default {
 	{
 		// Event listener to send a chat by pressing enter
 		window.addEventListener('keydown', e => {
-			if(e.key === 'Enter' && this.chatmessage !== "")
-				this.sendChat();
+			if(e.key === 'Enter')
+			{
+				e.preventDefault()
+				this.chatmessage !== "" ? this.sendChat() : ''
+			}
 		})
 
 		SOCKET.on("chat", args => {
