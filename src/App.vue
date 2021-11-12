@@ -42,8 +42,15 @@
 					<ChatMessage :sender="chat.sender" :message="chat.message" :vote="chat.vote"  v-for="(chat, index) in chats" :key="index" />
 				</div>
 				<div class="info-content-chat-input">
-					<Input type="message" name="message" placeholder="Type something" v-model="chatmessage" :emoji="true"/>
-					<svg xmlns="http://www.w3.org/2000/svg" width="34.875" height="34.875" viewBox="0 0 34.875 34.875" @click="sendChat">
+					<svg xmlns="http://www.w3.org/2000/svg" width="46.088" height="20.947" viewBox="0 0 46.088 20.947" class="info-content-chat-input-handle" ref="resizehandle" @mousedown="activateResize">
+						<g id="Icon_ionic-ios-menu" data-name="Icon ionic-ios-menu" transform="translate(-4.5 -25.835)">
+							<path id="Path_39" data-name="Path 39" d="M48.667,22.112H6.42c-1.056,0-1.92-1.178-1.92-2.618h0c0-1.44.864-2.618,1.92-2.618H48.667c1.056,0,1.92,1.178,1.92,2.618h0C50.588,20.934,49.723,22.112,48.667,22.112Z" transform="translate(0 8.96)" fill="#d0bb7e"/>
+							<path id="Path_40" data-name="Path 40" d="M48.667,28.862H6.42c-1.056,0-1.92-1.178-1.92-2.618h0c0-1.44.864-2.618,1.92-2.618H48.667c1.056,0,1.92,1.178,1.92,2.618h0C50.588,27.684,49.723,28.862,48.667,28.862Z" transform="translate(0 17.921)" fill="#d0bb7e"/>
+						</g>
+					</svg>
+
+					<Textarea type="message" name="message" placeholder="Type something" v-model="chatmessage" :emoji="true" max="500" @input.native="checkChatInput" ref="chatinput"/>
+					<svg xmlns="http://www.w3.org/2000/svg" width="34.875" height="34.875" viewBox="0 0 34.875 34.875" @click="sendChat" class="info-content-chat-input-send">
 						<path id="Icon_awesome-arrow-circle-up" data-name="Icon awesome-arrow-circle-up" d="M.563,18A17.438,17.438,0,1,1,18,35.438,17.434,17.434,0,0,1,.563,18Zm10.1,2.032,5.091-5.309V27.563a1.683,1.683,0,0,0,1.688,1.688h1.125a1.683,1.683,0,0,0,1.688-1.687V14.723l5.091,5.309a1.689,1.689,0,0,0,2.412.028l.766-.773a1.681,1.681,0,0,0,0-2.384L19.2,7.573a1.681,1.681,0,0,0-2.384,0L7.474,16.9a1.681,1.681,0,0,0,0,2.384l.766.773A1.7,1.7,0,0,0,10.659,20.032Z" transform="translate(-0.563 -0.563)" fill="#d0bb7e"/>
 					</svg>
 				</div>
@@ -92,6 +99,7 @@
 <script>
 import Logo from "./components/Logo";
 import Input from "./components/Input";
+import Textarea from "./components/TextArea";
 import store from './store';
 import Button from "./components/Button";
 import axios from "axios";
@@ -132,7 +140,8 @@ export default {
 		ChatMessage,
 		Button,
 		Logo,
-		Input
+		Input,
+		Textarea
 	},
 	methods :
 	{
@@ -171,6 +180,27 @@ export default {
 			this.updateVotes(data.votes)
 		},
 
+		activateResize(e)
+		{
+			window['initialY'] = e.pageY
+
+			window.addEventListener('mousemove', this.activateDrag)
+			window.addEventListener('mouseup', this.disableDrag)
+		},
+
+		activateDrag(e)
+		{
+			let resizeAmount 	= (window['initialY'] - e.clientY) * 2;
+			let initialHeight	= this.$refs.chatinput.$el.offsetHeight;
+
+			this.$refs.chatinput.$el.style.height = initialHeight + resizeAmount / 50 + 'px'
+		},
+
+		disableDrag(e)
+		{
+			window.removeEventListener('mousemove', this.activateDrag)
+		},
+
 		updateVotes(data)
 		{
 			this.votes = data;
@@ -187,6 +217,21 @@ export default {
 		clearChats()
 		{
 			this.chats = [];
+		},
+
+		checkChatInput(e)
+		{
+
+			let totalmessage = this.chatmessage + e.target.value
+
+			if(totalmessage.length > 500)
+			{
+				e.preventDefault()
+				this.chatmessage = this.chatmessage.substring(0, 500);
+
+				this.$toast.open({message: 'Chat messages may only contain 500 characters', type: 'warning', position: 'top-right'});
+			}
+
 		},
 
 		copyLink()
@@ -264,6 +309,10 @@ export default {
 				});
 
 				this.chatmessage = ""
+
+				setTimeout(() => {
+					document.querySelector('.info-content-chat-wrapper').scrollTo(0, document.querySelector('.info-content-chat-wrapper').scrollHeight);
+				}, 200)
 			}
 		},
 		openChecklist(index)
