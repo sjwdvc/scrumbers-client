@@ -10,14 +10,3 @@ export default {
 	}
 }
 </script>
-
-<style scoped lang="scss">
-
-@import "../../src/scss/main.scss";
-
-label{
-	text-align: left;
-	display: block;
-	color: $white;
-}
-</style>

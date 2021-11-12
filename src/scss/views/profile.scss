@@ -1,0 +1,87 @@
+.profile {
+    .interface {
+        text-align: left;
+    }
+
+    &-form {
+        margin: 20px 0;
+        .header {
+            margin: 20px;
+        }
+
+        label {
+            color: $white;
+            padding: 2px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        span {
+            float: right;
+        }
+
+        button {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        a {
+            font-size: 12px;
+            &:hover{
+                color: $white;
+            }
+        }
+
+        input {
+            background-color: $blue-light;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            padding: 1rem 10px;
+            color: $white;
+            border: none;
+            width: 100%;
+        }
+
+        .error {
+            color: $red;
+        }
+
+        .success {
+            color: $white;
+        }
+
+        .loader {
+            border: 3px solid $white;
+            border-radius: 70%;
+            border-top: 3px solid transparent;
+            animation: spin 1.2s linear infinite;
+            position: fixed;
+            z-index: 999;
+            margin: auto;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            width: 50px;
+            height: 50px;
+        }
+
+
+    }
+
+    &-list{
+        display: inline-flex;
+        p {
+            color: $white;
+            margin: 5px;
+        }
+    }
+}
+
+@keyframes spin
+{
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

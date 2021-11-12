@@ -30,6 +30,7 @@ router.beforeEach((to, from, next) => {
 
             if(data.data.login)
             {
+                console.log(data)
                 USER.name = data.data.name;
                 USER.email = data.data.email;
             }
@@ -48,12 +49,27 @@ router.beforeEach((to, from, next) => {
 
                 default: next()
             }
-
         })
         .catch(err => console.log(err))
-
-
 })
+
+/**
+ * Runs when the window resizes and applying scaling to fit the game window onto smaller screens
+ * Runs once on load
+ */
+window.addEventListener('resize', e => {
+    let scaling = e.target.innerHeight / 1000
+    let session = document.querySelector('.session')
+    let nav     = document.querySelector('.nav')
+
+    if(scaling < 1 && scaling > 0.5 && session)
+    {
+        session.style.transform = 'scale(' + scaling + ')'
+        nav.style.transform     = session.style.transform
+    }
+
+});
+
 
 // Global capitalize filter -- example: {{ value | capitalize }}
 Vue.filter('capitalize', value => value.toUpperCase())
