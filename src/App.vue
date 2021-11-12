@@ -176,7 +176,11 @@ export default {
 			this.votes = data;
 
 			this.votes.forEach(vote => {
-				this.chats.find(chat => chat.sender === vote.sender).vote = vote.value
+
+				this.chats.forEach(chat => {
+					if(chat.sender === vote.sender)
+						chat.vote = vote.value
+				})
 			})
 		},
 
