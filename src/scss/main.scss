@@ -36,9 +36,9 @@
     height: 100vh;
 }
 
-@media(max-width: 1600px){
+@media(max-height: 1600px){
     .container{
-        transform: scale(0.9)
+        transform: scale(0.7)
     }
 }
 
