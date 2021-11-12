@@ -152,18 +152,18 @@ export default
 				this.$emit('session:checklists', this.session.feature.checklists);
 				this.$emit('session:description', this.session.feature.desc);
 
-
 				switch(data.toLoad)
 				{
 					case 'round1':
 						this.$emit('closeInfo');
-						this.tooltip = 'more info';
 						break;
 
 					case 'round2':
+						console.log('data : ')
+						console.log(data)
 						this.$emit('session:chat:update', data.chats);
+						this.$emit('session:chat:votes', data.chats.votes);
 						this.$emit('openInfo');
-						this.tooltip = 'open chat';
 						break;
 				}
 			})

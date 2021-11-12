@@ -39,7 +39,7 @@
 			<div class="info-content-chat" v-if="sessionStatus === 'round2'">
 				<h2>Chats</h2>
 				<div class="info-content-chat-wrapper">
-					<ChatMessage :sender="chat.sender" :message="chat.message" v-for="(chat, index) in chats" :key="index" />
+					<ChatMessage :sender="chat.sender" :message="chat.message" :vote="chat.vote"  v-for="(chat, index) in chats" :key="index" />
 				</div>
 				<div class="info-content-chat-input">
 					<Input type="message" name="message" placeholder="Type something" v-model="chatmessage" :emoji="true"/>
@@ -80,6 +80,7 @@
 				@session:description="updateSessionDescription"
 				@session:chat:clear="clearChats"
 				@session:chat:update="updateChats"
+				@session:chat:votes="updateVotes"
 				@toggleInfo="toggleInfo"
 				@openInfo="openInfo"
 				@closeInfo="closeInfo"
@@ -120,6 +121,7 @@ export default {
 				}
 			],
 			chats: [],
+			votes: [],
 			chatmessage: "",
 			checklists : null,
 			description : ""
@@ -164,6 +166,17 @@ export default {
 					sender: chat.sender,
 					message: chat.value
 				})
+			})
+
+			this.updateVotes(data.votes)
+		},
+
+		updateVotes(data)
+		{
+			this.votes = data;
+
+			this.votes.forEach(vote => {
+				this.chats.find(chat => chat.sender === vote.sender).vote = vote.value
 			})
 		},
 
@@ -236,6 +249,7 @@ export default {
 				key: this.$route.params.key,
                 sender: USER.name,
                 message: this.chatmessage,
+				vote : this.votes.find(vote => vote.sender === USER.name).value
             });
 
 			this.chatmessage = ""
@@ -260,10 +274,14 @@ export default {
 					this.chats.push(
 					{
 						sender: args.sender,
-						message: args.message
+						message: args.message,
+						vote: args.vote
 					})
 					break;
 			}
+
+			console.log('chat received  : ')
+			console.log(args)
 		});
 	}
 }
