@@ -54,24 +54,22 @@ router.beforeEach((to, from, next) => {
 })
 
 /**
- * Converts a string to a hex color
- * @param {string} string input string
- * @returns Color in hex
+ * Runs when the window resizes and applying scaling to fit the game window onto smaller screens
+ * Runs once on load
  */
-function stringToColor(string)
-{
-    let hash = 0;
+window.addEventListener('resize', e => {
+    let scaling = e.target.innerHeight / 1000
+    let session = document.querySelector('.session')
+    let nav     = document.querySelector('.nav')
 
-    for (let i = 0; i < string.length; i++) {
-        hash = string.charCodeAt(i) + ((hash << 5) - hash);
+    if(scaling < 1 && scaling > 0.5 && session)
+    {
+        session.style.transform = 'scale(' + scaling + ')'
+        nav.style.transform     = session.style.transform
     }
-    var colour = '#';
-    for (var i = 0; i < 3; i++) {
-        var value = (hash >> (i * 8)) & 0xFF;
-        colour += ('00' + value.toString(16)).substr(-2);
-    }
-    return colour;
-}
+
+});
+
 
 // Global capitalize filter -- example: {{ value | capitalize }}
 Vue.filter('capitalize', value => value.toUpperCase())

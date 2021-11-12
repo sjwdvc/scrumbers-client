@@ -152,6 +152,9 @@ export default
 				this.$emit('session:checklists', this.session.feature.checklists);
 				this.$emit('session:description', this.session.feature.desc);
 
+				// Fire the resize event to re-scale the game window. This makes it fit into the viewport
+				window.dispatchEvent(new Event('resize'));
+
 				switch(data.toLoad)
 				{
 					case 'round1':
@@ -328,6 +331,8 @@ export default
 					this.$emit('closeInfo')
 				}
 
+				//quick fix for the coffee card
+				this.session.decision.number === 'coffee' ? this.session.decision.number = -1 : ''
 
 				SOCKET.emit('feature', {
 					key  	: this.$route.params.key,
