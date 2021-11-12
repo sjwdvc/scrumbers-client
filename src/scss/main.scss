@@ -36,6 +36,12 @@
     height: 100vh;
 }
 
+@media(max-width: 1600px){
+    .container{
+        transform: scale(0.9)
+    }
+}
+
 .interface{
     padding: 50px 75px;
     background-color: rgba($blue-dark, 0.9);
@@ -51,7 +57,7 @@
 
 .nav{
     position: relative;
-    padding: 50px 0 0;
+    padding: 25px 0 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -150,7 +156,7 @@
                 padding: 20px;
                 overflow-x: hidden;
                 flex: auto;
-                
+
                 &::-webkit-scrollbar {
                     width: 10px;
                     height: 10px;
