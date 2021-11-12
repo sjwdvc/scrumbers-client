@@ -36,12 +36,6 @@
     height: 100vh;
 }
 
-@media(max-height: 1600px){
-    .container{
-        transform: scale(0.7)
-    }
-}
-
 .interface{
     padding: 50px 75px;
     background-color: rgba($blue-dark, 0.9);

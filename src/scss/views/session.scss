@@ -29,9 +29,24 @@
     }
 }
 
+@media(max-width: 1600px){
+    .nav{
+        transform: scale(0.8);
+    }
+}
+
 .session {
+
+    @media(max-width: 1600px){
+        position: relative;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%) scale(0.8);
+    }
+
     #app{
         overflow: scroll;
+
     }
 
     h1 {
