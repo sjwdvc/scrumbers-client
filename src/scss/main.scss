@@ -145,6 +145,29 @@
                 max-height: 85%;
                 overflow-y: scroll;
                 padding: 20px;
+
+                &::-webkit-scrollbar {
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50px;
+                }
+
+                &::-webkit-scrollbar-thumb {
+                    background: $gold;
+                    border-radius: 50px;
+                }
+
+                &::-webkit-scrollbar-track {
+                    background: $blue-dark;
+                    border-radius: 50px;
+                }
+
+                // For Internet Explorer
+                & {
+                    scrollbar-face-color: $gold;
+                    scrollbar-track-color: $blue-dark;
+                }
+
             }
             h2{
                 color: $white;

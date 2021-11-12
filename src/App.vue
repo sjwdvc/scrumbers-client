@@ -248,15 +248,23 @@ export default {
 		},
 		sendChat()
 		{
-			SOCKET.emit("chat", {
-                event: "send",
-				key: this.$route.params.key,
-                sender: USER.name,
-                message: this.chatmessage,
-				vote : this.votes.find(vote => vote.sender === USER.name).value
-            });
+			if (!this.chatmessage.trim())
+			{
+				this.$toast.open({message:'No empty chat messages allowed', type: "warning", position: "top-right"});
+			}
 
-			this.chatmessage = ""
+			else
+			{
+				SOCKET.emit("chat", {
+					event: "send",
+					key: this.$route.params.key,
+					sender: USER.name,
+					message: this.chatmessage,
+					vote : this.votes.find(vote => vote.sender === USER.name).value
+				});
+
+				this.chatmessage = ""
+			}
 		},
 		openChecklist(index)
 		{

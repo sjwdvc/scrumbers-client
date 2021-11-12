@@ -28,7 +28,7 @@ export default {
 	},
 	mounted()
 	{
-		this.sender === USER.name ? this.currentSender = true : ''
+		this.sender === USER.name ? this.currentSender = true : '';
 	},
 	methods :
 	{

@@ -159,11 +159,14 @@ export default
 						break;
 
 					case 'round2':
-						console.log('data : ')
-						console.log(data)
 						this.$emit('session:chat:update', data.chats);
 						this.$emit('session:chat:votes', data.chats.votes);
 						this.$emit('openInfo');
+
+						setTimeout(() => {
+							document.querySelector('.info-content-chat-wrapper').scrollTo(0, document.querySelector('.info-content-chat-wrapper').scrollHeight);
+						}, 200)
+
 						break;
 				}
 			})

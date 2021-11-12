@@ -32,7 +32,10 @@
 
 .sender{
     align-self: flex-end;
+    margin-right: 20px;
     .chat-message{
         text-align: left;
+        overflow-wrap: anywhere;
+        padding-right: 20px;
     }
 }
