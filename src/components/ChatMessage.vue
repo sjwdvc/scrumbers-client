@@ -4,7 +4,7 @@
 		<p class="chat-message">
 			{{message}}
 		</p>
-
+		<p class="chat-vote">{{vote}}</p>
 	</div>
 </template>
 
@@ -15,8 +15,9 @@ import tinyColor from "tinycolor2"
 export default {
 	name : "ChatMessage",
 	props: {
-		sender: String,
-		message: String
+		sender	: String,
+		message	: String,
+		vote	: Number
 	},
 	data()
 	{

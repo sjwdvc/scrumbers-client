@@ -13,6 +13,21 @@
         font-size: 14px;
         color: $white;
     }
+    &-vote{
+        position: absolute;
+        right: -10px;
+        top: -10px;
+        background: $white;
+        border-bottom: 3px solid #99999f;
+        border-radius: $border;
+        transform: rotate(5deg);
+        color: $blue-dark;
+        padding: 10px;
+        font-size: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 }
 
 .sender{
