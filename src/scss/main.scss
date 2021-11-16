@@ -1,13 +1,35 @@
+// Import core variables
 @import "core/colors";
 @import "core/spacing";
 @import "core/typography";
 @import "core/animations";
+
+// Import views & components
+@import "views/session";
+@import "views/home";
+@import "views/createroom";
+@import "views/sharelink";
+@import "views/login";
+@import "views/profile";
+
+@import "components/button";
+@import "components/chatmessage";
+@import "components/input";
+@import "components/textarea";
+@import "components/label";
+@import "components/select";
+@import "components/displayheader";
+
 
 *{
     margin: 0;
     padding: 0;
     font-family: "Maven Pro", sans-serif;
     box-sizing: border-box;
+}
+
+body{
+    background-color: $blue-dark;
 }
 
 #app{
@@ -25,4 +47,258 @@
     border-radius: 10px;
     margin: 0 auto;
     text-align: center;
+}
+
+#app{
+    transition: 0.3s ease;
+}
+
+.nav{
+    position: relative;
+    padding: 25px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    &-home, &-profile{
+        width: fit-content;
+        justify-content: flex-end;
+        svg{
+            width: 30px;
+        }
+    }
+}
+
+.menu{
+    #app{
+        transform: scale(0.8) translateX(15%);
+    }
+    nav{
+        left: 0;
+        transition: 0.75s ease;
+    }
+}
+
+.info-content{
+    height: 100%;
+    width: 35%;
+    position: fixed;
+    right: -1000px;
+}
+
+.info{
+    #app{
+        transform: scale(0.8) translateX(-35%);
+    }
+    .info-content{
+        right: 0;
+        transition: 0.75s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        h2{
+            margin-bottom: 10px;
+            color: $white;
+        }
+        &-feature{
+            width: 90%;
+            &-checklists{
+                &-checklist{
+                    cursor: pointer;
+                    padding: 20px;
+                    margin-bottom: 20px;
+                    border: 2px solid $blue-light;
+                    border-radius: $border;
+                    color: $white;
+                    overflow: hidden;
+                    max-height: 65px;
+                    transition: 0.3s ease;
+                }
+                .checklist-header{
+                    position: relative;
+                    svg{
+                        position: absolute;
+                        right: 10px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                    }
+                }
+
+                .checklist-content{
+                    padding: 20px;
+                }
+            }
+            &-description{
+                padding: 20px;
+                background: $blue-light;
+                border-radius: $border;
+                height: 200px;
+                margin-bottom: 20px;
+                max-height: 200px;
+                overflow-y: scroll;
+                color: $white;
+            }
+        }
+
+        &-chat{
+            background-color: $blue-dark;
+            height: calc(100vh * 0.8);
+            position: relative;
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            &-wrapper{
+                display: flex;
+                flex-direction: column;
+                max-height: 85%;
+                overflow-y: scroll;
+                padding: 20px;
+                overflow-x: hidden;
+                flex: auto;
+
+                &::-webkit-scrollbar {
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50px;
+                }
+
+                &::-webkit-scrollbar-thumb {
+                    background: $gold;
+                    border-radius: 50px;
+                }
+
+                &::-webkit-scrollbar-track {
+                    background: $blue-dark;
+                    border-radius: 50px;
+                }
+
+                // For Internet Explorer
+                & {
+                    scrollbar-face-color: $gold;
+                    scrollbar-track-color: $blue-dark;
+                }
+
+            }
+            h2{
+                color: $white;
+                margin-bottom: 25px;
+            }
+            &-input{
+                position: relative;
+                display: flex;
+                align-items: center;
+                margin-top: 20px;
+                width: 100%;
+                bottom: 0;
+                left: 0;
+
+                &-handle{
+                    position: absolute;
+                    left: 50%;
+                    top: -25px;
+                    cursor: ns-resize;
+                    width: 20px;
+                }
+                textarea{
+                    margin-bottom: 0;
+                    padding-right: 50px;
+                    max-height: 250px;
+                    min-height: 50px;
+                    resize: none;
+                }
+                &-send{
+                    position: absolute;
+                    right: 10px;
+                    top: 7px;
+                    transition: 0.3s ease;
+                    &:hover{
+                        transform: translateY(-10px);
+                    }
+                }
+            }
+        }
+    }
+}
+
+main{
+    background-color: $blue-dark;
+    overflow: hidden;
+}
+
+
+nav{
+    height: 100vh;
+    width: 300px;
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+    align-items: center;
+    position: fixed;
+    color: $white;
+    left: -300px;
+    transition: 0.3s ease;
+    ul{
+        list-style: none;
+        line-height: 50px;
+        li{
+            transition: 0.3s ease;
+            &:hover{
+                transform: translateX(10px);
+            }
+            a{
+                display: flex;
+            }
+            img{
+                width: 30px;
+                margin-right: 25px;
+            }
+        }
+    }
+}
+
+.button-container{
+    height: 150px;
+}
+
+svg{
+    cursor: pointer;
+}
+#shareLink-wrapper {
+    margin: 0 auto;
+}
+#shareLinkInput{
+    margin: auto 0 !important;
+    font-size: 18px;
+}
+.copy{
+    position: absolute;
+    right: 1em;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    cursor: pointer;
+}
+.logoLeft {
+    float: left;
+    display: inline;
+}
+.shareLink {
+    display: inline-block;
+    width: 600px;
+    padding-right: 50px;
+    .copy
+    {
+        padding: 1em;
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 50px;
+        cursor: pointer;
+        background-color: $blue-light;
+        box-shadow: -20px 0px 20px $blue-light;
+    }
+}
+
+.checklist-open{
+    max-height: 300px!important;
 }

@@ -1,0 +1,41 @@
+.chat{
+    position: relative;
+    padding: 10px;
+    background-color: #3a3b3c;
+    width: 70%;
+    height: fit-content;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    &-sender{
+        font-weight: bold;
+    }
+    &-message{
+        font-size: 14px;
+        color: $white;
+    }
+    &-vote{
+        position: absolute;
+        right: -10px;
+        top: -10px;
+        background: $white;
+        border-bottom: 3px solid #99999f;
+        border-radius: $border;
+        transform: rotate(5deg);
+        color: $blue-dark;
+        padding: 10px;
+        font-size: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+.sender{
+    align-self: flex-end;
+    margin-right: 20px;
+    .chat-message{
+        text-align: left;
+        overflow-wrap: anywhere;
+        padding-right: 20px;
+    }
+}
