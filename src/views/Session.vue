@@ -1,6 +1,7 @@
 <template>
 	<section class="session" ref="session">
 		<div class="container">
+			<VotesPopup v-if="showVotesPopup"/>
 			<div class="interface" v-if="!session.started">
 				<div class="waitingroom">
 
@@ -66,6 +67,7 @@ import store from "../store";
 import Button from "../components/Button";
 import DisplayHeader from "../components/text/DisplayHeader";
 import TextArea from "../components/TextArea";
+import VotesPopup from "../components/VotesPopup";
 
 export default
 {
@@ -74,7 +76,8 @@ export default
 	{
 		TextArea,
 		DisplayHeader,
-		Button
+		Button,
+		VotesPopup,
 	},
 	data()
 	{
@@ -101,7 +104,8 @@ export default
 						number	: 0,
 						desc  	: ''
 					}
-			}
+			},
+			showVotesPopup	: false
 		}
 	},
 	mounted()
@@ -322,13 +326,15 @@ export default
 				textbox.style.border = 'none';
 				textbox.classList.remove('animate__headShake');
 
-				this.$refs.submitbutton.disableButton()
+				this.$refs.submitbutton.disableButton();
 
 				// Reset players choices for the new feature
 				if(this.session.status === "round2")
 				{
-					this.resetChoices()
-					this.$emit('closeInfo')
+					// TODO:: after round2 and before the next feature, add a score screen
+					this.showVotesPopup = true;
+					this.resetChoices();
+					this.$emit('closeInfo');
 				}
 
 				//quick fix for the coffee card
