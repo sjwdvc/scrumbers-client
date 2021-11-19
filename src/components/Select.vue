@@ -1,5 +1,5 @@
 <template>
-	<select :name="name" >
+	<select :name="name" @change="updateValue($event.target.value)">
 		<option :value="option.value" v-for="(option, index) in options" :key="index">{{option.content}}</option>
 	</select>
 </template>
@@ -9,7 +9,13 @@ export default {
 	name : "Select",
 	props: {
 		name: String,
-		options: Array
+		options: Array,
+	},
+	methods: {
+		updateValue(value)
+		{
+			this.$emit('updateSelect', value);
+		}
 	}
 }
 </script>
