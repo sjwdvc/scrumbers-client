@@ -1,7 +1,7 @@
 <template>
 	<section class="session" ref="session">
 		<div class="container">
-			<VotesPopup v-if="showVotesPopup"/>
+			<VotesPopup v-if="showVotesPopup" :feature="session.feature"/>
 			<div class="interface" v-if="!session.started">
 				<div class="waitingroom">
 
