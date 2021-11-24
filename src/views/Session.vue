@@ -333,7 +333,9 @@ export default
 
 				//quick fix for the coffee card
 				this.session.decision.number === 'coffee' ? this.session.decision.number = -1 : ''
-
+				if( this.session.decision.number == "1/2"){
+					this.session.decision.number = 0.5;
+				}
 				SOCKET.emit('feature', {
 					key  	: this.$route.params.key,
 					event	: 'submit',
