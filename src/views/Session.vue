@@ -368,18 +368,6 @@ export default
 
 				this.$refs.submitbutton.disableButton()
 
-				switch(this.session.status)
-				{
-					case 'round1':
-					break;
-
-					case 'round2':
-						this.resetChoices();
-						this.$emit('closeInfo');
-						this.$emit('hideChat');
-					break;
-				}
-
 				// Set your own status icon to a checkmark
 				this.users.find(user => user.name === USER.name).icon = this.userStatusIcon(USER.name, 'ready')
 
@@ -393,6 +381,19 @@ export default
 					desc 	: this.session.decision.desc,
 					email   : USER.email
 				});
+
+				switch(this.session.status)
+				{
+					case 'round1':
+					break;
+
+					case 'round2':
+						this.resetChoices();
+						this.$emit('closeInfo');
+						this.$emit('hideChat');
+					break;
+				}
+				
 			}
 		},
 	computed:
