@@ -1,7 +1,7 @@
 <template>
 	<section class="session" ref="session">
 		<div class="container">
-			<VotesPopup v-if="showVotesPopup" :feature="session.feature"/>
+			<VotesPopup ref="votesPopup"/>
 			<div class="interface" v-if="!session.started">
 				<div class="waitingroom">
 
@@ -104,8 +104,7 @@ export default
 						number	: 0,
 						desc  	: ''
 					}
-			},
-			showVotesPopup	: false
+			}
 		}
 	},
 	mounted()
@@ -331,8 +330,7 @@ export default
 				// Reset players choices for the new feature
 				if(this.session.status === "round2")
 				{
-					// TODO:: after round2 and before the next feature, add a score screen
-					this.showVotesPopup = true;
+					this.$refs.votesPopup.$emit('showVotesPopup', this.session.feature);
 					this.resetChoices();
 					this.$emit('closeInfo');
 				}

@@ -1,5 +1,5 @@
 <template>
-    <div class="votespopup">
+    <div v-if="showVotesPopup" class="votespopup">
         <div class="interface">
             <DisplayHeader content="FEATURE RESULT" />
             <p id="feature">Feature</p>
@@ -21,6 +21,11 @@
             <div id="assignee">
                 <p>{{ feature.assignee || "Assignee name" }}</p>
             </div>
+
+            <div id="progress">
+                <div ref="progbar" id="bar">
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -32,63 +37,46 @@ import DisplayHeader from "../components/text/DisplayHeader";
 
 export default {
     name: "VotesPopup",
-    props: {
-        votes: Array,
-        feature: Array,
-    },
     components: {
         DisplayHeader,
+    },
+    data() {
+        return {
+            feature: {},
+            showVotesPopup: true,
+            // showVotesPopup: false,
+            time: 1000,
+        };
+    },
+    mounted() {
+        this.$on("showVotesPopup", (data) => {
+            this.feature = data;
+            this.$forceUpdate();
+            this.$nextTick(() => {
+                this.startTimer();
+                this.showVotesPopup = true;
+            });
+        });
+    },
+    methods: {
+        startTimer: function () {
+            let timer = this.time;
+            let interval = setInterval(() => {
+                timer--;
+                this.updateProgressBar(timer);
+                if (timer <= 0) {
+                    this.showVotesPopup = false;
+                    clearInterval(interval);
+                }
+            }, 1);
+        },
+        updateProgressBar: function (time) {
+            this.$refs.progbar.style.width = (time / 10) + "%";
+        }
     },
 };
 </script>
 
-<style scoped>
-h1 {
-    text-align: center;
-}
-p {
-    font-size: 20px;
-    color: white;
-    font-weight: lighter;
-}
-.votespopup {
-    z-index: 100;
-    position: absolute;
-    top: 30%;
-    left: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-    width: 90%;
-}
+<style lang="scss" scoped >
 
-#feature-name {
-    font-size: 24px;
-    font-weight: bold;
-}
-
-#number {
-    border-radius: 10px;
-    background-color: white;
-    height: 10em;
-    width: 10em;
-    margin: 10px auto;
-    display: flex;
-    align-items: center; /* Vertical center alignment */
-    justify-content: center; /* Horizontal center alignment */
-}
-#number p {
-    color: black;
-    font-size: 5em;
-}
-
-#assignee {
-    border-radius: 10px;
-    background-color: rgba(53, 52, 52, 0.349);
-    height: 5em;
-    width: 20em;
-    margin: 10px auto;
-    display: flex;
-    align-items: center; /* Vertical center alignment */
-    justify-content: center; /* Horizontal center alignment */
-}
 </style>
