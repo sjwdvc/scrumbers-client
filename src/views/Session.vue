@@ -1,6 +1,7 @@
 <template>
 	<section class="session" ref="session">
 		<div class="container">
+			<ChoicePopup v-if="showMemberChoices"  @choiceSubmit="adminChoiceSubmit" :feature="session.feature" :choices="session.boardMembers"/>
 			<div class="interface" v-if="!session.started">
 				<div class="waitingroom">
 
@@ -65,6 +66,7 @@ import {SOCKET, USER, CLIENT} from "../constants";
 import store from "../store";
 import Button from "../components/Button";
 import DisplayHeader from "../components/text/DisplayHeader";
+import ChoicePopup from "../components/ChoicePopup";
 import TextArea from "../components/TextArea";
 
 export default
@@ -74,6 +76,7 @@ export default
 	{
 		TextArea,
 		DisplayHeader,
+		ChoicePopup,
 		Button
 	},
 	data()
@@ -87,6 +90,7 @@ export default
 			featuresIndex	: 1,
 			width			: 0,
 			tooltip 		: 'More info',
+			showMemberChoices: false,
 			session 		: {
 				status	: 'round1',
 				started : false,
@@ -114,7 +118,7 @@ export default
 			key		: this.$route.params.key,
 			name	: USER.name,
 			email	: USER.email
-		})
+		});
 
 		/**
 		 * Retrieves some session data from the socket server and sets client side variables
@@ -127,7 +131,7 @@ export default
 			this.$toast.open({message: args.data.name + ' has joined the game', type: "success", position: "top-right"});
 
 			this.refreshUserList(args.data);
-		})
+		});
 
 		/**
 		 * Updates feature data in both Session.vue and App.vue when loading the page
@@ -173,7 +177,7 @@ export default
 						break;
 				}
 			})
-		})
+		});
 
 
 		/**
@@ -214,6 +218,25 @@ export default
 			this.refreshUserList(args.data);
 		});
 
+		/**
+		 * Admin events
+		 */
+		SOCKET.on('admin', args => {
+			switch (args.event)
+			{
+				case 'choose':
+					// Let the admin choose a member to add to the card
+					this.session.boardMembers = [];
+					args.members.forEach(member => {
+						this.session.boardMembers.push({
+							content: member.fullName, 
+							value: member.id
+						});
+					});
+					this.showMemberChoices = true;
+				break;
+			}
+		});
 		store.shareLink.url = this.link = CLIENT + '/session/' + this.$route.params.key;
 		store.shareLink.show = true;
 	},
@@ -343,6 +366,23 @@ export default
 				});
 
 
+			},
+			/**
+			 * Send our choice back to the server so we can continue
+			 */
+			adminChoiceSubmit(memberID)
+			{
+				console.log({
+					key			: this.$route.params.key,
+					event		: 'choose',
+					memberID
+				});
+				SOCKET.emit('feature', {
+					key			: this.$route.params.key,
+					event		: 'choose',
+					memberID
+				});
+				this.showMemberChoices = false;
 			}
 		},
 	computed:
