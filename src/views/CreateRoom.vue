@@ -10,7 +10,7 @@
 				<Input id="coffee" value="coffee-timeout" type="number" placeholder="Coffee-timeout minutes" />
 
 				<Label for="rules" content="Admin rules" />
-				<Select id="rules" name="adminRules" :options="adminRules" />
+				<Select id="rules" name="adminRules" :options="adminRules" @updateSelect="updateSelect"/>
 
 				<p class="error">{{error}}</p>
 				<Button content="Generate link"/>
@@ -42,6 +42,10 @@ export default
 	{
 		return {
 			url: '',
+			settings : {
+				coffeeTimeout: '',
+				gameRule : ''
+			},
 			name: '',
 			token: '',
 			error: '',
@@ -66,6 +70,8 @@ export default
 		// Check if we authenticated with trello or not
 		let storedToken = localStorage.getItem('OAUTH_TOKEN');
 		let hasExpired = storedToken == null ? true : (parseInt(storedToken.split('@')[0]) < Date.now());
+		if (storedToken) 								console.log(storedToken.split('@'));
+
 		if (!location.hash.startsWith('#token=') && hasExpired)
 			location.replace(`https://trello.com/1/authorize?key=c6f2658e8bbe5ac486d18c13e49f1abb&name=Scrumbers&scope=read,write&expiration=1day&response_type=token&return_url=${CLIENT}/create-room`);
 		else if (location.hash.startsWith('#token='))
@@ -91,7 +97,7 @@ export default
 		}
 		else
 		{
-			this.token = location.hash.split('@')[1];
+			this.token = storedToken.split('@')[1];
 		}
 	},
 	methods:
@@ -108,6 +114,10 @@ export default
 			SOCKET.on('createRoom', data => {
 				this.$router.push({name: 'sharelink', params: {key: data.key}});
 			})
+		},
+		updateSelect(value)
+		{
+			this.settings.gameRule = value;
 		}
 	}
 }

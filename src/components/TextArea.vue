@@ -20,16 +20,3 @@ export default {
 	}
 }
 </script>
-
-<style scoped lang="scss">
-	@import "../../src/scss/main.scss";
-
-	textarea{
-		background-color: $blue-light;
-		border-radius: 10px;
-		padding: 25px;
-		color: $white;
-		border: none;
-		width: 100%;
-	}
-</style>

@@ -4,7 +4,7 @@
 		<p class="chat-message">
 			{{message}}
 		</p>
-		<p class="chat-vote">{{vote}}</p>
+		<p class="chat-vote">{{voteData}}</p>
 	</div>
 </template>
 
@@ -23,12 +23,17 @@ export default {
 	{
 		return {
 			currentSender: false,
-			senderColor: tinyColor(this.stringToColor(this.$props.sender)).isDark() ? '#D0BB7E' : this.stringToColor(this.$props.sender)
+			senderColor: tinyColor(this.stringToColor(this.$props.sender)).isDark() ? '#D0BB7E' : this.stringToColor(this.$props.sender),
+			voteData : 0
 		}
 	},
 	mounted()
 	{
-		this.sender === USER.name ? this.currentSender = true : ''
+		this.sender === USER.name ? this.currentSender = true : '';
+
+		// Quick fix coffee card
+		this.voteData = this.$props.vote
+		this.voteData === -1 ? this.voteData = "☕" : ''
 	},
 	methods :
 	{

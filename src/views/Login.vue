@@ -87,6 +87,11 @@ export default
 					// Notify user that registration was successful
 					this.error = "Success! Redirecting you..."
 
+					console.log('removing oauth')
+
+					// remove OAuth key from storage after login
+					localStorage.removeItem('OAUTH_TOKEN');
+
 					// Redirect after 2 seconds
 					setTimeout(() => {
 						this.session === null || this.session === undefined ? this.$router.push({name : 'home'}) : this.$router.push({name : 'session', params: {key: this.session}})

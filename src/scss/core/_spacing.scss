@@ -1,10 +1,12 @@
 $border: 10px;
 
 section{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    &:not(.session){
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
 }
 
 .d-none{
@@ -42,4 +44,28 @@ section{
 
 .items-start{
     align-items: flex-start;
+}
+
+.custom-scrollbar{
+    &::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+        border-radius: 50px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: $gold;
+        border-radius: 50px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: $blue-light;
+        border-radius: 50px;
+    }
+
+    // For Internet Explorer
+    & {
+        scrollbar-face-color: $gold;
+        scrollbar-track-color: $blue-light;
+    }
 }
