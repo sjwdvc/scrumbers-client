@@ -43,6 +43,7 @@
 						</div>
 					</h1>
 					<div class="session-game-features-cards">
+						<!-- <p @click="timer()">TImer</p> -->
 						<div class="session-game-features-cards-card" v-for="(card, index) in session.cards" :data-card="card" @mouseenter="activeCard" @mouseleave="staticCard" @click="selectCard" :key="index">
 							<p v-if="card !== 'coffee'">{{card}}</p>
 							<img src="/img/coffee.svg" alt="" v-else>
@@ -55,6 +56,13 @@
 						</div>
 					</div>
 				</div>
+			</div>
+		</div>
+		<div class="timeoutPopup" v-if="timeOut">
+			<h2>Coffee Time-out</h2>
+			<div class="content">
+				<p>Time left:</p>
+				<p class="time">{{timeOutMinutes}}:{{timeOutSeconds}}</p>
 			</div>
 		</div>
 	</section>
@@ -86,6 +94,10 @@ export default
 			featuresLength	: 0,
 			featuresIndex	: 1,
 			width			: 0,
+			timeOut 		: false,
+			timeOutLength	: 0,
+			timeOutMinutes	: 0,
+			timeOutSeconds	: 0,
 			tooltip 		: 'More info',
 			session 		: {
 				status	: 'round1',
@@ -113,7 +125,8 @@ export default
 			event	: 'join',
 			key		: this.$route.params.key,
 			name	: USER.name,
-			email	: USER.email
+			email	: USER.email,
+			coffee 	: this.timeOutLength
 		})
 
 		/**
@@ -136,6 +149,8 @@ export default
 			this.$nextTick(() => {
 				this.session.feature 	= data.data;
 
+				// set coffee time out
+				this.timeOutLength = data.data.coffee;
 				if(data.toLoad !== 'waiting')
 					this.$refs.submitbutton.enableButton();
 
@@ -214,6 +229,13 @@ export default
 			this.refreshUserList(args.data);
 		});
 
+		/**
+		 * When timeout timer has to start
+		 */
+		SOCKET.on('startTimer', () =>{
+			this.timer();
+		});
+
 		store.shareLink.url = this.link = CLIENT + '/session/' + this.$route.params.key;
 		store.shareLink.show = true;
 	},
@@ -234,6 +256,7 @@ export default
 			{
 				this.$refs.session.classList.add('session-started');
 				SOCKET.emit('session', {event: 'start', key: this.$route.params.key});
+				
 			},
 
 			/**
@@ -342,6 +365,28 @@ export default
 					email   : USER.email
 				});
 
+
+			},
+			timer(){
+				// After refresh coffee timeout timer dissapears and doesn't come back
+				// NEED TO FIX
+				
+				// Show popup
+            	this.timeOut = true;
+
+				// Send length of coffee timeout to server
+				SOCKET.emit('timer', { length: this.timeOutLength });
+
+				// Change time of coffee time out
+				SOCKET.on('sendTime', data => {
+					// console.log(data);
+
+					if(data.timeSeconds ==0 && data.timeMinutes ==0){
+						this.timeOut = false;
+					}
+					this.timeOutMinutes	= data.timeMinutes;
+					this.timeOutSeconds	= data.timeSeconds;
+				});
 
 			}
 		},
