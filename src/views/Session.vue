@@ -58,6 +58,7 @@
 				</div>
 			</div>
 		</div>
+		
 	</section>
 </template>
 
@@ -192,7 +193,6 @@ export default
 				}
 			})
 		})
-
 
 		/**
 		 * Sets the status of a client that has submitted to ready
