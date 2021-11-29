@@ -7,7 +7,7 @@
 				<Input id="url" type="text" name="link" placeholder="eg. https://trello.com/b/12345678/project-name" v-model="url" ref="url"/>
 
 				<Label for="coffee" content="Coffee Timeout Length" />
-				<Input id="coffee" value="coffee-timeout" type="number" placeholder="Coffee-timeout minutes" />
+				<Input id="coffee" name="coffee" v-model="coffee"  type="number" placeholder="Coffee-timeout minutes" />
 
 				<Label for="rules" content="Admin rules" />
 				<Select id="rules" name="adminRules" :options="adminRules" @updateSelect="updateSelect"/>
@@ -42,10 +42,7 @@ export default
 	{
 		return {
 			url: '',
-			settings : {
-				coffeeTimeout: '',
-				gameRule : ''
-			},
+			coffee: '',
 			name: '',
 			token: '',
 			error: '',
@@ -104,7 +101,7 @@ export default
 	{
 		generateRoom()
 		{
-			SOCKET.emit('session', {url: this.url, event: 'create', name: USER.name, email: USER.email, token: this.token});
+			SOCKET.emit('session', {url: this.url, coffee: this.coffee, event: 'create', name: USER.name, email: USER.email, token: this.token});
 
 			SOCKET.on('urlError', args => {
 				this.error = args.error;

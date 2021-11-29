@@ -58,6 +58,13 @@
 				</div>
 			</div>
 		</div>
+		<div class="timeoutPopup" v-if="timeOut">
+			<h2>Coffee Time-out</h2>
+			<div class="content">
+				<p>Time left:</p>
+				<p class="time">{{timeOutMinutes}}:{{timeOutSeconds}}</p>
+			</div>
+		</div>
 	</section>
 </template>
 
@@ -87,8 +94,13 @@ export default
 			featuresLength	: 0,
 			featuresIndex	: 1,
 			width			: 0,
-			userCard 		: '⏳',
+      userCard 		: '⏳',
 			submitted 		: false,
+			timeOut 		: false,
+			timeOutLength	: 0,
+			timeOutMinutes	: 0,
+			timeOutSeconds	: 0,
+			tooltip 		: 'More info',
 			session 		: {
 				status		: 'round1',
 				started 	: false,
@@ -115,7 +127,8 @@ export default
 			event	: 'join',
 			key		: this.$route.params.key,
 			name	: USER.name,
-			email	: USER.email
+			email	: USER.email,
+			coffee 	: this.timeOutLength
 		})
 
 		/**
@@ -137,9 +150,10 @@ export default
 		SOCKET.on('load', data => {
 			this.$nextTick(() => {
 
-				console.log('loadd socket event')
-
-				console.log(data.data.users)
+				// set coffee time out
+				this.timeOutLength = data.data.coffee;
+				if(data.toLoad !== 'waiting')
+					this.$refs.submitbutton.enableButton();
 
 				// Sets all users their status to the correct status responded from the server
 				data.data.users.forEach(user => {
@@ -233,6 +247,29 @@ export default
 			this.refreshUserList(args.data);
 		});
 
+		/**
+		 * When timeout timer has to start
+		 */
+		SOCKET.on('startTimer', () =>{
+			this.timer();
+		});
+
+
+		/**
+		 * Refresh time on coffee timeout timer
+		 */
+		// Change time of coffee time out
+		SOCKET.on('sendTime', data => {
+			this.timeOut = true;
+			// console.log(data);
+			// console.log(this.timeOut);
+			if(data.timeSeconds ==0 && data.timeMinutes ==0){
+				this.timeOut = false;
+			}
+			this.timeOutMinutes	= data.timeMinutes;
+			this.timeOutSeconds	= data.timeSeconds;
+		});
+
 		store.shareLink.url = this.link = CLIENT + '/session/' + this.$route.params.key;
 		store.shareLink.show = true;
 	},
@@ -253,6 +290,7 @@ export default
 			{
 				this.$refs.session.classList.add('session-started');
 				SOCKET.emit('session', {event: 'start', key: this.$route.params.key});
+				
 			},
 
 			/**
@@ -386,15 +424,21 @@ export default
 				{
 					case 'round1':
 					break;
-
-					case 'round2':
+          
+          case 'round2':
 						this.resetChoices();
 						this.$emit('closeInfo');
 						this.$emit('hideChat');
 					break;
-				}
-				
-			}
+        }
+			},
+      timer(){	
+				// Show popup
+        this.timeOut = true;
+
+				// Send length of coffee timeout to server
+				SOCKET.emit('timer', { length: this.timeOutLength, key: this.$route.params.key });
+      }
 		},
 	computed:
 		{	// Calculates the width for the progress bar
