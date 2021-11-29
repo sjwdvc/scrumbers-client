@@ -3,7 +3,7 @@
         <div class="interface">
             <DisplayHeader content="FEATURE RESULT" />
             <p id="feature">Feature</p>
-            <p id="feature-name">{{ feature.name }}</p>
+            <p id="feature-name">{{ data.feature.name }}</p>
 
             <br /><br />
 
@@ -11,7 +11,7 @@
             <!-- Number icon -->
             <div id="number">
                 <p>
-                    {{ feature.number || "5" }}
+                    {{ data.number || "-" }}
                 </p>
             </div>
 
@@ -19,7 +19,7 @@
 
             <p>Assigned to</p>
             <div id="assignee">
-                <p>{{ feature.assignee || "Assignee name" }}</p>
+                <p>{{ data.member || "" }}</p>
             </div>
 
             <div id="progress">
@@ -42,15 +42,14 @@ export default {
     },
     data() {
         return {
-            feature: {},
-            showVotesPopup: true,
-            // showVotesPopup: false,
+            data: {},
+            showVotesPopup: false,
             time: 1000,
         };
     },
     mounted() {
         this.$on("showVotesPopup", (data) => {
-            this.feature = data;
+            this.data = data;
             this.$forceUpdate();
             this.$nextTick(() => {
                 this.startTimer();

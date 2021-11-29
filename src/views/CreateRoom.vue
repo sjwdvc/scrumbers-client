@@ -7,7 +7,7 @@
 				<Input id="url" type="text" name="link" placeholder="eg. https://trello.com/b/12345678/project-name" v-model="url" ref="url"/>
 
 				<Label for="coffee" content="Coffee Timeout Length" />
-				<Input id="coffee" value="coffee-timeout" type="number" placeholder="Coffee-timeout minutes" v-model="settings.coffeeTimeout" />
+				<Input id="coffee" value="coffee-timeout" type="number" placeholder="Coffee-timeout minutes" v-model="coffee" />
 
 				<Label for="rules" content="Admin rules" />
 				<Select id="rules" name="adminRules" :options="adminRules" @updateSelect="updateSelect" />

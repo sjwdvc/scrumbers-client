@@ -203,7 +203,6 @@ export default {
             tooltip: "More info",
             showMemberChoices: false,
             userCard: "⏳",
-            submitted: false,
             timeOut: false,
             timeOutLength: 0,
             timeOutMinutes: 0,
@@ -443,6 +442,13 @@ export default {
             this.timer();
         });
 
+		SOCKET.on("results", (result) => {
+			this.$refs.votesPopup.$emit(
+				"showVotesPopup",
+				result
+			);
+		});
+
         /**
          * Refresh time on coffee timeout timer
          */
@@ -615,10 +621,6 @@ export default {
                     break;
 
                 case "round2":
-                    this.$refs.votesPopup.$emit(
-                        "showVotesPopup",
-                        this.session.feature
-                    );
                     this.resetChoices();
                     this.$emit("closeInfo");
                     this.$emit("hideChat");
