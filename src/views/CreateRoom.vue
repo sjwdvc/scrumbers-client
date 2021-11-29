@@ -42,10 +42,7 @@ export default
 	{
 		return {
 			url: '',
-			settings: {
-				coffeeTimeout: '',
-				gameRule: 'lowest'
-			},
+			coffee: '',
 			name: '',
 			token: '',
 			error: '',
@@ -103,7 +100,7 @@ export default
 	{
 		generateRoom()
 		{
-			SOCKET.emit('session', {url: this.url, event: 'create', settings: this.settings, name: USER.name, email: USER.email, token: this.token});
+			SOCKET.emit('session', {url: this.url, coffee: this.coffee, event: 'create', name: USER.name, email: USER.email, token: this.token});
 
 			SOCKET.on('urlError', args => {
 				this.error = args.error;

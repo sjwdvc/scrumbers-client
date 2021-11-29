@@ -60,6 +60,13 @@
 			</div>
 			<SessionHistory :feature-data="history" ref="history"/>
 		</div>
+		<div class="timeoutPopup" v-if="timeOut">
+			<h2>Coffee Time-out</h2>
+			<div class="content">
+				<p>Time left:</p>
+				<p class="time">{{timeOutMinutes}}:{{timeOutSeconds}}</p>
+			</div>
+		</div>
 	</section>
 </template>
 
@@ -86,31 +93,34 @@ export default
 	data()
 	{
 		return {
-			name 			: '',
-			sessionId 		: this.$route.params.key,
-			users 			: [],
-			admin 			: false,
-			featuresLength	: 0,
-			featuresIndex	: 1,
-			width			: 0,
-			tooltip 		: 'More info',
-			showMemberChoices: false,
-			userCard 		: '⏳',
-			submitted 		: false,
-			history  		: [],
-			session 		: {
-				status		: 'round1',
-				started 	: false,
-				cards 		: ['coffee', '0', '1/2', '1', '2', '3', '5', '8', '13', '20', '40', '100'],
-				feature 	:
-					{
-						name	: '',
-						desc	: ''
-					},
-				decision :
-					{
-						number	: 0,
-						desc  	: ''
+			name 			        : '',
+			sessionId 		    : this.$route.params.key,
+			users 			      : [],
+			admin 			      : false,
+			featuresLength	  : 0,
+			featuresIndex	    : 1,
+			width			        : 0,
+      submitted 		    : false,
+			history  		      : [],
+      tooltip 		      : 'More info',
+			showMemberChoices : false,
+      userCard 		      : '⏳',
+			submitted 	      : false,
+			timeOut 		      : false,
+			timeOutLength	    : 0,
+			timeOutMinutes	  : 0,
+			timeOutSeconds	  : 0,
+			session 		      : {
+          status		    : 'round1',
+          started 	    : false,
+          cards 		    : ['coffee', '0', '1/2', '1', '2', '3', '5', '8', '13', '20', '40', '100'],
+          feature 	    : {
+              name	    : '',
+              desc	    : ''
+          },
+			    decision      : {
+						number	    : 0,
+						desc  	    : ''
 					}
 			}
 		}
@@ -126,7 +136,8 @@ export default
 			event	: 'join',
 			key		: this.$route.params.key,
 			name	: USER.name,
-			email	: USER.email
+			email	: USER.email,
+			coffee 	: this.timeOutLength
 		});
 
 		/**
@@ -148,6 +159,15 @@ export default
 		SOCKET.on('load', data => {
 
 			this.$nextTick(() => {
+				// set coffee time out
+				this.timeOutLength = data.data.coffee;
+				if(data.toLoad !== 'waiting')
+					this.$refs.submitbutton.enableButton();
+
+				// Sets all users their status to the correct status responded from the server
+				data.data.users.forEach(user => {
+					this.users.find(client => client.name === user.name).status = user.status
+				})
 
 				// end returns different data from the server which is processed differently. Therefore the end state is handled beforehand instead of in the switch case
 				if(data.toLoad === 'end')
@@ -275,6 +295,28 @@ export default
 				break;
 			}
 		});
+    
+    /**
+		 * When timeout timer has to start
+		 */
+		SOCKET.on('startTimer', () =>{
+			this.timer();
+		});
+
+		/**
+		 * Refresh time on coffee timeout timer
+		 */
+		// Change time of coffee time out
+		SOCKET.on('sendTime', data => {
+			this.timeOut = true;
+			// console.log(data);
+			// console.log(this.timeOut);
+			if(data.timeSeconds ==0 && data.timeMinutes ==0){
+				this.timeOut = false;
+			}
+			this.timeOutMinutes	= data.timeMinutes;
+			this.timeOutSeconds	= data.timeSeconds;
+		});
 		store.shareLink.url = this.link = CLIENT + '/session/' + this.$route.params.key;
 		store.shareLink.show = true;
 	},
@@ -295,6 +337,7 @@ export default
 			{
 				this.$refs.session.classList.add('session-started');
 				SOCKET.emit('session', {event: 'start', key: this.$route.params.key});
+				
 			},
 
 			/**
@@ -429,8 +472,8 @@ export default
 				{
 					case 'round1':
 					break;
-
-					case 'round2':
+          
+          case 'round2':
 						this.resetChoices();
 						this.$emit('closeInfo');
 						this.$emit('hideChat');
@@ -443,19 +486,22 @@ export default
 			 */
 			adminChoiceSubmit(memberID)
 			{
-				console.log({
-					key			: this.$route.params.key,
-					event		: 'choose',
-					memberID
-				});
 				SOCKET.emit('feature', {
-					key			: this.$route.params.key,
-					event		: 'choose',
-					memberID
+            key			: this.$route.params.key,
+            event		: 'choose',
+            memberID
 				});
 				this.showMemberChoices = false;
-			}
-		},
+			},
+      
+      timer(){	
+				// Show popup
+        this.timeOut = true;
+
+				// Send length of coffee timeout to server
+				SOCKET.emit('timer', { length: this.timeOutLength, key: this.$route.params.key });
+      }
+	},
 	computed:
 		{	// Calculates the width for the progress bar
 			calculateWidth: function () {
