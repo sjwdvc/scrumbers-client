@@ -147,14 +147,22 @@
                     background-size: contain;
                     background-repeat: no-repeat;
                 }
-            }
 
-            .waiting:after {
-                background-image: url('/img/waiting.svg');
-            }
-
-            .ready:after {
-                background-image: url('/img/ready.svg');
+                &-card{
+                    position: absolute;
+                    right: -10px;
+                    top: 50%;
+                    background: $white;
+                    border-bottom: 3px solid #99999f;
+                    border-radius: $border;
+                    transform: rotate(5deg) translateY(-50%);
+                    color: $blue-dark;
+                    padding: 10px;
+                    font-size: 30px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
             }
         }
 
@@ -196,27 +204,7 @@
                 gap: 20px;
                 overflow-y: hidden;
 
-                &::-webkit-scrollbar {
-                    width: 10px;
-                    height: 10px;
-                    border-radius: 50px;
-                }
 
-                &::-webkit-scrollbar-thumb {
-                    background: $gold;
-                    border-radius: 50px;
-                }
-
-                &::-webkit-scrollbar-track {
-                    background: $blue-dark;
-                    border-radius: 50px;
-                }
-
-                // For Internet Explorer
-                & {
-                    scrollbar-face-color: $gold;
-                    scrollbar-track-color: $blue-dark;
-                }
 
                 &-card {
                     $inactive-card: darken($white, 25%);

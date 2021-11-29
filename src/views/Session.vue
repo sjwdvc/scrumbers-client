@@ -25,6 +25,7 @@
 					<p class="session-game-header">Users</p>
 					<div class="session-game-users-user" v-for="user in users" :key="user.index" :class="user.status">
 						{{user.name}}
+						<div class="session-game-users-user-card">{{ user.icon }}</div>
 					</div>
 				</div>
 				<div class="session-game-features">
@@ -42,8 +43,7 @@
 							</svg>
 						</div>
 					</h1>
-					<div class="session-game-features-cards">
-						<!-- <p @click="timer()">TImer</p> -->
+					<div class="session-game-features-cards custom-scrollbar">
 						<div class="session-game-features-cards-card" v-for="(card, index) in session.cards" :data-card="card" @mouseenter="activeCard" @mouseleave="staticCard" @click="selectCard" :key="index">
 							<p v-if="card !== 'coffee'">{{card}}</p>
 							<img src="/img/coffee.svg" alt="" v-else>
@@ -94,16 +94,18 @@ export default
 			featuresLength	: 0,
 			featuresIndex	: 1,
 			width			: 0,
+      userCard 		: '⏳',
+			submitted 		: false,
 			timeOut 		: false,
 			timeOutLength	: 0,
 			timeOutMinutes	: 0,
 			timeOutSeconds	: 0,
 			tooltip 		: 'More info',
 			session 		: {
-				status	: 'round1',
-				started : false,
-				cards 	: ['coffee', '0', '1/2', '1', '2', '3', '5', '8', '13', '20', '40', '100'],
-				feature :
+				status		: 'round1',
+				started 	: false,
+				cards 		: ['coffee', '0', '1/2', '1', '2', '3', '5', '8', '13', '20', '40', '100'],
+				feature 	:
 					{
 						name	: '',
 						desc	: ''
@@ -147,18 +149,28 @@ export default
 		 */
 		SOCKET.on('load', data => {
 			this.$nextTick(() => {
-				this.session.feature 	= data.data;
 
 				// set coffee time out
 				this.timeOutLength = data.data.coffee;
 				if(data.toLoad !== 'waiting')
 					this.$refs.submitbutton.enableButton();
 
+				// Sets all users their status to the correct status responded from the server
+				data.data.users.forEach(user => {
+					this.users.find(client => client.name === user.name).status = user.status
+				})
+
+				// If the user status === ready, set the submitted value to true
+				this.submitted = this.users.find(user => user.name === USER.name).status === 'ready'
+
+				this.submitted ? this.$refs.submitbutton.disableButton() : this.$refs.submitbutton.enableButton()
+
+				// Sets the feature data
+				this.session.feature 	= data.data;
+
 				// Watch spelling if using elsewhere! Both singular and plural
 				this.featuresIndex 		= data.data['featurePointer'];
 				this.featuresLength 	= data.data['featuresLength'];
-
-				this.refreshUserList(data.data);
 
 				this.session.status = data.toLoad;
 
@@ -174,6 +186,7 @@ export default
 				{
 					case 'round1':
 						this.$emit('closeInfo');
+						this.refreshUserList(data.data)
 						break;
 
 					case 'round2':
@@ -181,6 +194,10 @@ export default
 						this.$emit('session:chat:votes', data.chats.votes);
 						this.$emit('openInfo');
 
+						// Set the chosen number to the card in the name list
+						this.users.forEach(user => user.icon = this.$parent['votes'].find(vote => vote.sender === user.name).value);
+
+						// Scroll down the chat window
 						setTimeout(() => {
 							document.querySelector('.info-content-chat-wrapper').scrollTo(0, document.querySelector('.info-content-chat-wrapper').scrollHeight);
 						}, 200)
@@ -195,7 +212,8 @@ export default
 		 * Sets the status of a client that has submitted to ready
 		 */
 		SOCKET.on('submit', data => {
-			this.users.find(user => user.name === data.user).status = 'ready';
+			this.users.find(user => user.name === data.user).status 	= 'ready';
+			this.users.find(user => user.name === data.user).icon 	= this.userStatusIcon(data.user, 'ready')
 		});
 
 		/**
@@ -317,6 +335,28 @@ export default
 			},
 
 			/**
+			 * Return the correct icon for the user status
+			 */
+			userStatusIcon(username, status)
+			{
+
+				switch(status)
+				{
+					case 'waiting':
+						return "⏳";
+						break;
+
+					case 'ready':
+						return "✔️";
+						break;
+
+					case 'card':
+						return this.$parent['votes'].find(user => user.sender === username).value;
+						break;
+				}
+			},
+
+			/**
 			 * Update the users and their status
 			 */
 			refreshUserList(d)
@@ -324,13 +364,11 @@ export default
 				this.users 		= [];
 
 				d.users.forEach(user => {
-
-					console.log(user)
-
 					this.users.push(
 						{
-							name: user.name,
-							status: user.status
+							name	: user.name,
+							status	: user.status,
+							icon	: this.userStatusIcon(user.name, user.status)
 						})
 				});
 			},
@@ -341,6 +379,11 @@ export default
 			 */
 			submit()
 			{
+				// Sets your client to the submitted state to prevent double submits etc
+				this.submitted = true
+
+				console.log('submit event')
+
 				// Define textarea element for styling purposes
 				let textbox = document.querySelector('textarea')
 
@@ -363,12 +406,8 @@ export default
 
 				this.$refs.submitbutton.disableButton()
 
-				// Reset players choices for the new feature
-				if(this.session.status === "round2")
-				{
-					this.resetChoices()
-					this.$emit('closeInfo')
-				}
+				// Set your own status icon to a checkmark
+				this.users.find(user => user.name === USER.name).icon = this.userStatusIcon(USER.name, 'ready')
 
 				//quick fix for the coffee card
 				this.session.decision.number === 'coffee' ? this.session.decision.number = -1 : ''
@@ -381,15 +420,25 @@ export default
 					email   : USER.email
 				});
 
-
+				switch(this.session.status)
+				{
+					case 'round1':
+					break;
+          
+          case 'round2':
+						this.resetChoices();
+						this.$emit('closeInfo');
+						this.$emit('hideChat');
+					break;
+        }
 			},
-			timer(){	
+      timer(){	
 				// Show popup
-            	this.timeOut = true;
+        this.timeOut = true;
 
 				// Send length of coffee timeout to server
 				SOCKET.emit('timer', { length: this.timeOutLength, key: this.$route.params.key });
-			}
+      }
 		},
 	computed:
 		{	// Calculates the width for the progress bar

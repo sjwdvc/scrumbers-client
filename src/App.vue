@@ -10,7 +10,7 @@
 			</div>
 		</nav>
 		<div class="info-content">
-			<div class="info-content-feature" v-if="sessionStatus === 'round1'">
+			<div class="info-content-feature custom-scrollbar" v-if="info">
 				<h2>Description</h2>
 				<div class="info-content-feature-description">
 					{{ description }}
@@ -36,7 +36,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="info-content-chat" v-if="sessionStatus === 'round2'">
+			<div class="info-content-chat" v-if="chatOpen && sessionStatus === 'round2'">
 				<h2>Chats</h2>
 				<div class="info-content-chat-wrapper">
 					<ChatMessage :sender="chat.sender" :message="chat.message" :vote="chat.vote"  v-for="(chat, index) in chats" :key="index" />
@@ -91,6 +91,7 @@
 				@toggleInfo="toggleInfo"
 				@openInfo="openInfo"
 				@closeInfo="closeInfo"
+				@hideChat="hideChat"
 			/>
 		</div>
 	</main>
@@ -113,6 +114,7 @@ export default {
 			shareLink		: store.shareLink,
 			menu			: false,
 			info 			: false,
+			chatOpen 		: false,
 			menuUser 		: USER,
 			sessionStatus 	: '',
 			menuLinks 		:
@@ -148,6 +150,10 @@ export default {
 		updateSessionStatus(e)
 		{
 			this.sessionStatus = e.status;
+
+			console.log('session status is : ' + this.sessionStatus)
+
+			this.chatOpen = this.sessionStatus === 'round2'
 		},
 
 		updateSessionChecklists(data)
@@ -217,6 +223,11 @@ export default {
 		clearChats()
 		{
 			this.chats = [];
+		},
+
+		hideChat()
+		{
+			this.chatOpen = false;
 		},
 
 		checkChatInput(e)
