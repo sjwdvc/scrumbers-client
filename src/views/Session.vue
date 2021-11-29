@@ -1,6 +1,7 @@
 <template>
 	<section class="session" ref="session">
 		<div class="container">
+			<ChoicePopup v-if="showMemberChoices"  @choiceSubmit="adminChoiceSubmit" :feature="session.feature" :choices="session.boardMembers"/>
 			<div class="interface" v-if="!session.started">
 				<div class="waitingroom">
 
@@ -57,6 +58,7 @@
 					</div>
 				</div>
 			</div>
+			<SessionHistory :feature-data="history" ref="history"/>
 		</div>
 		<div class="timeoutPopup" v-if="timeOut">
 			<h2>Coffee Time-out</h2>
@@ -73,53 +75,60 @@ import {SOCKET, USER, CLIENT} from "../constants";
 import store from "../store";
 import Button from "../components/Button";
 import DisplayHeader from "../components/text/DisplayHeader";
+import ChoicePopup from "../components/ChoicePopup";
 import TextArea from "../components/TextArea";
+import SessionHistory from "../components/SessionHistory"
 
 export default
 {
 	name : "Session",
 	components :
 	{
+		SessionHistory,
 		TextArea,
 		DisplayHeader,
+		ChoicePopup,
 		Button
 	},
 	data()
 	{
 		return {
-			name 			: '',
-			sessionId 		: this.$route.params.key,
-			users 			: [],
-			admin 			: false,
-			featuresLength	: 0,
-			featuresIndex	: 1,
-			width			: 0,
-      userCard 		: '⏳',
-			submitted 		: false,
-			timeOut 		: false,
-			timeOutLength	: 0,
-			timeOutMinutes	: 0,
-			timeOutSeconds	: 0,
-			tooltip 		: 'More info',
-			session 		: {
-				status		: 'round1',
-				started 	: false,
-				cards 		: ['coffee', '0', '1/2', '1', '2', '3', '5', '8', '13', '20', '40', '100'],
-				feature 	:
-					{
-						name	: '',
-						desc	: ''
-					},
-				decision :
-					{
-						number	: 0,
-						desc  	: ''
+			name 			        : '',
+			sessionId 		    : this.$route.params.key,
+			users 			      : [],
+			admin 			      : false,
+			featuresLength	  : 0,
+			featuresIndex	    : 1,
+			width			        : 0,
+      submitted 		    : false,
+			history  		      : [],
+      tooltip 		      : 'More info',
+			showMemberChoices : false,
+      userCard 		      : '⏳',
+			submitted 	      : false,
+			timeOut 		      : false,
+			timeOutLength	    : 0,
+			timeOutMinutes	  : 0,
+			timeOutSeconds	  : 0,
+			session 		      : {
+          status		    : 'round1',
+          started 	    : false,
+          cards 		    : ['coffee', '0', '1/2', '1', '2', '3', '5', '8', '13', '20', '40', '100'],
+          feature 	    : {
+              name	    : '',
+              desc	    : ''
+          },
+			    decision      : {
+						number	    : 0,
+						desc  	    : ''
 					}
 			}
 		}
 	},
 	mounted()
 	{
+
+
 		/**
 		 * Join the session when you load the page and send the key from the url to define which session to join
 		 */
@@ -129,7 +138,7 @@ export default
 			name	: USER.name,
 			email	: USER.email,
 			coffee 	: this.timeOutLength
-		})
+		});
 
 		/**
 		 * Retrieves some session data from the socket server and sets client side variables
@@ -142,14 +151,14 @@ export default
 			this.$toast.open({message: args.data.name + ' has joined the game', type: "success", position: "top-right"});
 
 			this.refreshUserList(args.data);
-		})
+		});
 
 		/**
 		 * Updates feature data in both Session.vue and App.vue when loading the page
 		 */
 		SOCKET.on('load', data => {
-			this.$nextTick(() => {
 
+			this.$nextTick(() => {
 				// set coffee time out
 				this.timeOutLength = data.data.coffee;
 				if(data.toLoad !== 'waiting')
@@ -160,52 +169,72 @@ export default
 					this.users.find(client => client.name === user.name).status = user.status
 				})
 
-				// If the user status === ready, set the submitted value to true
-				this.submitted = this.users.find(user => user.name === USER.name).status === 'ready'
-
-				this.submitted ? this.$refs.submitbutton.disableButton() : this.$refs.submitbutton.enableButton()
-
-				// Sets the feature data
-				this.session.feature 	= data.data;
-
-				// Watch spelling if using elsewhere! Both singular and plural
-				this.featuresIndex 		= data.data['featurePointer'];
-				this.featuresLength 	= data.data['featuresLength'];
-
-				this.session.status = data.toLoad;
-
-				// Emit session data to App.vue to update the config menu
-				this.$emit('session:status', {status: data.toLoad});
-				this.$emit('session:checklists', this.session.feature.checklists);
-				this.$emit('session:description', this.session.feature.desc);
-
-				// Fire the resize event to re-scale the game window. This makes it fit into the viewport
-				window.dispatchEvent(new Event('resize'));
-
-				switch(data.toLoad)
+				// end returns different data from the server which is processed differently. Therefore the end state is handled beforehand instead of in the switch case
+				if(data.toLoad === 'end')
 				{
-					case 'round1':
-						this.$emit('closeInfo');
-						this.refreshUserList(data.data)
-						break;
+					SOCKET.emit('session', {event : 'history', config: 'single', key: this.sessionId})
+					SOCKET.on('history', data => this.history = data.sessions)
 
-					case 'round2':
-						this.$emit('session:chat:update', data.chats);
-						this.$emit('session:chat:votes', data.chats.votes);
-						this.$emit('openInfo');
+					this.$refs.history.togglePopup()
+				}
+				else
+				{
+					// Sets all users their status to the correct status responded from the server
+					data.data.users.forEach(user => {
+						this.users.find(client => client.name === user.name).status = user.status
+					})
 
-						// Set the chosen number to the card in the name list
-						this.users.forEach(user => user.icon = this.$parent['votes'].find(vote => vote.sender === user.name).value);
+					// If the user status === ready, set the submitted value to true
+					this.submitted = this.users.find(user => user.name === USER.name).status === 'ready'
 
-						// Scroll down the chat window
-						setTimeout(() => {
-							document.querySelector('.info-content-chat-wrapper').scrollTo(0, document.querySelector('.info-content-chat-wrapper').scrollHeight);
-						}, 200)
+					this.submitted ? this.$refs.submitbutton.disableButton() : this.$refs.submitbutton.enableButton()
 
-						break;
+					// Sets the feature data
+					this.session.feature 	= data.data;
+
+
+					// Watch spelling if using elsewhere! Both singular and plural
+					this.featuresIndex 		= data.data['featurePointer'];
+					this.featuresLength 	= data.data['featuresLength'];
+
+					this.refreshUserList(data.data);
+
+					this.session.status = data.toLoad;
+
+					// Emit session data to App.vue to update the config menu
+					this.$emit('session:status', {status: data.toLoad});
+					this.$emit('session:checklists', this.session.feature.checklists);
+					this.$emit('session:description', this.session.feature.desc);
+
+					// Fire the resize event to re-scale the game window. This makes it fit into the viewport
+					window.dispatchEvent(new Event('resize'));
+
+					switch(data.toLoad)
+					{
+						case 'round1':
+							this.$emit('closeInfo');
+							this.$emit('session:chat:updateround', 1)
+							break;
+
+						case 'round2':
+							this.$emit('session:chat:update', data.chats);
+							this.$emit('session:chat:votes', data.chats.votes);
+							this.$emit('session:chat:updateround', 2)
+							this.$emit('openInfo');
+
+							// Set the chosen number to the card in the name list
+							this.users.forEach(user => user.icon = this.$parent['votes'].find(vote => vote.sender === user.name).value);
+
+							// Scroll down the chat window
+							setTimeout(() => {
+								document.querySelector('.info-content-chat-wrapper').scrollTo(0, document.querySelector('.info-content-chat-wrapper').scrollHeight);
+							}, 200)
+
+							break;
+					}
 				}
 			})
-		})
+		});
 
 
 		/**
@@ -248,12 +277,31 @@ export default
 		});
 
 		/**
+		 * Admin events
+		 */
+		SOCKET.on('admin', args => {
+			switch (args.event)
+			{
+				case 'choose':
+					// Let the admin choose a member to add to the card
+					this.session.boardMembers = [];
+					args.members.forEach(member => {
+						this.session.boardMembers.push({
+							content: member.fullName,
+							value: member.id
+						});
+					});
+					this.showMemberChoices = true;
+				break;
+			}
+		});
+    
+    /**
 		 * When timeout timer has to start
 		 */
 		SOCKET.on('startTimer', () =>{
 			this.timer();
 		});
-
 
 		/**
 		 * Refresh time on coffee timeout timer
@@ -269,7 +317,6 @@ export default
 			this.timeOutMinutes	= data.timeMinutes;
 			this.timeOutSeconds	= data.timeSeconds;
 		});
-
 		store.shareLink.url = this.link = CLIENT + '/session/' + this.$route.params.key;
 		store.shareLink.show = true;
 	},
@@ -382,8 +429,6 @@ export default
 				// Sets your client to the submitted state to prevent double submits etc
 				this.submitted = true
 
-				console.log('submit event')
-
 				// Define textarea element for styling purposes
 				let textbox = document.querySelector('textarea')
 
@@ -411,6 +456,9 @@ export default
 
 				//quick fix for the coffee card
 				this.session.decision.number === 'coffee' ? this.session.decision.number = -1 : ''
+				if( this.session.decision.number == "1/2"){
+					this.session.decision.number = 0.5;
+				}
 
 				SOCKET.emit('feature', {
 					key  	: this.$route.params.key,
@@ -430,8 +478,22 @@ export default
 						this.$emit('closeInfo');
 						this.$emit('hideChat');
 					break;
-        }
+				}
+
 			},
+			/**
+			 * Send our choice back to the server so we can continue
+			 */
+			adminChoiceSubmit(memberID)
+			{
+				SOCKET.emit('feature', {
+            key			: this.$route.params.key,
+            event		: 'choose',
+            memberID
+				});
+				this.showMemberChoices = false;
+			},
+      
       timer(){	
 				// Show popup
         this.timeOut = true;
@@ -439,7 +501,7 @@ export default
 				// Send length of coffee timeout to server
 				SOCKET.emit('timer', { length: this.timeOutLength, key: this.$route.params.key });
       }
-		},
+	},
 	computed:
 		{	// Calculates the width for the progress bar
 			calculateWidth: function () {

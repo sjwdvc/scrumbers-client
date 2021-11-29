@@ -4,6 +4,15 @@
 @import "core/typography";
 @import "core/animations";
 
+@import "components/button";
+@import "components/chatmessage";
+@import "components/input";
+@import "components/textarea";
+@import "components/label";
+@import "components/select";
+@import "components/displayheader";
+@import "components/sessionhistory";
+
 // Import views & components
 @import "views/session";
 @import "views/home";
@@ -12,13 +21,7 @@
 @import "views/login";
 @import "views/profile";
 
-@import "components/button";
-@import "components/chatmessage";
-@import "components/input";
-@import "components/textarea";
-@import "components/label";
-@import "components/select";
-@import "components/displayheader";
+
 
 
 *{

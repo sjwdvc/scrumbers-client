@@ -1,4 +1,5 @@
 <template>
+	
 	<section class="profile">
 		<div class="interface">
 			<DisplayHeader class="header" content="PROFILE" />
@@ -26,22 +27,30 @@
 					<Button @click.native="logout" content="Log out" ref="logout" />
 				</div>
 			</form>
-			<a>Change password</a>
+			<div class='flex space-between'>
+				<a>Change password</a>
+				<a @click="$refs.history.togglePopup()" >History</a>
+			</div>
+
 		</div>
+		<SessionHistory :feature-data="this.featureData" ref="history"/>
 	</section>
+	
 </template>
 
 <script>
 import axios from "axios";
-import {SERVER, TOKEN, USER} from "../constants";
+import {SERVER, SOCKET, TOKEN, USER} from "../constants"
 import Button from "../components/Button";
 import DisplayHeader from "../components/text/DisplayHeader";
-
+import $ from "jquery";
+import SessionHistory from "../components/SessionHistory"
 
 export default {
 	name : "Profile",
 	components :
 		{
+			SessionHistory,
 			DisplayHeader,
 			Button
 		},
@@ -49,11 +58,13 @@ export default {
 	{
 		return {
 			profile: {},
+			featureData: {},
 			form: {
 				name: "",
 				age: "",
 			},
 			error: "",
+			chatround: true,
 			spinner: {},
 			token: localStorage.getItem('TOKEN')
 		}
@@ -61,11 +72,23 @@ export default {
 	mounted()
 	{
 		axios.defaults.headers = { Authorization: this.token };
+
 		axios.get(SERVER + 'user/profile', {
 			headers: {
 				Authorization: TOKEN
 			}
 		}).then(response => this.profile = response.data);
+
+
+		SOCKET.emit('session', {event: 'history', config: 'all', email: USER.email})
+		SOCKET.on('history', data => {
+			this.featureData = data.sessions
+		})
+
+
+
+		this.$refs.history.togglePopup()
+
 	},
 	methods: {
 		logout()
@@ -121,3 +144,4 @@ export default {
 	}
 }
 </script>
+

@@ -7,10 +7,10 @@
 				<Input id="url" type="text" name="link" placeholder="eg. https://trello.com/b/12345678/project-name" v-model="url" ref="url"/>
 
 				<Label for="coffee" content="Coffee Timeout Length" />
-				<Input id="coffee" name="coffee" v-model="coffee"  type="number" placeholder="Coffee-timeout minutes" />
+				<Input id="coffee" value="coffee-timeout" type="number" placeholder="Coffee-timeout minutes" v-model="settings.coffeeTimeout" />
 
 				<Label for="rules" content="Admin rules" />
-				<Select id="rules" name="adminRules" :options="adminRules" @updateSelect="updateSelect"/>
+				<Select id="rules" name="adminRules" :options="adminRules" @updateSelect="updateSelect" />
 
 				<p class="error">{{error}}</p>
 				<Button content="Generate link"/>
@@ -67,7 +67,6 @@ export default
 		// Check if we authenticated with trello or not
 		let storedToken = localStorage.getItem('OAUTH_TOKEN');
 		let hasExpired = storedToken == null ? true : (parseInt(storedToken.split('@')[0]) < Date.now());
-		if (storedToken) 								console.log(storedToken.split('@'));
 
 		if (!location.hash.startsWith('#token=') && hasExpired)
 			location.replace(`https://trello.com/1/authorize?key=c6f2658e8bbe5ac486d18c13e49f1abb&name=Scrumbers&scope=read,write&expiration=1day&response_type=token&return_url=${CLIENT}/create-room`);

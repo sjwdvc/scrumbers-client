@@ -1,0 +1,226 @@
+.popup{
+    width: 120%;
+    height: 90vh;
+    z-index: 1;
+    background-color: $blue-dark;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    padding: 0.5rem;
+    color: $white;
+    border-radius: 0.5rem;
+    max-width: 750px;
+
+    .feature{
+        &-wrapper{
+            display: none;
+        }
+        &-content{
+            &-title{
+                color: $gold;
+            }
+            &-votes{
+                &-header{
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-evenly;
+                    width: 200px;
+                    margin: 0 auto;
+                    cursor: pointer;
+                    border: 1px solid $blue-light;
+                    padding: 0.5rem;
+                    border-radius: 1rem;
+                    text-align: center;
+                    svg{
+                        transition: 0.3s ease;
+                    }
+                }
+
+                &-content{
+                    display: none;
+                    &-titles{
+                        display: flex;
+                        justify-content: space-around;
+                        h3{
+                            text-align: center;
+                            width: 50%;
+                        }
+                    }
+                }
+                .open{
+                    svg{
+                        transform: rotate(180deg)
+                    }
+                }
+            }
+            &-chats{
+                &-header{
+                    @extend .feature-content-votes-header;
+                }
+                &-content{
+                    display: none;
+                }
+                .open{
+                    svg{
+                        transform: rotate(180deg)
+                    }
+                }
+            }
+        }
+    }
+
+    .interface {
+        text-align: left;
+    }
+
+    .closepopup{
+        border: 2px solid $blue-light;
+        padding: 0.4rem;
+        border-radius: 0.4rem;
+    }
+
+    .topsection{
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid $gold;
+        margin-bottom: 0.4rem;
+    }
+
+    .roundToggler{
+        text-align: center;
+        cursor: pointer;
+        padding: 0.8rem;
+        color: $gold;
+        font-weight: 700;
+        border: 1px $gold solid;
+        border-radius: 1rem;
+        margin: 1rem;
+    }
+
+    .roundToggler:hover{
+        opacity: 0.8;
+    }
+
+    .popup-content{
+     overflow-y: scroll;
+     // overflow: hidden;
+     max-height: 78vh;
+    }
+
+    .sessionTitle{
+     font-size: 1.3rem;
+    }
+
+    .vote-content{
+     margin-bottom: 0.5rem;
+
+
+     .message-wrapper{
+         padding: 1rem;
+         background: $blue-light;
+         position:relative;
+         border-radius: 0.5rem;
+
+         .vote-card{
+             @extend .chat-vote;
+             position: absolute;
+             width: 2rem;
+         }
+
+         .name-sender{
+             color: $gold;
+             padding: 0.2rem 2rem;
+             font-weight: 700;
+         }
+
+         h3{
+             padding-left: 2rem;
+             color: $gold;
+         }
+
+     }
+
+
+    }
+
+    .chat-content{
+     margin-bottom: 0.5rem;
+     padding: 0.5rem;
+
+     h3{
+         padding-left: 3rem;
+         color: $gold;
+     }
+
+     .name-sender{
+         font-size: 1.1rem;
+         padding: 0.2rem 2rem;
+         font-weight: 700;
+         color: $gold;
+     }
+
+     .chat-message{
+         padding: 0.7rem;
+         background: $blue-light;
+         border-radius: 1rem;
+         margin:0.5rem;
+     }
+
+     .messageValue{
+         padding: 0.3rem 2rem;
+
+     }
+    }
+
+    .voteParent{
+     display: flex;
+     justify-content: space-around;
+    }
+
+    .sessionSubTitle{
+     border: 1px solid $blue-light;
+     padding: 0.5rem;
+     border-radius: 1rem;
+     text-align: center;
+     margin: 0.2rem;
+    }
+
+    .roundTitles{
+
+    }
+
+    .sub-title{
+     padding: 0.2rem;
+    }
+
+    .center{
+     padding: 0.5rem;
+     text-align: center;
+    }
+
+    .border{
+     border: $blue-light 2px solid;
+     border-radius: 0.5rem;
+     margin-bottom: 0.2rem;
+    }
+
+    .session{
+     padding: 0.2rem;
+    }
+    .toggleBtn{
+     color: $white;
+     cursor: pointer;
+    }
+
+    .chevron{
+     transition: 0.3s ease;
+     color: $gold;
+    }
+
+    .feature-content{
+     padding: 0rem 2rem 0rem 2rem;
+
+    }
+ }

@@ -30,6 +30,11 @@
 }
 
 .session {
+
+    .closepopup{
+        display: none;
+    }
+
     #app{
         overflow: scroll;
 
