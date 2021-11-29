@@ -30,6 +30,11 @@
 }
 
 .session {
+
+    .closepopup{
+        display: none;
+    }
+
     #app{
         overflow: scroll;
 
@@ -38,6 +43,43 @@
     h1 {
         margin-bottom: 25px;
         text-align: left;
+    }
+
+    .timeoutPopup{
+        background: $blue-dark;
+        z-index: 1;
+        width: 50%;
+        height: 60vh;
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        border-radius: 1rem;
+        h2{
+            text-align: center;
+            font-size: 3rem;
+            color: $white;
+            padding: 1rem;
+        }
+        p{
+            font-size: 2rem;
+            color: $white;
+            text-align: center;
+        }
+        .time{
+            padding: 1rem;
+            color: $gold;
+            font-weight: 700;
+        }
+        .content{
+            padding: 1.5rem;
+            background: $blue-light;
+            margin: 1rem 4rem ;
+            border-radius: 1rem;
+        }
     }
 
     &-progress {
