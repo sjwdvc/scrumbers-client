@@ -10,7 +10,7 @@
 				<Input id="coffee" value="coffee-timeout" type="number" placeholder="Coffee-timeout minutes" />
 
 				<Label for="rules" content="Admin rules" />
-				<Select id="rules" name="adminRules" :options="adminRules" />
+				<Select id="rules" name="adminRules" :options="adminRules" @updateSelect="updateSelect"/>
 
 				<p class="error">{{error}}</p>
 				<Button content="Generate link"/>
@@ -42,6 +42,10 @@ export default
 	{
 		return {
 			url: '',
+			settings : {
+				coffeeTimeout: '',
+				gameRule : ''
+			},
 			name: '',
 			token: '',
 			error: '',
@@ -110,6 +114,10 @@ export default
 			SOCKET.on('createRoom', data => {
 				this.$router.push({name: 'sharelink', params: {key: data.key}});
 			})
+		},
+		updateSelect(value)
+		{
+			this.settings.gameRule = value;
 		}
 	}
 }
