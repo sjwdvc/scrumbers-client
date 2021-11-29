@@ -29,18 +29,18 @@
 			</form>
 			<div class='flex space-between'>
 				<a>Change password</a>
-				<a @click="TogglePopup()" >History</a>
+				<a @click="$refs.history.togglePopup()" >History</a>
 			</div>
 
 		</div>
-		<SessionHistory :feature-data="this.featureData"/>
+		<SessionHistory :feature-data="this.featureData" ref="history"/>
 	</section>
 	
 </template>
 
 <script>
 import axios from "axios";
-import {SERVER, TOKEN, USER} from "../constants";
+import {SERVER, SOCKET, TOKEN, USER} from "../constants"
 import Button from "../components/Button";
 import DisplayHeader from "../components/text/DisplayHeader";
 import $ from "jquery";
@@ -79,15 +79,15 @@ export default {
 			}
 		}).then(response => this.profile = response.data);
 
-		axios.get(SERVER + 'session/profile', {
-			headers: {
-				Authorization: TOKEN
-			}
-		}).then(response => {
-			this.featureData = response.data.sessions.data;
-			console.log(this.featureData);
 
-			});
+		SOCKET.emit('session', {event: 'history', config: 'all', email: USER.email})
+		SOCKET.on('history', data => {
+			this.featureData = data.sessions
+		})
+
+
+
+		this.$refs.history.togglePopup()
 
 	},
 	methods: {
@@ -140,34 +140,6 @@ export default {
 			 	.catch(function(error) {
 					console.log(error);
 			 	});
-		},
-		ToggleDiv: function(i)
-		{
-			$("#featureDiv-"+i).toggle(400);
-			document.querySelector(".chevronSpan"+i).classList.toggle('open');
-	
-		},
-		ToggleVotes: function(i)
-		{
-			$("#votesDiv-"+i).toggle(400);
-			$("#votesRounds-"+i).toggle(400);
-			document.querySelector(".votesChevron"+i).classList.toggle('open');
-
-		},
-		ToggleChats: function(i)
-		{
-			$("#chatsDiv-"+i).toggle(400);
-			$(".chats-"+i).toggle(400);
-			document.querySelector(".chatsChevron"+i).classList.toggle('open');
-
-		},
-		TogglePopup: function()
-		{
-			$("#history").toggle(400);
-		},
-		ToggleChatRound: function(){
-			this.chatround= !this.chatround;
-
 		}
 	}
 }

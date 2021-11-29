@@ -58,6 +58,7 @@
 					</div>
 				</div>
 			</div>
+			<SessionHistory :feature-data="history" ref="history"/>
 		</div>
 	</section>
 </template>
@@ -69,12 +70,14 @@ import Button from "../components/Button";
 import DisplayHeader from "../components/text/DisplayHeader";
 import ChoicePopup from "../components/ChoicePopup";
 import TextArea from "../components/TextArea";
+import SessionHistory from "../components/SessionHistory"
 
 export default
 {
 	name : "Session",
 	components :
 	{
+		SessionHistory,
 		TextArea,
 		DisplayHeader,
 		ChoicePopup,
@@ -94,6 +97,7 @@ export default
 			showMemberChoices: false,
 			userCard 		: '⏳',
 			submitted 		: false,
+			history  		: [],
 			session 		: {
 				status		: 'round1',
 				started 	: false,
@@ -113,6 +117,8 @@ export default
 	},
 	mounted()
 	{
+
+
 		/**
 		 * Join the session when you load the page and send the key from the url to define which session to join
 		 */
@@ -140,62 +146,72 @@ export default
 		 * Updates feature data in both Session.vue and App.vue when loading the page
 		 */
 		SOCKET.on('load', data => {
+
 			this.$nextTick(() => {
 
-				console.log('loadd socket event')
-
-				console.log(data.data.users)
-
-				// Sets all users their status to the correct status responded from the server
-				data.data.users.forEach(user => {
-					this.users.find(client => client.name === user.name).status = user.status
-				})
-
-				// If the user status === ready, set the submitted value to true
-				this.submitted = this.users.find(user => user.name === USER.name).status === 'ready'
-
-				this.submitted ? this.$refs.submitbutton.disableButton() : this.$refs.submitbutton.enableButton()
-
-				// Sets the feature data
-				this.session.feature 	= data.data;
-
-
-				// Watch spelling if using elsewhere! Both singular and plural
-				this.featuresIndex 		= data.data['featurePointer'];
-				this.featuresLength 	= data.data['featuresLength'];
-
-				this.refreshUserList(data.data);
-
-				this.session.status = data.toLoad;
-
-				// Emit session data to App.vue to update the config menu
-				this.$emit('session:status', {status: data.toLoad});
-				this.$emit('session:checklists', this.session.feature.checklists);
-				this.$emit('session:description', this.session.feature.desc);
-
-				// Fire the resize event to re-scale the game window. This makes it fit into the viewport
-				window.dispatchEvent(new Event('resize'));
-
-				switch(data.toLoad)
+				// end returns different data from the server which is processed differently. Therefore the end state is handled beforehand instead of in the switch case
+				if(data.toLoad === 'end')
 				{
-					case 'round1':
-						this.$emit('closeInfo');
-						break;
+					SOCKET.emit('session', {event : 'history', config: 'single', key: this.sessionId})
+					SOCKET.on('history', data => this.history = data.sessions)
 
-					case 'round2':
-						this.$emit('session:chat:update', data.chats);
-						this.$emit('session:chat:votes', data.chats.votes);
-						this.$emit('openInfo');
+					this.$refs.history.togglePopup()
+				}
+				else
+				{
+					// Sets all users their status to the correct status responded from the server
+					data.data.users.forEach(user => {
+						this.users.find(client => client.name === user.name).status = user.status
+					})
 
-						// Set the chosen number to the card in the name list
-						this.users.forEach(user => user.icon = this.$parent['votes'].find(vote => vote.sender === user.name).value);
+					// If the user status === ready, set the submitted value to true
+					this.submitted = this.users.find(user => user.name === USER.name).status === 'ready'
 
-						// Scroll down the chat window
-						setTimeout(() => {
-							document.querySelector('.info-content-chat-wrapper').scrollTo(0, document.querySelector('.info-content-chat-wrapper').scrollHeight);
-						}, 200)
+					this.submitted ? this.$refs.submitbutton.disableButton() : this.$refs.submitbutton.enableButton()
 
-						break;
+					// Sets the feature data
+					this.session.feature 	= data.data;
+
+
+					// Watch spelling if using elsewhere! Both singular and plural
+					this.featuresIndex 		= data.data['featurePointer'];
+					this.featuresLength 	= data.data['featuresLength'];
+
+					this.refreshUserList(data.data);
+
+					this.session.status = data.toLoad;
+
+					// Emit session data to App.vue to update the config menu
+					this.$emit('session:status', {status: data.toLoad});
+					this.$emit('session:checklists', this.session.feature.checklists);
+					this.$emit('session:description', this.session.feature.desc);
+
+					// Fire the resize event to re-scale the game window. This makes it fit into the viewport
+					window.dispatchEvent(new Event('resize'));
+
+					switch(data.toLoad)
+					{
+						case 'round1':
+							this.$emit('closeInfo');
+							this.$emit('session:chat:updateround', 1)
+							break;
+
+						case 'round2':
+							this.$emit('session:chat:update', data.chats);
+							this.$emit('session:chat:votes', data.chats.votes);
+							this.$emit('session:chat:updateround', 2)
+							this.$emit('openInfo');
+
+							// Set the chosen number to the card in the name list
+							this.users.forEach(user => user.icon = this.$parent['votes'].find(vote => vote.sender === user.name).value);
+
+							// Scroll down the chat window
+							setTimeout(() => {
+								document.querySelector('.info-content-chat-wrapper').scrollTo(0, document.querySelector('.info-content-chat-wrapper').scrollHeight);
+							}, 200)
+
+							break;
+					}
 				}
 			})
 		});
