@@ -236,6 +236,22 @@ export default
 			this.timer();
 		});
 
+
+		/**
+		 * Refresh time on coffee timeout timer
+		 */
+		// Change time of coffee time out
+		SOCKET.on('sendTime', data => {
+			this.timeOut = true;
+			// console.log(data);
+			// console.log(this.timeOut);
+			if(data.timeSeconds ==0 && data.timeMinutes ==0){
+				this.timeOut = false;
+			}
+			this.timeOutMinutes	= data.timeMinutes;
+			this.timeOutSeconds	= data.timeSeconds;
+		});
+
 		store.shareLink.url = this.link = CLIENT + '/session/' + this.$route.params.key;
 		store.shareLink.show = true;
 	},
@@ -367,27 +383,12 @@ export default
 
 
 			},
-			timer(){
-				// After refresh coffee timeout timer dissapears and doesn't come back
-				// NEED TO FIX
-				
+			timer(){	
 				// Show popup
             	this.timeOut = true;
 
 				// Send length of coffee timeout to server
-				SOCKET.emit('timer', { length: this.timeOutLength });
-
-				// Change time of coffee time out
-				SOCKET.on('sendTime', data => {
-					// console.log(data);
-
-					if(data.timeSeconds ==0 && data.timeMinutes ==0){
-						this.timeOut = false;
-					}
-					this.timeOutMinutes	= data.timeMinutes;
-					this.timeOutSeconds	= data.timeSeconds;
-				});
-
+				SOCKET.emit('timer', { length: this.timeOutLength, key: this.$route.params.key });
 			}
 		},
 	computed:
