@@ -12,6 +12,7 @@
 @import "components/select";
 @import "components/displayheader";
 @import "components/sessionhistory";
+@import "components/votespopup.scss";
 
 // Import views & components
 @import "views/session";
@@ -20,9 +21,6 @@
 @import "views/sharelink";
 @import "views/login";
 @import "views/profile";
-
-
-
 
 *{
     margin: 0;

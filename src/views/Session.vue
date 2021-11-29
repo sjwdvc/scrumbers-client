@@ -1,518 +1,665 @@
 <template>
-	<section class="session" ref="session">
-		<div class="container">
-			<ChoicePopup v-if="showMemberChoices"  @choiceSubmit="adminChoiceSubmit" :feature="session.feature" :choices="session.boardMembers"/>
-			<div class="interface" v-if="!session.started">
-				<div class="waitingroom">
+    <section class="session" ref="session">
+        <div class="container">
+            <ChoicePopup
+                v-if="showMemberChoices"
+                @choiceSubmit="adminChoiceSubmit"
+                :feature="session.feature"
+                :choices="session.boardMembers"
+            />
+            <VotesPopup ref="votesPopup" />
+            <div class="interface" v-if="!session.started">
+                <div class="waitingroom">
+                    <v-lottie-player
+                        name="cards"
+                        loop
+                        path="https://assets8.lottiefiles.com/private_files/lf30_klsv8ygt.json"
+                        height="100px"
+                        style="margin: 0 auto"
+                    />
+                    <DisplayHeader
+                        content="Waiting..."
+                        class="waitingroom-header"
+                    />
 
-					<v-lottie-player name="cards" loop path="https://assets8.lottiefiles.com/private_files/lf30_klsv8ygt.json" height="100px" style="margin: 0 auto"/>
-					<DisplayHeader content="Waiting..." class="waitingroom-header"/>
+                    <div class="waitingroom-users">
+                        <p
+                            class="user"
+                            v-for="user in users"
+                            :key="user.index"
+                            :class="{ admin: user.name === admin }"
+                        >
+                            {{ user.name }}
+                        </p>
+                    </div>
 
-					<div class="waitingroom-users">
-						<p class="user" v-for="user in users" :key="user.index" :class=" {'admin' : user.name === admin}">{{user.name}}</p>
-					</div>
+                    <Button
+                        content="Start session"
+                        v-if="admin === name"
+                        @click.native="startSession"
+                    />
+                </div>
+            </div>
 
-					<Button content="Start session" v-if="admin === name" @click.native="startSession"/>
-				</div>
-			</div>
+            <div class="session-progress" v-if="session.started">
+                <div class="session-progress-background"></div>
+                <div
+                    class="session-progress-bar"
+                    v-bind:style="{ width: calculateWidth }"
+                ></div>
+            </div>
 
-			<div class="session-progress" v-if="session.started">
-				<div class="session-progress-background"></div>
-				<div class="session-progress-bar" v-bind:style="{ width: calculateWidth }"></div>
-			</div>
-
-			<div class="session-game flex" v-if="session.started">
-				<div class="session-game-users">
-					<p class="session-game-header">Users</p>
-					<div class="session-game-users-user" v-for="user in users" :key="user.index" :class="user.status">
-						{{user.name}}
-						<div class="session-game-users-user-card">{{ user.icon }}</div>
-					</div>
-				</div>
-				<div class="session-game-features">
-					<p class="session-game-header">Feature</p>
-					<h1 class="session-game-features-feature flex">
-						{{session.feature.name}}
-						<div class="session-game-features-feature-controls flex flex-row space-between">
-							<span>{{ featuresIndex }}/{{ featuresLength }}</span>
-							<svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" @click="$emit('toggleInfo')">
-								<g id="Icon_feather-info" data-name="Icon feather-info" transform="translate(-1.5 -1.5)">
-									<path id="Path_54" data-name="Path 54" d="M33,18A15,15,0,1,1,18,3,15,15,0,0,1,33,18Z" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
-									<path id="Path_55" data-name="Path 55" d="M18,24V18" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
-									<path id="Path_56" data-name="Path 56" d="M18,12h0" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
-								</g>
-							</svg>
-						</div>
-					</h1>
-					<div class="session-game-features-cards custom-scrollbar">
-						<div class="session-game-features-cards-card" v-for="(card, index) in session.cards" :data-card="card" @mouseenter="activeCard" @mouseleave="staticCard" @click="selectCard" :key="index">
-							<p v-if="card !== 'coffee'">{{card}}</p>
-							<img src="/img/coffee.svg" alt="" v-else>
-						</div>
-					</div>
-					<div class="session-game-features-reason">
-						<div class="relative">
-							<TextArea name="description" placeholder="Explain your choice (max. 250 chars)" class="animate__animated" v-model="session.decision.desc" max="200" required/>
-							<Button content="Submit" @click.native="submit" ref="submitbutton" />
-						</div>
-					</div>
-				</div>
-			</div>
-			<SessionHistory :feature-data="history" ref="history"/>
-		</div>
-		<div class="timeoutPopup" v-if="timeOut">
-			<h2>Coffee Time-out</h2>
-			<div class="content">
-				<p>Time left:</p>
-				<p class="time">{{timeOutMinutes}}:{{timeOutSeconds}}</p>
-			</div>
-		</div>
-	</section>
+            <div class="session-game flex" v-if="session.started">
+                <div class="session-game-users">
+                    <p class="session-game-header">Users</p>
+                    <div
+                        class="session-game-users-user"
+                        v-for="user in users"
+                        :key="user.index"
+                        :class="user.status"
+                    >
+                        {{ user.name }}
+                        <div class="session-game-users-user-card">
+                            {{ user.icon }}
+                        </div>
+                    </div>
+                </div>
+                <div class="session-game-features">
+                    <p class="session-game-header">Feature</p>
+                    <h1 class="session-game-features-feature flex">
+                        {{ session.feature.name }}
+                        <div
+                            class="
+                                session-game-features-feature-controls
+                                flex flex-row
+                                space-between
+                            "
+                        >
+                            <span
+                                >{{ featuresIndex }}/{{ featuresLength }}</span
+                            >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="33"
+                                height="33"
+                                viewBox="0 0 33 33"
+                                @click="$emit('toggleInfo')"
+                            >
+                                <g
+                                    id="Icon_feather-info"
+                                    data-name="Icon feather-info"
+                                    transform="translate(-1.5 -1.5)"
+                                >
+                                    <path
+                                        id="Path_54"
+                                        data-name="Path 54"
+                                        d="M33,18A15,15,0,1,1,18,3,15,15,0,0,1,33,18Z"
+                                        fill="none"
+                                        stroke="#d0bb7e"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="3"
+                                    />
+                                    <path
+                                        id="Path_55"
+                                        data-name="Path 55"
+                                        d="M18,24V18"
+                                        fill="none"
+                                        stroke="#d0bb7e"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="3"
+                                    />
+                                    <path
+                                        id="Path_56"
+                                        data-name="Path 56"
+                                        d="M18,12h0"
+                                        fill="none"
+                                        stroke="#d0bb7e"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="3"
+                                    />
+                                </g>
+                            </svg>
+                        </div>
+                    </h1>
+                    <div class="session-game-features-cards custom-scrollbar">
+                        <div
+                            class="session-game-features-cards-card"
+                            v-for="(card, index) in session.cards"
+                            :data-card="card"
+                            @mouseenter="activeCard"
+                            @mouseleave="staticCard"
+                            @click="selectCard"
+                            :key="index"
+                        >
+                            <p v-if="card !== 'coffee'">{{ card }}</p>
+                            <img src="/img/coffee.svg" alt="" v-else />
+                        </div>
+                    </div>
+                    <div class="session-game-features-reason">
+                        <div class="relative">
+                            <TextArea
+                                name="description"
+                                placeholder="Explain your choice (max. 250 chars)"
+                                class="animate__animated"
+                                v-model="session.decision.desc"
+                                max="200"
+                                required
+                            />
+                            <Button
+                                content="Submit"
+                                @click.native="submit"
+                                ref="submitbutton"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <SessionHistory :feature-data="history" ref="history" />
+        </div>
+        <div class="timeoutPopup" v-if="timeOut">
+            <h2>Coffee Time-out</h2>
+            <div class="content">
+                <p>Time left:</p>
+                <p class="time">{{ timeOutMinutes }}:{{ timeOutSeconds }}</p>
+            </div>
+        </div>
+    </section>
 </template>
 
 <script>
-import {SOCKET, USER, CLIENT} from "../constants";
+import { SOCKET, USER, CLIENT } from "../constants";
 import store from "../store";
 import Button from "../components/Button";
 import DisplayHeader from "../components/text/DisplayHeader";
 import ChoicePopup from "../components/ChoicePopup";
 import TextArea from "../components/TextArea";
-import SessionHistory from "../components/SessionHistory"
+import SessionHistory from "../components/SessionHistory";
+import VotesPopup from "../components/VotesPopup";
 
-export default
-{
-	name : "Session",
-	components :
-	{
-		SessionHistory,
-		TextArea,
-		DisplayHeader,
-		ChoicePopup,
-		Button
-	},
-	data()
-	{
-		return {
-			name 			        : '',
-			sessionId 		    : this.$route.params.key,
-			users 			      : [],
-			admin 			      : false,
-			featuresLength	  : 0,
-			featuresIndex	    : 1,
-			width			        : 0,
-      submitted 		    : false,
-			history  		      : [],
-      tooltip 		      : 'More info',
-			showMemberChoices : false,
-      userCard 		      : '⏳',
-			submitted 	      : false,
-			timeOut 		      : false,
-			timeOutLength	    : 0,
-			timeOutMinutes	  : 0,
-			timeOutSeconds	  : 0,
-			session 		      : {
-          status		    : 'round1',
-          started 	    : false,
-          cards 		    : ['coffee', '0', '1/2', '1', '2', '3', '5', '8', '13', '20', '40', '100'],
-          feature 	    : {
-              name	    : '',
-              desc	    : ''
-          },
-			    decision      : {
-						number	    : 0,
-						desc  	    : ''
-					}
-			}
-		}
-	},
-	mounted()
-	{
+export default {
+    name: "Session",
+    components: {
+        SessionHistory,
+        TextArea,
+        DisplayHeader,
+        ChoicePopup,
+        VotesPopup,
+        Button,
+    },
+    data() {
+        return {
+            name: "",
+            sessionId: this.$route.params.key,
+            users: [],
+            admin: false,
+            featuresLength: 0,
+            featuresIndex: 1,
+            width: 0,
+            submitted: false,
+            history: [],
+            tooltip: "More info",
+            showMemberChoices: false,
+            userCard: "⏳",
+            timeOut: false,
+            timeOutLength: 0,
+            timeOutMinutes: 0,
+            timeOutSeconds: 0,
+            session: {
+                status: "round1",
+                started: false,
+                cards: [
+                    "coffee",
+                    "0",
+                    "1/2",
+                    "1",
+                    "2",
+                    "3",
+                    "5",
+                    "8",
+                    "13",
+                    "20",
+                    "40",
+                    "100",
+                ],
+                feature: {
+                    name: "",
+                    desc: "",
+                },
+                decision: {
+                    number: 0,
+                    desc: "",
+                },
+            },
+        };
+    },
+    mounted() {
+        /**
+         * Join the session when you load the page and send the key from the url to define which session to join
+         */
+        SOCKET.emit("session", {
+            event: "join",
+            key: this.$route.params.key,
+            name: USER.name,
+            email: USER.email,
+            coffee: this.timeOutLength,
+        });
 
+        /**
+         * Retrieves some session data from the socket server and sets client side variables
+         */
+        SOCKET.on("joined", (args) => {
+            this.admin = args.data.admin;
+            this.name = USER.name;
+            this.session.started = args.data.started;
 
-		/**
-		 * Join the session when you load the page and send the key from the url to define which session to join
-		 */
-		SOCKET.emit('session', {
-			event	: 'join',
-			key		: this.$route.params.key,
-			name	: USER.name,
-			email	: USER.email,
-			coffee 	: this.timeOutLength
-		});
+            this.$toast.open({
+                message: args.data.name + " has joined the game",
+                type: "success",
+                position: "top-right",
+            });
 
-		/**
-		 * Retrieves some session data from the socket server and sets client side variables
-		 */
-		SOCKET.on('joined', args => {
-			this.admin 				= args.data.admin;
-			this.name  				= USER.name;
-			this.session.started 	= args.data.started;
+            this.refreshUserList(args.data);
+        });
 
-			this.$toast.open({message: args.data.name + ' has joined the game', type: "success", position: "top-right"});
+        /**
+         * Updates feature data in both Session.vue and App.vue when loading the page
+         */
+        SOCKET.on("load", (data) => {
+            this.$nextTick(() => {
+                // set coffee time out
+                this.timeOutLength = data.data.coffee;
+                if (data.toLoad !== "waiting")
+                    this.$refs.submitbutton.enableButton();
 
-			this.refreshUserList(args.data);
-		});
+                // Sets all users their status to the correct status responded from the server
+                data.data.users.forEach((user) => {
+                    this.users.find(
+                        (client) => client.name === user.name
+                    ).status = user.status;
+                });
 
-		/**
-		 * Updates feature data in both Session.vue and App.vue when loading the page
-		 */
-		SOCKET.on('load', data => {
+                // end returns different data from the server which is processed differently. Therefore the end state is handled beforehand instead of in the switch case
+                if (data.toLoad === "end") {
+                    SOCKET.emit("session", {
+                        event: "history",
+                        config: "single",
+                        key: this.sessionId,
+                    });
+                    SOCKET.on(
+                        "history",
+                        (data) => (this.history = data.sessions)
+                    );
 
-			this.$nextTick(() => {
-				// set coffee time out
-				this.timeOutLength = data.data.coffee;
-				if(data.toLoad !== 'waiting')
-					this.$refs.submitbutton.enableButton();
+                    this.$refs.history.togglePopup();
+                } else {
+                    // Sets all users their status to the correct status responded from the server
+                    data.data.users.forEach((user) => {
+                        this.users.find(
+                            (client) => client.name === user.name
+                        ).status = user.status;
+                    });
 
-				// Sets all users their status to the correct status responded from the server
-				data.data.users.forEach(user => {
-					this.users.find(client => client.name === user.name).status = user.status
-				})
+                    // If the user status === ready, set the submitted value to true
+                    this.submitted =
+                        this.users.find((user) => user.name === USER.name)
+                            .status === "ready";
 
-				// end returns different data from the server which is processed differently. Therefore the end state is handled beforehand instead of in the switch case
-				if(data.toLoad === 'end')
-				{
-					SOCKET.emit('session', {event : 'history', config: 'single', key: this.sessionId})
-					SOCKET.on('history', data => this.history = data.sessions)
+                    this.submitted
+                        ? this.$refs.submitbutton.disableButton()
+                        : this.$refs.submitbutton.enableButton();
 
-					this.$refs.history.togglePopup()
-				}
-				else
-				{
-					// Sets all users their status to the correct status responded from the server
-					data.data.users.forEach(user => {
-						this.users.find(client => client.name === user.name).status = user.status
-					})
+                    // Sets the feature data
+                    this.session.feature = data.data;
 
-					// If the user status === ready, set the submitted value to true
-					this.submitted = this.users.find(user => user.name === USER.name).status === 'ready'
+                    // Watch spelling if using elsewhere! Both singular and plural
+                    this.featuresIndex = data.data["featurePointer"];
+                    this.featuresLength = data.data["featuresLength"];
 
-					this.submitted ? this.$refs.submitbutton.disableButton() : this.$refs.submitbutton.enableButton()
+                    this.refreshUserList(data.data);
 
-					// Sets the feature data
-					this.session.feature 	= data.data;
+                    this.session.status = data.toLoad;
 
+                    // Emit session data to App.vue to update the config menu
+                    this.$emit("session:status", { status: data.toLoad });
+                    this.$emit(
+                        "session:checklists",
+                        this.session.feature.checklists
+                    );
+                    this.$emit(
+                        "session:description",
+                        this.session.feature.desc
+                    );
 
-					// Watch spelling if using elsewhere! Both singular and plural
-					this.featuresIndex 		= data.data['featurePointer'];
-					this.featuresLength 	= data.data['featuresLength'];
+                    // Fire the resize event to re-scale the game window. This makes it fit into the viewport
+                    window.dispatchEvent(new Event("resize"));
 
-					this.refreshUserList(data.data);
+                    switch (data.toLoad) {
+                        case "round1":
+                            this.$emit("closeInfo");
+                            this.$emit("session:chat:updateround", 1);
+                            break;
 
-					this.session.status = data.toLoad;
+                        case "round2":
+                            this.$emit("session:chat:update", data.chats);
+                            this.$emit("session:chat:votes", data.chats.votes);
+                            this.$emit("session:chat:updateround", 2);
+                            this.$emit("openInfo");
 
-					// Emit session data to App.vue to update the config menu
-					this.$emit('session:status', {status: data.toLoad});
-					this.$emit('session:checklists', this.session.feature.checklists);
-					this.$emit('session:description', this.session.feature.desc);
+                            // Set the chosen number to the card in the name list
+                            this.users.forEach(
+                                (user) =>
+                                    (user.icon = this.$parent["votes"].find(
+                                        (vote) => vote.sender === user.name
+                                    ).value)
+                            );
 
-					// Fire the resize event to re-scale the game window. This makes it fit into the viewport
-					window.dispatchEvent(new Event('resize'));
+                            // Scroll down the chat window
+                            setTimeout(() => {
+                                document
+                                    .querySelector(".info-content-chat-wrapper")
+                                    .scrollTo(
+                                        0,
+                                        document.querySelector(
+                                            ".info-content-chat-wrapper"
+                                        ).scrollHeight
+                                    );
+                            }, 200);
 
-					switch(data.toLoad)
-					{
-						case 'round1':
-							this.$emit('closeInfo');
-							this.$emit('session:chat:updateround', 1)
-							break;
+                            break;
+                    }
+                }
+            });
+        });
 
-						case 'round2':
-							this.$emit('session:chat:update', data.chats);
-							this.$emit('session:chat:votes', data.chats.votes);
-							this.$emit('session:chat:updateround', 2)
-							this.$emit('openInfo');
+        /**
+         * Sets the status of a client that has submitted to ready
+         */
+        SOCKET.on("submit", (data) => {
+            this.users.find((user) => user.name === data.user).status = "ready";
+            this.users.find((user) => user.name === data.user).icon =
+                this.userStatusIcon(data.user, "ready");
+        });
 
-							// Set the chosen number to the card in the name list
-							this.users.forEach(user => user.icon = this.$parent['votes'].find(vote => vote.sender === user.name).value);
+        /**
+         * Activates the game for all clients in the waiting room when the admin starts the session
+         */
+        SOCKET.on("started", (data) => {
+            this.session.started = true;
+            this.session.status = "round1";
+        });
 
-							// Scroll down the chat window
-							setTimeout(() => {
-								document.querySelector('.info-content-chat-wrapper').scrollTo(0, document.querySelector('.info-content-chat-wrapper').scrollHeight);
-							}, 200)
+        /**
+         * When the session cannot be found on the server, redirect to the 404 page
+         */
+        SOCKET.on("undefinedSession", () => {
+            this.$router.push({
+                name: "Error",
+                params: {
+                    message:
+                        "Oops.. This session can't be found. Please double check your URL or contact the room administrator",
+                },
+            });
+        });
 
-							break;
-					}
-				}
-			})
-		});
+        /**
+         * When a user left a session
+         */
+        SOCKET.on("leftSession", (args) => {
+            this.$toast.open({
+                message: args.data.userLeft + " has left the game",
+                type: "warning",
+                position: "top-right",
+            });
+            this.refreshUserList(args.data);
+        });
 
+        /**
+         * Admin events
+         */
+        SOCKET.on("admin", (args) => {
+            switch (args.event) {
+                case "choose":
+                    // Let the admin choose a member to add to the card
+                    this.session.boardMembers = [];
+                    args.members.forEach((member) => {
+                        this.session.boardMembers.push({
+                            content: member.fullName,
+                            value: member.id,
+                        });
+                    });
+                    this.showMemberChoices = true;
+                    break;
+            }
+        });
 
-		/**
-		 * Sets the status of a client that has submitted to ready
-		 */
-		SOCKET.on('submit', data => {
-			this.users.find(user => user.name === data.user).status 	= 'ready';
-			this.users.find(user => user.name === data.user).icon 	= this.userStatusIcon(data.user, 'ready')
-		});
+        /**
+         * When timeout timer has to start
+         */
+        SOCKET.on("startTimer", () => {
+            this.timer();
+        });
 
-		/**
-		 * Activates the game for all clients in the waiting room when the admin starts the session
-		 */
-		SOCKET.on('started', data => {
-			this.session.started = true;
-			this.session.status = 'round1';
-		});
-
-		/**
-		 * When the session cannot be found on the server, redirect to the 404 page
-		 */
-		SOCKET.on('undefinedSession', () => {
-			this.$router.push(
-				{
-					name: 'Error',
-					params:
-						{
-							message: "Oops.. This session can't be found. Please double check your URL or contact the room administrator"
-						}
-				}
+		SOCKET.on("results", (result) => {
+			this.$refs.votesPopup.$emit(
+				"showVotesPopup",
+				result
 			);
 		});
 
-		/**
-		 * When a user left a session
-		 */
-		SOCKET.on('leftSession', args => {
-			this.$toast.open({message: args.data.userLeft + ' has left the game', type: "warning", position: "top-right"});
-			this.refreshUserList(args.data);
-		});
+        /**
+         * Refresh time on coffee timeout timer
+         */
+        // Change time of coffee time out
+        SOCKET.on("sendTime", (data) => {
+            this.timeOut = true;
+            // console.log(data);
+            // console.log(this.timeOut);
+            if (data.timeSeconds == 0 && data.timeMinutes == 0) {
+                this.timeOut = false;
+            }
+            this.timeOutMinutes = data.timeMinutes;
+            this.timeOutSeconds = data.timeSeconds;
+        });
+        store.shareLink.url = this.link =
+            CLIENT + "/session/" + this.$route.params.key;
+        store.shareLink.show = true;
+    },
+    methods: {
+        /**
+         * Sets the admin of the server
+         */
+        defineAdmin() {
+            return this.name === USER.admin;
+        },
 
-		/**
-		 * Admin events
-		 */
-		SOCKET.on('admin', args => {
-			switch (args.event)
-			{
-				case 'choose':
-					// Let the admin choose a member to add to the card
-					this.session.boardMembers = [];
-					args.members.forEach(member => {
-						this.session.boardMembers.push({
-							content: member.fullName,
-							value: member.id
-						});
-					});
-					this.showMemberChoices = true;
-				break;
-			}
-		});
-    
-    /**
-		 * When timeout timer has to start
-		 */
-		SOCKET.on('startTimer', () =>{
-			this.timer();
-		});
+        /**
+         * Starts the session
+         */
+        startSession() {
+            this.$refs.session.classList.add("session-started");
+            SOCKET.emit("session", {
+                event: "start",
+                key: this.$route.params.key,
+            });
+        },
 
-		/**
-		 * Refresh time on coffee timeout timer
-		 */
-		// Change time of coffee time out
-		SOCKET.on('sendTime', data => {
-			this.timeOut = true;
-			// console.log(data);
-			// console.log(this.timeOut);
-			if(data.timeSeconds ==0 && data.timeMinutes ==0){
-				this.timeOut = false;
-			}
-			this.timeOutMinutes	= data.timeMinutes;
-			this.timeOutSeconds	= data.timeSeconds;
-		});
-		store.shareLink.url = this.link = CLIENT + '/session/' + this.$route.params.key;
-		store.shareLink.show = true;
-	},
-	methods:
-		{
-			/**
-			 * Sets the admin of the server
-			 */
-			defineAdmin()
-			{
-				return this.name === USER.admin;
-			},
+        /**
+         * Adds the raised card styling class
+         */
+        activeCard(e) {
+            e.target.classList.add("active");
+        },
 
-			/**
-			 * Starts the session
-			 */
-			startSession()
-			{
-				this.$refs.session.classList.add('session-started');
-				SOCKET.emit('session', {event: 'start', key: this.$route.params.key});
-				
-			},
+        /**
+         * Mouse leave event for the card. removes the raised card styling class
+         */
+        staticCard(e) {
+            e.target.classList.remove("active");
+        },
 
-			/**
-			 * Adds the raised card styling class
-			 */
-			activeCard(e)
-			{
-				e.target.classList.add('active');
-			},
+        /**
+         * Apply styling to the card and update the property
+         */
+        selectCard(e) {
+            document
+                .querySelectorAll(".selected")
+                .forEach((selected) => selected.classList.remove("selected"));
+            this.session.decision.number = e.target.dataset.card;
+            e.target.classList.add("selected");
+        },
 
-			/**
-			 * Mouse leave event for the card. removes the raised card styling class
-			 */
-			staticCard(e)
-			{
-				e.target.classList.remove('active');
-			},
+        /**
+         * Reset the cards and comment field
+         */
+        resetChoices() {
+            // Reset the session decisions from round 1
+            document
+                .querySelectorAll(".session-game-features-cards-card")
+                .forEach((card) => {
+                    card.classList.remove("selected");
+                });
 
-			/**
-			 * Apply styling to the card and update the property
-			 */
-			selectCard(e)
-			{
-				document.querySelectorAll('.selected').forEach(selected => selected.classList.remove('selected'));
-				this.session.decision.number = e.target.dataset.card;
-				e.target.classList.add('selected');
-			},
+            this.session.decision = { number: 0, desc: "" };
 
-			/**
-			 * Reset the cards and comment field
-			 */
-			resetChoices()
-			{
-				// Reset the session decisions from round 1
-				document.querySelectorAll('.session-game-features-cards-card').forEach(card => {
-					card.classList.remove('selected');
-				})
+            this.$emit("session:chat:clear");
+        },
 
-				this.session.decision = { number: 0, desc  : '' };
+        /**
+         * Return the correct icon for the user status
+         */
+        userStatusIcon(username, status) {
+            switch (status) {
+                case "waiting":
+                    return "⏳";
+                    break;
 
-				this.$emit('session:chat:clear');
-			},
+                case "ready":
+                    return "✔️";
+                    break;
 
-			/**
-			 * Return the correct icon for the user status
-			 */
-			userStatusIcon(username, status)
-			{
+                case "card":
+                    return this.$parent["votes"].find(
+                        (user) => user.sender === username
+                    ).value;
+                    break;
+            }
+        },
 
-				switch(status)
-				{
-					case 'waiting':
-						return "⏳";
-						break;
+        /**
+         * Update the users and their status
+         */
+        refreshUserList(d) {
+            this.users = [];
 
-					case 'ready':
-						return "✔️";
-						break;
+            d.users.forEach((user) => {
+                this.users.push({
+                    name: user.name,
+                    status: user.status,
+                    icon: this.userStatusIcon(user.name, user.status),
+                });
+            });
+        },
 
-					case 'card':
-						return this.$parent['votes'].find(user => user.sender === username).value;
-						break;
-				}
-			},
+        /**
+         * Fires when you click submit
+         * Adds some styling and sends the data to the server
+         */
+        submit() {
+            // Sets your client to the submitted state to prevent double submits etc
+            this.submitted = true;
 
-			/**
-			 * Update the users and their status
-			 */
-			refreshUserList(d)
-			{
-				this.users 		= [];
+            // Define textarea element for styling purposes
+            let textbox = document.querySelector("textarea");
 
-				d.users.forEach(user => {
-					this.users.push(
-						{
-							name	: user.name,
-							status	: user.status,
-							icon	: this.userStatusIcon(user.name, user.status)
-						})
-				});
-			},
+            if (this.session.decision.desc === "") {
+                this.$toast.open({
+                    message: "Please explain your decision in the field below",
+                    type: "error",
+                    position: "top-right",
+                });
 
-			/**
-			 * Fires when you click submit
-			 * Adds some styling and sends the data to the server
-			 */
-			submit()
-			{
-				// Sets your client to the submitted state to prevent double submits etc
-				this.submitted = true
+                // Some styling to announce an error in the textarea
+                textbox.style.border = "2px solid #A03A3C";
+                textbox.classList.add("animate__headShake");
 
-				// Define textarea element for styling purposes
-				let textbox = document.querySelector('textarea')
+                textbox.addEventListener("animationend", (e) => {
+                    e.currentTarget.classList.remove("animate__headShake");
+                });
+                return;
+            }
+            // Remove textarea error styling
+            textbox.style.border = "none";
+            textbox.classList.remove("animate__headShake");
 
-				if(this.session.decision.desc === "")
-				{
-					this.$toast.open({message: 'Please explain your decision in the field below', type: "error", position: "top-right"});
+            this.$refs.submitbutton.disableButton();
 
-					// Some styling to announce an error in the textarea
-					textbox.style.border = '2px solid #A03A3C';
-					textbox.classList.add('animate__headShake');
+            // Set your own status icon to a checkmark
+            this.users.find((user) => user.name === USER.name).icon =
+                this.userStatusIcon(USER.name, "ready");
 
-					textbox.addEventListener('animationend', e => {
-						e.currentTarget.classList.remove('animate__headShake')
-					})
-					return
-				}
-				// Remove textarea error styling
-				textbox.style.border = 'none';
-				textbox.classList.remove('animate__headShake');
+            //quick fix for the coffee card
+            this.session.decision.number === "coffee"
+                ? (this.session.decision.number = -1)
+                : "";
+            if (this.session.decision.number == "1/2") {
+                this.session.decision.number = 0.5;
+            }
 
-				this.$refs.submitbutton.disableButton()
+            SOCKET.emit("feature", {
+                key: this.$route.params.key,
+                event: "submit",
+                number: this.session.decision.number,
+                desc: this.session.decision.desc,
+                email: USER.email,
+            });
 
-				// Set your own status icon to a checkmark
-				this.users.find(user => user.name === USER.name).icon = this.userStatusIcon(USER.name, 'ready')
+            switch (this.session.status) {
+                case "round1":
+                    break;
 
-				//quick fix for the coffee card
-				this.session.decision.number === 'coffee' ? this.session.decision.number = -1 : ''
-				if( this.session.decision.number == "1/2"){
-					this.session.decision.number = 0.5;
-				}
+                case "round2":
+                    this.resetChoices();
+                    this.$emit("closeInfo");
+                    this.$emit("hideChat");
+                    break;
+            }
+        },
+        /**
+         * Send our choice back to the server so we can continue
+         */
+        adminChoiceSubmit(memberID) {
+            SOCKET.emit("feature", {
+                key: this.$route.params.key,
+                event: "choose",
+                memberID,
+            });
+            this.showMemberChoices = false;
+        },
 
-				SOCKET.emit('feature', {
-					key  	: this.$route.params.key,
-					event	: 'submit',
-					number 	: this.session.decision.number,
-					desc 	: this.session.decision.desc,
-					email   : USER.email
-				});
+        timer() {
+            // Show popup
+            this.timeOut = true;
 
-				switch(this.session.status)
-				{
-					case 'round1':
-					break;
-          
-          case 'round2':
-						this.resetChoices();
-						this.$emit('closeInfo');
-						this.$emit('hideChat');
-					break;
-				}
+            // Send length of coffee timeout to server
+            SOCKET.emit("timer", {
+                length: this.timeOutLength,
+                key: this.$route.params.key,
+            });
+        },
+    },
+    computed: {
+        // Calculates the width for the progress bar
+        calculateWidth: function () {
+            let procent = 100 / Number(this.featuresLength);
+            let calculatedWidth = Number(procent) * Number(this.featuresIndex);
 
-			},
-			/**
-			 * Send our choice back to the server so we can continue
-			 */
-			adminChoiceSubmit(memberID)
-			{
-				SOCKET.emit('feature', {
-            key			: this.$route.params.key,
-            event		: 'choose',
-            memberID
-				});
-				this.showMemberChoices = false;
-			},
-      
-      timer(){	
-				// Show popup
-        this.timeOut = true;
+            if (calculatedWidth > 100) calculatedWidth = 100;
 
-				// Send length of coffee timeout to server
-				SOCKET.emit('timer', { length: this.timeOutLength, key: this.$route.params.key });
-      }
-	},
-	computed:
-		{	// Calculates the width for the progress bar
-			calculateWidth: function () {
-				let procent = 100/Number(this.featuresLength);
-				let calculatedWidth = Number(procent)*Number(this.featuresIndex);
-
-				if(calculatedWidth > 100)
-					calculatedWidth = 100;
-
-      			return calculatedWidth+"%";
-    		}
-		}
-}
+            return calculatedWidth + "%";
+        },
+    },
+};
 </script>
