@@ -88,6 +88,7 @@
 				@session:chat:clear="clearChats"
 				@session:chat:update="updateChats"
 				@session:chat:votes="updateVotes"
+				@session:chat:updateround="updateRound"
 				@toggleInfo="toggleInfo"
 				@openInfo="openInfo"
 				@closeInfo="closeInfo"
@@ -117,6 +118,12 @@ export default {
 			chatOpen 		: false,
 			menuUser 		: USER,
 			sessionStatus 	: '',
+			chats			: [],
+			votes			: [],
+			chatmessage		: "",
+			checklists 		: null,
+			description 	: "",
+			chatround 		: 0,
 			menuLinks 		:
 			[
 				{
@@ -130,11 +137,6 @@ export default {
 					link: 'createroom'
 				}
 			],
-			chats: [],
-			votes: [],
-			chatmessage: "",
-			checklists : null,
-			description : ""
 		}
 	},
 	components :
@@ -218,6 +220,11 @@ export default {
 						chat.vote = vote.value
 				})
 			})
+		},
+
+		updateRound(data)
+		{
+			this.chatround = data
 		},
 
 		clearChats()
@@ -316,7 +323,8 @@ export default {
 					key: this.$route.params.key,
 					sender: USER.name,
 					message: this.chatmessage,
-					vote : this.votes.find(vote => vote.sender === USER.name).value
+					vote : this.votes.find(vote => vote.sender === USER.name).value,
+					round: this.chatround
 				});
 
 				this.chatmessage = ""
@@ -354,9 +362,6 @@ export default {
 					})
 					break;
 			}
-
-			console.log('chat received  : ')
-			console.log(args)
 		});
 	}
 }

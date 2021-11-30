@@ -4,14 +4,6 @@
 @import "core/typography";
 @import "core/animations";
 
-// Import views & components
-@import "views/session";
-@import "views/home";
-@import "views/createroom";
-@import "views/sharelink";
-@import "views/login";
-@import "views/profile";
-
 @import "components/button";
 @import "components/chatmessage";
 @import "components/input";
@@ -19,7 +11,16 @@
 @import "components/label";
 @import "components/select";
 @import "components/displayheader";
+@import "components/sessionhistory";
+@import "components/votespopup.scss";
 
+// Import views & components
+@import "views/session";
+@import "views/home";
+@import "views/createroom";
+@import "views/sharelink";
+@import "views/login";
+@import "views/profile";
 
 *{
     margin: 0;

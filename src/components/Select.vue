@@ -9,13 +9,13 @@ export default {
 	name : "Select",
 	props: {
 		name: String,
-		options: Array
+		options: Array,
 	},
 	methods: {
 		updateValue(value)
 		{
 			this.$emit('updateSelect', value);
-		},
+		}
 	}
 }
 </script>
