@@ -19,15 +19,13 @@ import Button from "./Button.vue";
 
 export default {
     name: "ChoicePopup",
-    data() {
+    data()
+    {
         return {
             choice: null
         };
     },
     props: {
-        /**
-         * @type {Array.<{content: String, value: String}>}
-         */
         choices: Array,
         feature: Object,
     },
