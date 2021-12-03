@@ -95,6 +95,7 @@ export default {
             width: 0,
             submitted: false,
             history: [],
+            playerJoinMessages: [],
             tooltip: "More info",
             showMemberChoices: false,
             userCard: "⏳",
@@ -136,12 +137,18 @@ export default {
             this.name = USER.name;
             this.session.started = args.data.started;
 
-            this.$toast.open({
-                message: args.data.name + " has joined the game",
-                type: "success",
-                position: "top-right",
-            });
 
+            // if statement
+            if(!this.playerJoinMessages.includes(args.data.name))
+            {
+                this.$toast.open({
+                    message: args.data.name + " has joined the game",
+                    type: "success",
+                    position: "top-right",
+                });
+                this.playerJoinMessages.push(args.data.name);
+            }
+            // if player is in playerjoinmessages dont execute $toast
             this.refreshUserList(args.data);
         });
 
@@ -155,7 +162,7 @@ export default {
                 this.timeOutLength = data.data.coffee;
                 
                 // Reset the session display
-	            document.querySelector('.session-game').classList.remove('d-none')
+	            // document.querySelector('.session-game').classList.remove('d-none')
 	
 	            console.log('reloading')
                 
@@ -258,6 +265,12 @@ export default {
          * @param {Object} args - the userlist returned from the server
          */
         SOCKET.on("leftSession", args => {
+            // Remove a joined user from the array
+            let playerIndex = this.playerJoinMessages.indexOf(args.data.name);
+            if (playerIndex > -1) {
+            this.playerJoinMessages.splice(playerIndex, 1);
+            }
+
             this.$toast.open({message: args.data.userLeft + " has left the game", type: "warning", position: "top-right"});
             this.refreshUserList(args.data);
         });
