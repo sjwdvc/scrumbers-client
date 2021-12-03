@@ -9,8 +9,9 @@
 					<img src="/img/eye.svg" alt="" class="password-show" @mousedown="showPassword" @mouseup="hidePassword">
 				</div>
 				<p>{{ error }}</p>
-				<Button type="submit" content="Log in" class="login-form-button" />
+				<Button type="submit" content="Login" class="login-form-button" />
 			</form>
+			<Button @click.native="loginMicrosoft" content="Login with Microsoft" class="" />
 		</div>
 		<p> No account yet?
 			<router-link to="register">Click here to register</router-link>
@@ -109,6 +110,13 @@ export default
 		hidePassword()
 		{
 			this.passwordType = 'password'
+		},
+		loginMicrosoft()
+		{
+			axios.post(SERVER + 'user/login/microsoft', {}).then(response => {
+				console.log(response);
+				location.replace(response.data.oauthUrl);
+			});
 		}
 	},
 	mounted()
