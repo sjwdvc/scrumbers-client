@@ -3,6 +3,8 @@
 </template>
 
 <script>
+import EVENTBUS from '../eventbus'
+
 export default {
 	name: "Button",
 	props:

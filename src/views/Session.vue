@@ -1,8 +1,6 @@
 <template>
     <section class="session" ref="session">
         <div class="container">
-            <ChoicePopup v-if="showMemberChoices" @choiceSubmit="adminChoiceSubmit" :feature="session.feature" :choices="session.boardMembers"/>
-            <VotesPopup ref="votesPopup" />
             <div class="interface" v-if="!session.started">
                 <div class="waitingroom">
                     <v-lottie-player name="cards" loop path="https://assets8.lottiefiles.com/private_files/lf30_klsv8ygt.json" height="100px" style="margin: 0 auto"/>
@@ -16,12 +14,12 @@
                 </div>
             </div>
 
-            <div class="session-progress" v-if="session.started">
+            <div class="session-progress" v-if="session.started" :class="{'d-none' : !session.visible}">
                 <div class="session-progress-background"></div>
                 <div class="session-progress-bar" v-bind:style="{ width: calculateWidth }"></div>
             </div>
 
-            <div class="session-game flex" v-if="session.started">
+            <div class="session-game flex" v-if="session.started" :class="{'d-none' : !session.visible}">
                 <div class="session-game-users">
                     <p class="session-game-header">Users</p>
                     <div class="session-game-users-user" v-for="user in users" :key="user.index" :class="user.status">
@@ -56,12 +54,15 @@
             </div>
             <SessionHistory :feature-data="history" ref="history" />
 	        <CoffeeTimer />
+	        <ChoicePopup @choiceSubmit="adminChoiceSubmit" />
+	        <VotesPopup ref="votesPopup" />
         </div>
     </section>
 </template>
 
 <script>
 import { SOCKET, USER, CLIENT } from "../constants";
+import EVENTBUS from '../eventbus.js';
 import store from "../store";
 import Button from "../components/Button";
 import DisplayHeader from "../components/text/DisplayHeader";
@@ -84,7 +85,11 @@ export default {
         VotesPopup,
         Button,
     },
-    data() {
+	updated ()
+	{
+	
+	},
+	data() {
         return {
             name: "",
             sessionId: this.$route.params.key,
@@ -102,7 +107,8 @@ export default {
             timeOutLength: 0,
             timeOutMinutes: 0,
             timeOutSeconds: 0,
-            session: {
+         
+	        session: {
                 status: "round1",
                 started: false,
                 feature: {
@@ -113,10 +119,30 @@ export default {
                     number: 0,
                     desc: "",
                 },
+	            boardMembers: [],
+		        visible: true
             },
+	        
+	        // Popup for the results
+	        votes : {
+            	number  : 0,
+		        member  : '',
+		        visible : false
+	        },
+	        
+	        // Popup for the admin to select a card and assign a user
+	        choice : {
+            	cards   : [],
+		        card    : 0,
+		        members : [],
+		        member  : '',
+		        visible : false
+	        }
         };
     },
     mounted() {
+	    let submitbutton = this.$refs.submitbutton
+	    
         /**
          * Join the session when you load the page and send the key from the url to define which session to join
          */
@@ -144,87 +170,97 @@ export default {
 
             this.refreshUserList(args.data);
         });
+        
+        const roundSetup = data => {
+	        // set coffee time out
+	        this.timeOutLength = data.data.coffee;
+	        
+	        // If the user status === ready, set the submitted value to true
+	        this.submitted = this.users.find((user) => user.name === USER.name).status === "ready";
+
+	        this.submitted
+		        ? document.querySelector('.session-game-features-reason button').setAttribute('disabled', true)
+		        : document.querySelector('.session-game-features-reason button').removeAttribute('disabled')
+	        
+	        // Sets the feature data
+	        this.session.feature = data.data;
+	
+	        // Watch spelling if using elsewhere! Both singular and plural
+	        this.featuresIndex = data.data["featurePointer"];
+	        this.featuresLength = data.data["featuresLength"];
+	
+	        this.refreshUserList(data.data);
+	        
+	        // Emit session data to App.vue to update the config menu
+	        this.$emit("session:status", { status: data.toLoad });
+	        this.$emit("session:checklists", this.session.feature.checklists);
+	        this.$emit("session:description", this.session.feature.desc);
+        }
 
         /**
          * Updates feature data in both Session.vue and App.vue when loading the page
          */
         SOCKET.on("load", (data) => {
-            this.$nextTick(() => {
-            	
-                // set coffee time out
-                this.timeOutLength = data.data.coffee;
-                
-                // Reset the session display
-	            document.querySelector('.session-game').classList.remove('d-none')
-	
-	            console.log('reloading')
-                
-                if (data.toLoad !== "waiting")
-                    this.$refs.submitbutton.enableButton();
+	        this.$nextTick(() => {
+	            
+	            this.session.status = data.toLoad;
+	            this.resetChoices()
 
                 // Sets all users their status to the correct status responded from the server
                 data.data.users.forEach((user) => this.users.find((client) => client.name === user.name).status = user.status);
 
-                // end returns different data from the server which is processed differently. Therefore the end state is handled beforehand instead of in the switch case
-                if (data.toLoad === "end")
-                {
-                    SOCKET.emit("session", {event: "history", config: "single", key: this.sessionId});
-                    SOCKET.on("history", (data) => (this.history = data.sessions));
+                switch (data.toLoad) {
+                    case 0: // WAITING
+                        break;
+	                
+                    case 1: // ROUND1
+	                    
+                        roundSetup(data)
+                        this.$emit("closeInfo");
+                        this.$emit("session:chat:updateround", 1);
+                    break;
+
+                    case 2: // ROUND2
+                    	
+                        roundSetup(data)
+                        this.$emit("session:chat:update", data.chats);
+                        this.$emit("session:chat:votes", data.chats.votes);
+                        this.$emit("session:chat:updateround", 2);
+                        this.$emit("openInfo");
+
+                        // Set the chosen number to the card in the name list
+                        this.users.forEach((user) => (user.icon = this.$parent["votes"].find((vote) => vote.sender === user.name).value));
+
+                        // Scroll down the chat window
+                        setTimeout(() => {
+                            document.querySelector(".info-content-chat-wrapper").scrollTo(0, document.querySelector(".info-content-chat-wrapper").scrollHeight);
+                        }, 200);
+                    break;
                     
-                    // Hide the game window after the session ends
-                    document.querySelector('.session-game').classList.add('d-none')
-
-                    this.$refs.history.togglePopup();
-                }
-                else
-                {
-                    // If the user status === ready, set the submitted value to true
-                    this.submitted = this.users.find((user) => user.name === USER.name).status === "ready";
-
-                    this.submitted
-                        ? this.$refs.submitbutton.disableButton()
-                        : this.$refs.submitbutton.enableButton();
-
-                    // Sets the feature data
-                    this.session.feature = data.data;
-
-                    // Watch spelling if using elsewhere! Both singular and plural
-                    this.featuresIndex = data.data["featurePointer"];
-                    this.featuresLength = data.data["featuresLength"];
-
-                    this.refreshUserList(data.data);
-
-                    this.session.status = data.toLoad;
-
-                    // Emit session data to App.vue to update the config menu
-                    this.$emit("session:status", { status: data.toLoad });
-                    this.$emit("session:checklists", this.session.feature.checklists);
-                    this.$emit("session:description", this.session.feature.desc);
-
-                    switch (data.toLoad) {
-                        case "round1":
-                            this.$emit("closeInfo");
-                            this.$emit("session:chat:updateround", 1);
-                            break;
-
-                        case "round2":
-                            this.$emit("session:chat:update", data.chats);
-                            this.$emit("session:chat:votes", data.chats.votes);
-                            this.$emit("session:chat:updateround", 2);
-                            this.$emit("openInfo");
-
-                            // Set the chosen number to the card in the name list
-                            this.users.forEach((user) => (user.icon = this.$parent["votes"].find((vote) => vote.sender === user.name).value));
-
-                            // Scroll down the chat window
-                            setTimeout(() => {
-                                document.querySelector(".info-content-chat-wrapper").scrollTo(0, document.querySelector(".info-content-chat-wrapper").scrollHeight);
-                            }, 200);
-
-                            break;
-                            
-                            
-                    }
+                    case 4: // ADMIN CHOICE
+                    	
+	                    roundSetup(data)
+	                    this.$emit("session:chat:update", data.chats);
+	                    this.$emit("session:chat:votes", data.chats.votes);
+	                    this.$emit("openInfo");
+	
+	
+	                    
+	                    EVENTBUS.$emit('adminchoice');
+                    break;
+                        
+                    case 5: // END
+	                    
+                    	// Hide the result / admin popup and the session interface
+                    	votes.visible       = false;
+                    	choice.visible      = false;
+                    	session.visible     = false;
+	                    
+	                    // Query the history data and open the popup
+                        SOCKET.emit("session", {event: "history", config: "single", key: this.sessionId});
+                        SOCKET.on("history", (data) => (this.history = data.sessions));
+                        this.$refs.history.togglePopup();
+                    break;
                 }
             });
         });
@@ -234,8 +270,7 @@ export default {
          */
         SOCKET.on("submit", (data) => {
             this.users.find((user) => user.name === data.user).status = "ready";
-            this.users.find((user) => user.name === data.user).icon =
-            this.userStatusIcon(data.user, "ready");
+            this.users.find((user) => user.name === data.user).icon = this.userStatusIcon(data.user, "ready");
         });
 
         /**
@@ -266,27 +301,40 @@ export default {
          * Admin events
          */
         SOCKET.on("admin", (args) => {
-            switch (args.event) {
-                case "choose":
-                    // Let the admin choose a member to add to the card
-                    this.session.boardMembers = [];
-                    args.members.forEach((member) => {
-                        this.session.boardMembers.push({
-                            content: member.fullName,
-                            value: member.id,
-                        });
-                    });
-                    this.showMemberChoices = true;
-                    break;
-            }
+		        this.choice.members = [];
+	            roundSetup(args)
+	        
+		        args.members.forEach((member) => {
+			        this.choice.members.push(
+				        {
+					        content : member.fullName,
+					        value   : member.id,
+				        });
+		        });
+		
+		        this.choice.visible = true;
+		        this.$emit("closeInfo");
+	
+	            this.choice.card = this.choice.cards = args.cards.map(num => num.value)[0]
+		        
+		        args.event === 'chooseboth' ? this.choice.cards = args.cards.map(num => num.value) : this.choice.cards = [] ;
         });
 
         /**
          * When timeout timer has to start
          */
         SOCKET.on("startTimer", () => this.timer());
-	    
-		SOCKET.on("results", result => this.$refs.votesPopup.$emit("showVotesPopup", result));
+        
+		SOCKET.on("results", result => {
+			
+			this.votes.member = result.member
+			this.votes.number = result.number
+			
+			// Hide admin assign window
+			this.choice.visible = false
+			
+			EVENTBUS.$emit('results')
+		});
 	    
 	    /**
 	     * Fill and display the URL bar
@@ -309,7 +357,7 @@ export default {
          */
         resetChoices() {
             // Reset the cards
-            this.$refs.cards.reset()
+	        document.querySelectorAll(".session-game-features-cards-card").forEach((card) => card.classList.remove("selected"));
 
             this.session.decision = { number: 0, desc: "" };
 
@@ -353,7 +401,7 @@ export default {
             this.submitted = true;
 
             // Define textarea element for styling purposes
-            let textbox = document.querySelector("textarea");
+            let textbox = document.querySelector(".session-game-features-reason textarea");
 
             if (this.session.decision.desc === "") {
                 this.$toast.open({
@@ -416,17 +464,17 @@ export default {
             SOCKET.emit("feature", {
                 key: this.$route.params.key,
                 event: "choose",
-                memberID,
+                member : memberID,
+	            number : this.choice.card
             });
-            this.showMemberChoices = false;
+            
+            this.choice.visible = false;
         },
 
         timer() {
             // Show popup
             this.timeOut = true;
-	
-	        console.log('coffee timer starts')
-
+	        
             // Send length of coffee timeout to server
             SOCKET.emit("timer", {
                 length: this.timeOutLength,

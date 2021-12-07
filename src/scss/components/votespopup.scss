@@ -1,15 +1,22 @@
 .votespopup {
     z-index: 100;
     position: absolute;
-    top: 30%;
+    top: 50%;
     left: 50%;
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
     width: 45em;
+    .interface{
+        background-color: $blue-dark!important;
+        background-image: url('/img/gradient.png');
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
 
     h1 {
         text-align: center;
     }
+
     p {
         font-size: 20px;
         color: white;
@@ -28,24 +35,51 @@
         font-weight: bold;
     }
 
+    @import "../views/session";
+
     #number {
-        border-radius: 10px;
-        background-color: white;
-        height: 10em;
-        width: 10em;
-        margin: 10px auto;
         display: flex;
-        align-items: center; /* Vertical center alignment */
-        justify-content: center; /* Horizontal center alignment */
-    }
-    #number p {
-        color: black;
-        font-size: 5em;
+        justify-content: center;
+        align-items: center;
+        padding: 25px;
+        position: relative;
+        &:after{
+            content: "";
+            background-image: url('/img/cardshadow.svg');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            width: 150px;
+            height: 50px;
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 0;
+        }
+        p, img {
+            $inactive-card: darken($white, 25%);
+
+            font-size: 42px;
+            min-width: 75px;
+            max-width: 75px;
+            padding: 25px 0;
+            color: $blue-dark;
+            border-radius: 10px;
+            font-weight: 900;
+            background-color: $white;
+            text-align: center;
+            transition: 0.3s ease;
+            cursor: pointer;
+            border-bottom: 5px solid darken($inactive-card, 25%);
+            transform: rotate(20deg);
+            z-index: 1;
+        }
     }
 
     #assignee {
         border-radius: 10px;
-        background-color: rgba(53, 52, 52, 0.842);
+        background-color: $blue-light;
         height: 5em;
         width: 20em;
         margin: 10px auto;
@@ -54,14 +88,14 @@
         justify-content: center; /* Horizontal center alignment */
     }
 
-    #progress {
+    .progress {
         width: 100%;
         position: absolute;
         padding: 5px;
         left: 0;
         bottom: 0;
     
-        #bar {
+        &-bar {
             width: 100%;
             height: 2em;
             background-color: $gold;
