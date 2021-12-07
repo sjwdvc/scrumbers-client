@@ -11,7 +11,7 @@
 				<p>{{ error }}</p>
 				<Button type="submit" content="Login" class="login-form-button" />
 			</form>
-			<Button @click.native="loginMicrosoft" content="Login with Microsoft" class="" />
+			<Button @click.native="loginMicrosoft" content="Login with Microsoft" class="login-microsoft-button" />
 		</div>
 		<p> No account yet?
 			<router-link to="register">Click here to register</router-link>
@@ -34,6 +34,29 @@ export default
 		Button,
 		DisplayHeader,
 		Input
+	},
+	beforeMount()
+	{
+		if (window.location.search.startsWith('?token='))
+		{
+			//document.querySelector(".login-microsoft-button").setAttribute("disabled", "");
+
+			// Set the token
+			localStorage.setItem('TOKEN', window.location.search.substring('?token='.length, window.location.search.length));
+			
+			// Notify user that registration was successful
+			this.error = "Success! Redirecting you...";
+
+			console.log('removing oauth');
+
+			// remove OAuth key from storage after login
+			localStorage.removeItem('OAUTH_TOKEN');
+
+			// Redirect after 2 seconds
+			setTimeout(() => {
+				this.session === null || this.session === undefined ? this.$router.push({name : 'home'}) : this.$router.push({name : 'session', params: {key: this.session}})
+			}, 2000);
+		}
 	},
 	data()
 	{
@@ -83,12 +106,12 @@ export default
 					document.querySelector(".login-form-button").setAttribute("disabled", "");
 
 					// Save token globally in localstorage
-					localStorage.setItem('TOKEN', res.data.data[0].token)
+					localStorage.setItem('TOKEN', res.data.data[0].token);
 
 					// Notify user that registration was successful
-					this.error = "Success! Redirecting you..."
+					this.error = "Success! Redirecting you...";
 
-					console.log('removing oauth')
+					console.log('removing oauth');
 
 					// remove OAuth key from storage after login
 					localStorage.removeItem('OAUTH_TOKEN');
@@ -96,7 +119,7 @@ export default
 					// Redirect after 2 seconds
 					setTimeout(() => {
 						this.session === null || this.session === undefined ? this.$router.push({name : 'home'}) : this.$router.push({name : 'session', params: {key: this.session}})
-					}, 2000)
+					}, 2000);
 				}
 			})
 			.catch(function(error) {
