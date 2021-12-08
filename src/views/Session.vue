@@ -30,7 +30,11 @@
                     </div>
                 </div>
                 <div class="session-game-features">
-                    <p class="session-game-header">Feature</p>
+                    <div class="session-game-header flex space-between">
+                        <p>Feature</p>
+                        <p>Round {{ session.status }}</p>
+                    </div>
+                    
                     <h1 class="session-game-features-feature flex">
                         {{ session.feature.name }}
                         <div class="session-game-features-feature-controls flex flex-rowspace-between">
