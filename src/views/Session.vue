@@ -333,12 +333,13 @@ export default {
 	        switch (args.event)
 	        {
 	        	case 'choose':
-			        this.choice.cards = []
+			        this.choice.cards   = []
+			        this.choice.card    = parseInt(args.cards)
 	        		break;
 	        		
                 case 'chooseboth':
-	                this.choice.cards = args.cards
-	                this.choice.card = args.cards[0]
+	                this.choice.cards   = args.cards
+	                this.choice.card    = args.cards[0]
                 	break;
 	        }
         });
