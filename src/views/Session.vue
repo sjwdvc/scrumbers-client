@@ -116,7 +116,7 @@ export default {
                     desc: "",
                 },
                 decision: {
-                    number: 0,
+                    number: null,
                     desc: "",
                 },
 	            boardMembers: [],
@@ -301,23 +301,33 @@ export default {
          * Admin events
          */
         SOCKET.on("admin", (args) => {
-		        this.choice.members = [];
-	            roundSetup(args)
-	        
-		        args.members.forEach((member) => {
-			        this.choice.members.push(
-				        {
-					        content : member.fullName,
-					        value   : member.id,
-				        });
-		        });
-		
-		        this.choice.visible = true;
-		        this.$emit("closeInfo");
+	        this.choice.members = [];
+            roundSetup(args)
+
+            console.log('admin args : ')
+            console.log(args)
+        
+	        args.members.forEach((member) => {
+		        this.choice.members.push(
+			        {
+				        content : member.fullName,
+				        value   : member.id,
+			        });
+	        });
 	
-	            this.choice.card = this.choice.cards = args.cards.map(num => num.value)[0]
-		        
-		        args.event === 'chooseboth' ? this.choice.cards = args.cards.map(num => num.value) : this.choice.cards = [] ;
+	        this.choice.visible = true;
+	        this.$emit("closeInfo");
+	        
+	        switch (args.event)
+	        {
+	        	case 'choose':
+			        this.choice.cards = []
+	        		break;
+	        		
+                case 'chooseboth':
+	                this.choice.cards = args.cards
+                	break;
+	        }
         });
 
         /**
@@ -359,7 +369,7 @@ export default {
             // Reset the cards
 	        document.querySelectorAll(".session-game-features-cards-card").forEach((card) => card.classList.remove("selected"));
 
-            this.session.decision = { number: 0, desc: "" };
+            this.session.decision = { number: null, desc: "" };
 
             this.$emit("session:chat:clear");
         },
@@ -422,39 +432,49 @@ export default {
             // Remove textarea error styling
             textbox.style.border = "none";
             textbox.classList.remove("animate__headShake");
-
-            this.$refs.submitbutton.disableButton();
-
-            // Set your own status icon to a checkmark
-            this.users.find((user) => user.name === USER.name).icon =
-                this.userStatusIcon(USER.name, "ready");
-
-            //quick fix for the coffee card
-            this.session.decision.number === "coffee"
-                ? (this.session.decision.number = -1)
-                : "";
-            if (this.session.decision.number == "1/2") {
-                this.session.decision.number = 0.5;
-            }
-
-            SOCKET.emit("feature", {
-                key: this.$route.params.key,
-                event: "submit",
-                number: this.session.decision.number,
-                desc: this.session.decision.desc,
-                email: USER.email,
-            });
-
-            switch (this.session.status) {
-                case "round1":
-                    break;
-
-                case "round2":
-                    this.resetChoices();
-                    this.$emit("closeInfo");
-                    this.$emit("hideChat");
-                    break;
-            }
+	
+	        if (this.session.decision.number === null) {
+		        this.$toast.open({
+                    message: "Please select a card",
+			        type: "error",
+                    position: "top-right",
+		        });
+	        }
+	        else
+	        {
+		        this.$refs.submitbutton.disableButton();
+		
+		        // Set your own status icon to a checkmark
+		        this.users.find((user) => user.name === USER.name).icon =
+			        this.userStatusIcon(USER.name, "ready");
+		
+		        //quick fix for the coffee card
+		        this.session.decision.number === "coffee"
+			        ? (this.session.decision.number = -1)
+			        : "";
+		        if (this.session.decision.number == "1/2") {
+			        this.session.decision.number = 0.5;
+		        }
+		
+		        SOCKET.emit("feature", {
+			        key: this.$route.params.key,
+			        event: "submit",
+			        number: this.session.decision.number,
+			        desc: this.session.decision.desc,
+			        email: USER.email,
+		        });
+		
+		        switch (this.session.status) {
+			        case "round1":
+				        break;
+			
+			        case "round2":
+				        this.resetChoices();
+				        this.$emit("closeInfo");
+				        this.$emit("hideChat");
+				        break;
+		        }
+	        }
         },
 	    
         /**
