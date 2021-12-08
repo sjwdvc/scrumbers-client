@@ -127,7 +127,8 @@ export default {
 	        votes : {
             	number  : 0,
 		        member  : '',
-		        visible : false
+		        visible : false,
+		        feature : ''
 	        },
 	        
 	        // Popup for the admin to select a card and assign a user
@@ -339,6 +340,7 @@ export default {
 			
 			this.votes.member = result.member
 			this.votes.number = result.number
+			this.votes.feature = result.feature.name
 			
 			// Hide admin assign window
 			this.choice.visible = false

@@ -3,7 +3,7 @@
 		<div class="interface">
 			<DisplayHeader content="FEATURE RESULT" />
 			<p id="feature">Feature</p>
-			<p id="feature-name">{{ $parent.session.feature.name }}</p>
+			<p id="feature-name">{{ $parent.votes.feature }}</p>
 			
 			<br><br>
 			
