@@ -46,6 +46,9 @@ export default
 			name: '',
 			token: '',
 			error: '',
+			settings : {
+				assignMethod : 'lowest'
+			},
 			adminRules: [
 				{
 					content: 'Lowest number',
@@ -100,7 +103,15 @@ export default
 	{
 		generateRoom()
 		{
-			SOCKET.emit('session', {url: this.url, coffee: this.coffee, event: 'create', name: USER.name, email: USER.email, token: this.token});
+			SOCKET.emit('session', {
+				url     : this.url,
+				coffee  : this.coffee,
+				event   : 'create',
+				name    : USER.name,
+				email   : USER.email,
+				token   : this.token,
+				settings: this.settings
+			});
 
 			SOCKET.on('urlError', args => {
 				this.error = args.error;
@@ -113,7 +124,7 @@ export default
 		},
 		updateSelect(value)
 		{
-			this.settings.gameRule = value;
+			this.settings.assignMethod = value;
 		}
 	}
 }

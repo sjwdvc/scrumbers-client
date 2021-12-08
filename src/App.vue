@@ -36,7 +36,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="info-content-chat" v-if="chatOpen && sessionStatus === 'round2'">
+			<div class="info-content-chat" v-if="chatOpen && sessionStatus === 2">
 				<h2>Chats</h2>
 				<div class="info-content-chat-wrapper">
 					<ChatMessage :sender="chat.sender" :message="chat.message" :vote="chat.vote"  v-for="(chat, index) in chats" :key="index" />
@@ -155,7 +155,7 @@ export default {
 
 			console.log('session status is : ' + this.sessionStatus)
 
-			this.chatOpen = this.sessionStatus === 'round2'
+			this.chatOpen = this.sessionStatus === 2
 		},
 
 		updateSessionChecklists(data)
