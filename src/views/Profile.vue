@@ -86,9 +86,6 @@ export default {
 		})
 
 
-
-		this.$refs.history.togglePopup()
-
 	},
 	methods: {
 		logout()
