@@ -251,8 +251,6 @@ export default {
 	                    this.$emit("session:chat:update", data.chats);
 	                    this.$emit("session:chat:votes", data.chats.votes);
 	                    this.$emit("openInfo");
-	
-	
 	                    
 	                    EVENTBUS.$emit('adminchoice');
                     break;
@@ -340,6 +338,7 @@ export default {
 	        		
                 case 'chooseboth':
 	                this.choice.cards = args.cards
+	                this.choice.card = args.cards[0]
                 	break;
 	        }
         });
@@ -357,6 +356,8 @@ export default {
 			
 			// Hide admin assign window
 			this.choice.visible = false
+			
+			result.event === 'chooseboth' ? this.votes.number = result.cards[0] : ''
 			
 			EVENTBUS.$emit('results')
 		});

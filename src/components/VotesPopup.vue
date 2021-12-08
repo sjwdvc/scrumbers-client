@@ -60,7 +60,7 @@ export default {
 	},
 	mounted()
 	{
-		EVENTBUS.$on('results', args => {
+		EVENTBUS.$on('results', () => {
 			this.startTimer();
 			this.$parent.votes.visible = true;
 			this.$parent.session.visible = false;
