@@ -87,7 +87,7 @@ export default {
 	data()
 	{
 		return {
-			chatround	: false,
+			chatround	: true,
 			visible 	: false
 		}
 	},
@@ -109,8 +109,9 @@ export default {
 		toggleSession(i)
 		{
 			let wrapper = $($('.feature-wrapper')[i]);
+			let chevron = $($('.sessionTitle')[i]);
 			wrapper.toggle(400);
-			wrapper.toggleClass('open')
+			chevron.toggleClass('open');
 		},
 		ToggleVotes(i)
 		{
