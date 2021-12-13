@@ -1,5 +1,5 @@
-<template>
-	<div class="popup" v-if="visible" id='history'>
+<template >
+	<div class="popup" v-if="visible"  id='history'>
 		<div class="topsection">
 			<h1>Sessions</h1>
 			<svg class="closepopup" @click="togglePopup" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z" fill="#D0BB7E" /></svg>
@@ -82,14 +82,17 @@ import $ from 'jquery'
 export default {
 	name : "SessionHistory",
 	props : {
-		featureData : null
+		featureData : null,
 	},
 	data()
 	{
 		return {
-			chatround	: false,
+			chatround	: true,
 			visible 	: false
 		}
+	},
+	mounted(){
+		console.log(this.visible);
 	},
 	methods: {
 		test(data, player){
@@ -106,8 +109,9 @@ export default {
 		toggleSession(i)
 		{
 			let wrapper = $($('.feature-wrapper')[i]);
+			let chevron = $($('.sessionTitle')[i]);
 			wrapper.toggle(400);
-			wrapper.toggleClass('open')
+			chevron.toggleClass('open');
 		},
 		ToggleVotes(i)
 		{

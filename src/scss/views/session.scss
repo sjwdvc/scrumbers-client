@@ -31,6 +31,10 @@
 
 .session {
 
+    .container{
+        height: 750px;
+    }
+
     .closepopup{
         display: none;
     }
@@ -45,7 +49,7 @@
         text-align: left;
     }
 
-    .timeoutPopup{
+    .coffeetimer{
         background: $blue-dark;
         z-index: 1;
         width: 50%;

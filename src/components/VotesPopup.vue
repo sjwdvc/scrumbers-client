@@ -1,81 +1,70 @@
 <template>
-    <div v-if="showVotesPopup" class="votespopup">
-        <div class="interface">
-            <DisplayHeader content="FEATURE RESULT" />
-            <p id="feature">Feature</p>
-            <p id="feature-name">{{ data.feature.name }}</p>
-
-            <br /><br />
-
-            <p>Number</p>
-            <!-- Number icon -->
-            <div id="number">
-                <p>
-                    {{ data.number || "-" }}
-                </p>
-            </div>
-
-            <br /><br />
-
-            <p>Assigned to</p>
-            <div id="assignee">
-                <p>{{ data.member || "" }}</p>
-            </div>
-
-            <div id="progress">
-                <div ref="progbar" id="bar">
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="votespopup" :class="{'d-none' : !$parent.votes.visible}">
+		<div class="interface">
+			<DisplayHeader content="FEATURE RESULT" />
+			<p id="feature">Feature</p>
+			<p id="feature-name">{{ $parent.votes.feature }}</p>
+			
+			<br><br>
+			
+			<p>Number</p>
+			<!-- Number icon -->
+			<div id="number">
+				<p>
+					{{ $parent.votes.number || "-" }}
+				</p>
+			</div>
+			
+			<br><br>
+			
+			<p>Assigned to</p>
+			<div id="assignee">
+				<p>{{ $parent.votes.member || "" }}</p>
+			</div>
+			
+			<div class="progress">
+				<div class="progress-bar"></div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>
-import { SOCKET, USER, CLIENT } from "../constants";
-import store from "../store";
 import DisplayHeader from "../components/text/DisplayHeader";
+import EVENTBUS from '../eventbus';
 
 export default {
-    name: "VotesPopup",
-    components: {
-        DisplayHeader,
-    },
-    data() {
-        return {
-            data: {},
-            showVotesPopup: false,
-            time: 1000,
-        };
-    },
-    mounted() {
-        this.$on("showVotesPopup", (data) => {
-            this.data = data;
-            this.$forceUpdate();
-            this.$nextTick(() => {
-                this.startTimer();
-                this.showVotesPopup = true;
-            });
-        });
-    },
-    methods: {
-        startTimer: function () {
-            let timer = this.time;
-            let interval = setInterval(() => {
-                timer--;
-                this.updateProgressBar(timer);
-                if (timer <= 0) {
-                    this.showVotesPopup = false;
-                    clearInterval(interval);
-                }
-            }, 1);
-        },
-        updateProgressBar: function (time) {
-            this.$refs.progbar.style.width = (time / 10) + "%";
-        }
-    },
+	name: "VotesPopup",
+	components: {
+		DisplayHeader,
+	},
+	methods: {
+		startTimer() {
+			let timer = 1000;
+			let interval = setInterval(() => {
+				timer--;
+				this.updateProgressBar(timer);
+				
+				if (timer <= 0)
+				{
+					this.$parent.votes.visible = false
+					this.$parent.session.visible = true;
+					clearInterval(interval);
+				}
+			}, 1);
+		},
+		
+		updateProgressBar(time) {
+			document.querySelector('.progress-bar').style.width = (time / 10) + "%";
+		}
+	},
+	mounted()
+	{
+		EVENTBUS.$on('results', () => {
+			this.startTimer();
+			this.$parent.votes.visible = true;
+			this.$parent.session.visible = false;
+		})
+	}
 };
 </script>
-
-<style lang="scss" scoped >
-
-</style>

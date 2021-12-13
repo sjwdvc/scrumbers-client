@@ -57,6 +57,6 @@ export default new Router({
             props: {
                 message: String
             }
-        }
+        },
     ]
 });
