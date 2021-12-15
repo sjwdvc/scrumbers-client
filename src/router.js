@@ -6,6 +6,8 @@ import Login from "./views/Login";
 import CreateRoom from "./views/CreateRoom";
 import ShareLink from "./views/ShareLink";
 import Session from "./views/Session";
+import Profile from "./views/Profile";
+import Error from "./views/Error";
 
 Vue.use(Router);
 
@@ -24,7 +26,7 @@ export default new Router({
             name: 'register'
         },
         {
-            path: "/login",
+            path: "/login/:key?",
             component: Login,
             name: 'login'
         },
@@ -34,14 +36,27 @@ export default new Router({
             name: 'createroom'
         },
         {
-            path: "/share-link/:id",
+            path: "/share-link/:key",
             component: ShareLink,
             name: 'sharelink'
         },
         {
-            path: "/session/:id",
+            path: "/session/:key",
             component: Session,
             name: 'session'
-        }
+        },
+        {
+            path: "/profile",
+            component: Profile,
+            name: 'profile'
+        },
+        {
+            path: "/error",
+            component: Error,
+            name: 'Error',
+            props: {
+                message: String
+            }
+        },
     ]
 });

@@ -1,10 +1,19 @@
 <template>
 	<section class="createroom">
 		<div class="interface">
-			<DisplayHeader content="NIEUW BORD" />
+			<DisplayHeader content="NEW SESSION" />
 			<form action="" class="createroom-form" @submit.prevent="generateRoom">
-				<Input type="text" name="link" placeholder="Trello bord URL" v-model="url"/>
-				<Button content="Genereer link"/>
+				<Label for="url" content="Trello URL" />
+				<Input id="url" type="text" name="link" placeholder="eg. https://trello.com/b/12345678/project-name" v-model="url" ref="url"/>
+
+				<Label for="coffee" content="Coffee Timeout Length" />
+				<Input id="coffee" value="coffee-timeout" type="number" placeholder="Coffee-timeout minutes" v-model="coffee" />
+
+				<Label for="rules" content="Admin rules" />
+				<Select id="rules" name="adminRules" :options="adminRules" @updateSelect="updateSelect" />
+
+				<p class="error">{{error}}</p>
+				<Button content="Generate link"/>
 			</form>
 		</div>
 	</section>
@@ -13,49 +22,110 @@
 <script>
 import DisplayHeader from "../components/text/DisplayHeader";
 import Input from "../components/Input";
+import Label from "../components/Label";
 import Button from "../components/Button";
-import axios from 'axios';
-import { CLIENT, SERVER, TRELLO_APP_KEY } from '../constants';
-export default {
+import Select from "../components/Select";
+import {CLIENT, SOCKET, USER} from "../constants";
+
+export default
+{
 	name : "CreateRoom",
-	components : {Button, Input, DisplayHeader},
-	data(){
+	components :
+	{
+		Button,
+		Input,
+		DisplayHeader,
+		Label,
+		Select
+	},
+	data()
+	{
 		return {
-			url: ''
+			url: '',
+			coffee: '',
+			name: '',
+			token: '',
+			error: '',
+			settings : {
+				assignMethod : 'lowest'
+			},
+			adminRules: [
+				{
+					content: 'Lowest number',
+					value: 'lowest'
+				},
+				{
+					content: 'Most common',
+					value: 'mostcommon'
+				},
+				{
+					content: 'Admin decides',
+					value: 'admin'
+				},
+			]
 		}
 	},
 	beforeMount()
 	{
-		console.warn(window.location.search);
-		// Check if a token was send
-		if (location.hash != '')
+		// Check if we authenticated with trello or not
+		let storedToken = localStorage.getItem('OAUTH_TOKEN');
+		let hasExpired = storedToken == null ? true : (parseInt(storedToken.split('@')[0]) < Date.now());
+
+		if (!location.hash.startsWith('#token=') && hasExpired)
+			location.replace(`https://trello.com/1/authorize?key=c6f2658e8bbe5ac486d18c13e49f1abb&name=Scrumbers&scope=read,write&expiration=1day&response_type=token&return_url=${CLIENT}/create-room`);
+		else if (location.hash.startsWith('#token='))
 		{
-			let token = location.hash.replace('#token=', '');
-			//location.hash = '';
-			// Create a room with our token and link
-			axios.post(SERVER + 'room', { token, url: window.location.search.replace('?url=', '') })
-			.then(res => {
-				if (res.status == 200)
-					this.$router.push('share-link/' + res.data[0].id);
-			});
+			// Get the token
+			this.token = location.hash.replace('#token=', '');
+			// Check if there is an error (when you reject the oAuth)
+			if (this.token.startsWith('&error'))
+			{
+				this.$router.push({name : 'home'});
+			}
+			else
+			{
+				// Set the token in local storage so we can remember it
+				// TODO:
+				// Use httpOnly cookies for security
+				let expire = Date.now() + (3600 * 1000 * 24);
+				localStorage.setItem('OAUTH_TOKEN', expire + '@' + this.token);
+
+				// Remove the hash(token) for security
+				history.pushState("", document.title, window.location.pathname);
+			}
+		}
+		else
+		{
+			this.token = storedToken.split('@')[1];
 		}
 	},
-	methods: {
+	methods:
+	{
 		generateRoom()
 		{
-			console.log('room generated with url:' + this.url)
-			// Ask for trello login
-			location.replace(`https://trello.com/1/authorize?key=${TRELLO_APP_KEY}&name=Scrumbers&scope=read,write&expiration=1day&response_type=token&return_url=${CLIENT}/create-room?url=${this.url}`);
+			SOCKET.emit('session', {
+				url     : this.url,
+				coffee  : this.coffee,
+				event   : 'create',
+				name    : USER.name,
+				email   : USER.email,
+				token   : this.token,
+				settings: this.settings
+			});
+
+			SOCKET.on('urlError', args => {
+				this.error = args.error;
+				url.style.border = '2px solid #A03A3C';
+			})
+
+			SOCKET.on('createRoom', data => {
+				this.$router.push({name: 'sharelink', params: {key: data.key}});
+			})
+		},
+		updateSelect(value)
+		{
+			this.settings.assignMethod = value;
 		}
 	}
 }
 </script>
-
-<style scoped lang="scss">
-	section{
-		width: 750px;
-	}
-	input{
-		margin: 2rem 0;
-	}
-</style>

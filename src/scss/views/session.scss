@@ -1,0 +1,276 @@
+
+
+.user {
+    color: $white;
+    width: 200px;
+    margin: 0 auto;
+}
+
+.admin {
+    &:before {
+        content: "👑";
+        width: 10px;
+        height: 10px;
+    }
+}
+
+.waitingroom {
+    margin-bottom: 20px;
+
+    &-header{
+        text-align: center!important;
+    }
+
+    &-header {
+        color: $white;
+    }
+    &-users{
+        padding: 25px 0;
+    }
+}
+
+.session {
+
+    .container{
+        height: 750px;
+    }
+
+    .closepopup{
+        display: none;
+    }
+
+    #app{
+        overflow: scroll;
+
+    }
+
+    h1 {
+        margin-bottom: 25px;
+        text-align: left;
+    }
+
+    .coffeetimer{
+        background: $blue-dark;
+        z-index: 1;
+        width: 50%;
+        height: 60vh;
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        border-radius: 1rem;
+        h2{
+            text-align: center;
+            font-size: 3rem;
+            color: $white;
+            padding: 1rem;
+        }
+        p{
+            font-size: 2rem;
+            color: $white;
+            text-align: center;
+        }
+        .time{
+            padding: 1rem;
+            color: $gold;
+            font-weight: 700;
+        }
+        .content{
+            padding: 1.5rem;
+            background: $blue-light;
+            margin: 1rem 4rem ;
+            border-radius: 1rem;
+        }
+    }
+
+    &-progress {
+        height: 10px;
+        position: relative;
+        margin: 20px auto;
+
+        div {
+            border-radius: 50px;
+            height: 15px;
+            transition: 1s ease;
+        }
+
+        &-bar {
+            width: 100px;
+            background-color: $gold;
+            position: absolute;
+            left: 0;
+            background-image: url('/img/progress.svg');
+        }
+
+        &-background {
+            width: 100%;
+            background-color: grey;
+            position: absolute;
+        }
+    }
+
+    &-started {
+        position: relative;
+        transform: none;
+        top: 0;
+        left: 0;
+    }
+
+    &-game {
+        height: fit-content;
+        min-height: 500px;
+
+        &-header {
+            font-size: 24px;
+            border-bottom: 1px solid $white;
+            color: $white;
+            padding: 10px 0;
+            margin-bottom: 50px;
+        }
+
+        &-users {
+            width: 25%;
+            margin-right: 50px;
+
+            &-user {
+                padding: 25px;
+                margin: 25px 0;
+                color: $white;
+                background-color: $blue-light;
+                border-radius: 10px;
+                border: 1px solid rgba($white, 0.5);
+                position: relative;
+                font-size: 24px;
+
+                &:after {
+                    content: '';
+                    position: absolute;
+                    right: 10px;
+                    top: 50%;
+                    width: 25px;
+                    height: 25px;
+                    transform: translateY(-50%);
+                    background-size: contain;
+                    background-repeat: no-repeat;
+                }
+
+                &-card{
+                    position: absolute;
+                    right: -10px;
+                    top: 50%;
+                    background: $white;
+                    border-bottom: 3px solid #99999f;
+                    border-radius: $border;
+                    transform: rotate(5deg) translateY(-50%);
+                    color: $blue-dark;
+                    padding: 10px;
+                    font-size: 30px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+            }
+        }
+
+        &-features {
+            width: 75%;
+
+            &-feature {
+                border: 5px solid rgba($white, 0.5);
+                background-color: $blue-light;
+                border-radius: 10px;
+                font-size: 30px;
+                padding: 30px 100px 30px 25px;
+                color: $white;
+                position: relative;
+                align-items: center;
+
+                span {
+                    position: absolute;
+                    right: 10px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    color: $white;
+                    opacity: 0.5;
+                    font-weight: 100;
+                    font-size: 24px;
+                }
+
+                &-controls {
+                    margin-left: 15px;
+                }
+            }
+
+            &-cards {
+                display: inline-flex;
+                align-items: center;
+                overflow: scroll;
+                max-width: 100%;
+                padding: 20px 0;
+                gap: 20px;
+                overflow-y: hidden;
+
+
+
+                &-card {
+                    $inactive-card: darken($white, 25%);
+
+                    font-size: 42px;
+                    min-width: 75px;
+                    max-width: 75px;
+                    padding: 25px 0;
+                    color: $blue-dark;
+                    border-radius: 10px;
+                    font-weight: 900;
+                    background-color: $inactive-card;
+                    text-align: center;
+                    transition: 0.3s ease;
+                    cursor: pointer;
+                    border-bottom: 5px solid darken($inactive-card, 25%);
+
+                    p, img {
+                        pointer-events: none;
+                    }
+                }
+
+                .active, .selected {
+                    background-color: $white;
+                    border-bottom: 5px solid darken($white, 25%);
+                    transform: translateY(-10px);
+
+                    &:not(:first-child):not(:last-child) {
+                        transform: translateY(-10px) rotate(5deg);
+                    }
+                }
+            }
+
+            &-reason {
+                margin-top: 25px;
+
+                .relative {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: flex-start;
+                    justify-content: space-between;
+                }
+
+                textarea {
+                    font-size: 24px;
+                    min-height: 200px;
+                    max-height: 200px;
+                    width: 80%;
+                    padding-right: 100px;
+                }
+
+                button {
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                }
+            }
+        }
+    }
+}

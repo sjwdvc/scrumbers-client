@@ -1,29 +1,20 @@
 <template>
 	<section class="login">
 		<div class="interface">
-			<DisplayHeader content="INLOGGEN" />
+			<DisplayHeader content="LOG IN" />
 			<form action="" class="login-form" @submit.prevent="submitData">
-				<Input
-					type="email"
-					name="email"
-					placeholder="Email"
-					required
-					v-model="form.email"
-				/>
-				<Input
-					type="password"
-					name="password"
-					placeholder="Wachtwoord"
-					required
-					v-model="form.password"
-				/>
+				<Input type="email" name="email" placeholder="Email" required v-model="form.email"/>
+				<div class="relative">
+					<Input :type="passwordType" name="password" placeholder="Password" required v-model="form.password" ref="password-input"/>
+					<img src="/img/eye.svg" alt="" class="password-show" @mousedown="showPassword" @mouseup="hidePassword">
+				</div>
 				<p>{{ error }}</p>
-				<Button type="submit" content="Inloggen" />
+				<Button type="submit" content="Login" class="login-form-button" />
 			</form>
+			<Button @click.native="loginMicrosoft" content="Login with Microsoft" class="login-microsoft-button" />
 		</div>
-		<p>
-			Heb je nog geen account ?
-			<router-link to="register">Klik hier om te registreren</router-link>
+		<p> No account yet?
+			<router-link to="register">Click here to register</router-link>
 		</p>
 	</section>
 </template>
@@ -33,24 +24,63 @@ import axios from "axios";
 import DisplayHeader from "../components/text/DisplayHeader";
 import Input from "../components/Input";
 import Button from "../components/Button";
-import {SERVER} from "../constants-example";
+import {SERVER, TOKEN} from "../constants";
 
-export default {
+export default
+{
 	name: "login",
-	components: { Button, DisplayHeader, Input },
-	data() {
+	components:
+	{
+		Button,
+		DisplayHeader,
+		Input
+	},
+	beforeMount()
+	{
+		if (window.location.search.startsWith('?token='))
+		{
+			//document.querySelector(".login-microsoft-button").setAttribute("disabled", "");
+
+			// Set the token
+			localStorage.setItem('TOKEN', window.location.search.substring('?token='.length, window.location.search.length));
+			
+			// Notify user that registration was successful
+			this.error = "Success! Redirecting you...";
+
+			console.log('removing oauth');
+
+			// remove OAuth key from storage after login
+			localStorage.removeItem('OAUTH_TOKEN');
+
+			// Redirect after 2 seconds
+			setTimeout(() => {
+				this.session === null || this.session === undefined ? this.$router.push({name : 'home'}) : this.$router.push({name : 'session', params: {key: this.session}})
+			}, 2000);
+		}
+	},
+	data()
+	{
 		return {
-			form: {
+			form:
+			{
 				email: "",
 				password: ""
 			},
-			error: ""
+			error: "",
+			session: null,
+			passwordType: 'password'
 		};
 	},
-	methods: {
+	methods:
+	{
 		// Submit the formdata to the server url defined in main.js using a post request
-		submitData() {
-			axios.post(SERVER + 'user/login', this.form)
+		submitData()
+		{
+			let formdata 					= this.form
+			formdata.headers 				= {}
+			formdata.headers.Authorization 	= TOKEN
+
+			axios.post(SERVER + 'user/login', formdata)
 			.then(res => {
 				this.error = "";
 
@@ -58,7 +88,8 @@ export default {
 					input.style.border = "none";
 				});
 
-				if (res.data.error) {
+				if (res.data.error)
+				{
 					// Highlight the input field containing the error
 					res.data.field !== "global"
 						? (document.querySelector(
@@ -68,49 +99,52 @@ export default {
 
 					// Comment the error under the form
 					this.error = res.data.error;
-				} else {
+				}
+				else
+				{
 					// Disable the submit button to prevent double submits
-					document.querySelector("button").setAttribute("disabled", "");
+					document.querySelector(".login-form-button").setAttribute("disabled", "");
 
-					// Notify user that registration was succesful
-					this.error = "Geslaagd! Je wordt doorgestuurd..."
+					// Save token globally in localstorage
+					localStorage.setItem('TOKEN', res.data.data[0].token);
+
+					// Notify user that registration was successful
+					this.error = "Success! Redirecting you...";
+
+					console.log('removing oauth');
+
+					// remove OAuth key from storage after login
+					localStorage.removeItem('OAUTH_TOKEN');
 
 					// Redirect after 2 seconds
-					setTimeout(() => this.$router.push({name: 'createroom'}), 2000)
+					setTimeout(() => {
+						this.session === null || this.session === undefined ? this.$router.push({name : 'home'}) : this.$router.push({name : 'session', params: {key: this.session}})
+					}, 2000);
 				}
 			})
 			.catch(function(error) {
 				console.log(error);
 			});
+		},
+		showPassword()
+		{
+			this.passwordType = 'text'
+		},
+		hidePassword()
+		{
+			this.passwordType = 'password'
+		},
+		loginMicrosoft()
+		{
+			axios.post(SERVER + 'user/login/microsoft', {}).then(response => {
+				console.log(response);
+				location.replace(response.data.oauthUrl);
+			});
 		}
+	},
+	mounted()
+	{
+		this.$route.params.key !== null ? this.session = this.$route.params.key : this.session = null
 	}
 };
 </script>
-	
-<style scoped lang="scss">
-@import "../../src/scss/main";
-
-.login {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	h1 {
-		margin: 0 auto 50px;
-		text-align: center;
-	}
-	&-form {
-		display: flex;
-		justify-content: center;
-		flex-direction: column;
-		button {
-			margin: 25px auto 0;
-		}
-	}
-	p {
-		color: $white;
-		text-align: center;
-		margin-top: 25px;
-	}
-}
-</style>

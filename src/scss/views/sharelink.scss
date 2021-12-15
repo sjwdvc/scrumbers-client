@@ -1,0 +1,39 @@
+.sharelink
+{
+    width: 750px;
+
+    h1{
+        margin-bottom: 20px;
+    }
+
+    &-input{
+        &-wrapper{
+            margin-bottom: 20px;
+
+            input
+            {
+                font-size: 18px;
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    p
+    {
+        color: $white;
+        margin-bottom: 10px;
+    }
+
+    .copy
+    {
+        padding: 1em;
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 50px;
+        cursor: pointer;
+        background-color: $blue-light;
+        box-shadow: -20px 0px 20px $blue-light;
+    }
+}
