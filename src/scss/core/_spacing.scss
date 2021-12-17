@@ -42,6 +42,14 @@ section{
     justify-content: space-around;
 }
 
+.justify-start{
+    justify-content: flex-start;
+}
+
+.justify-end{
+    justify-content: flex-end;
+}
+
 .items-center{
     align-items: center;
 }

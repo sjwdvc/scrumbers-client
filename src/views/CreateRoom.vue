@@ -2,22 +2,32 @@
 	<section class="createroom">
 		<div class="interface">
 			<DisplayHeader content="NEW SESSION" />
-			<form action="" class="createroom-form" @submit.prevent="generateRoom">
-				<Label for="url" content="Trello URL" />
-				<Input id="url" type="text" name="link" placeholder="eg. https://trello.com/b/12345678/project-name" v-model="url" ref="url" @change="urlChanged"/>
-				
-				<Label for="board" content="Select board" />
-				<Select id="board" name="selectedBoard" :options="selectedBoard" @updateSelect="updateBoard"/>
-				
-				<Label for="rules" content="Admin rules" />
-				<Select id="rules" name="adminRules" :options="adminRules" @updateSelect="updateSelect" />
-
-				<Label for="coffee" content="Coffee Timeout Length" />
-				<Input id="coffee" value="coffee-timeout" type="number" placeholder="Coffee-timeout minutes" v-model="coffee" />
-				
-				<p class="error">{{error}}</p>
-				<Button content="Generate link"/>
-			</form>
+			<div class="flex">
+				<div class="createroom-left">
+					<form action="" class="createroom-form" @submit.prevent="generateRoom">
+						<Label for="url" content="Trello URL" />
+						<Input id="url" type="text" name="link" placeholder="eg. https://trello.com/b/12345678/project-name" v-model="url" ref="url" @change="urlChanged"/>
+						
+						<Label for="board" content="Select board" />
+						<Select id="board" name="selectedBoard" :options="selectedBoard" @updateSelect="updateBoard"/>
+						
+						<Label for="rules" content="Admin rules" />
+						<Select id="rules" name="adminRules" :options="adminRules" @updateSelect="updateSelect" />
+						
+						<Label for="coffee" content="Coffee Timeout Length" />
+						<Input id="coffee" value="coffee-timeout" type="number" placeholder="Coffee-timeout minutes" v-model="coffee" />
+						
+						<p class="error">{{error}}</p>
+					</form>
+				</div>
+				<div class="createroom-right">
+					<h3>Card templates</h3>
+					<div class="createroom-templates">
+						<CardTemplates :data="cardTemplates"/>
+					</div>
+				</div>
+			</div>
+			<Button content="Generate link"/>
 		</div>
 	</section>
 </template>
@@ -29,12 +39,14 @@ import Label from "../components/Label";
 import Button from "../components/Button";
 import Select from "../components/Select";
 import {CLIENT, SOCKET, USER} from "../constants";
+import CardTemplates from "../components/CardTemplates"
 
 export default
 {
 	name : "CreateRoom",
 	components :
 	{
+		CardTemplates,
 		Button,
 		Input,
 		DisplayHeader,
@@ -72,7 +84,8 @@ export default
 					content: 'Please enter your trello URL first',
 					value: 'backlog'
 				},
-			]
+			],
+			cardTemplates : []
 		}
 	},
 	beforeMount()
@@ -156,6 +169,14 @@ export default
 		SOCKET.on('checkURL', data => {
 			this.selectedBoard = data
 			this.settings.board = data[0].value
+		})
+		
+		SOCKET.emit('profile', {event: 'loadCardTemplates', email : USER.email})
+		
+		SOCKET.on('loadCardTemplates', data => {
+			console.log('card templates : ')
+			console.log(data)
+			this.cardTemplates = data
 		})
 	}
 }
