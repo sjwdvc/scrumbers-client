@@ -32,7 +32,7 @@
 									<h3>Round: 1</h3>
 									<h3>Round: 2</h3>
 								</div>
-								<div class="flex space-around" v-for="player in featureArray.players" :key="player._id">
+								<div class="flex" v-for="player in featureArray.players" :key="player._id">
 									<div class="vote-content sub-title" v-for="(vote) in test(feature.votes, player)" v-bind:key="vote._id" >
 										<div class="message-wrapper">
 											<!-- <h3>Round: {{ vote.round }}</h3> -->
