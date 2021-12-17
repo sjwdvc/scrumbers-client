@@ -7,6 +7,7 @@ import CreateRoom from "./views/CreateRoom";
 import ShareLink from "./views/ShareLink";
 import Session from "./views/Session";
 import Profile from "./views/Profile";
+import ChangePassword from "./views/ChangePassword";
 import Error from "./views/Error";
 
 Vue.use(Router);
@@ -49,6 +50,11 @@ export default new Router({
             path: "/profile",
             component: Profile,
             name: 'profile'
+        },
+        {
+            path: "/changepassword",
+            component: ChangePassword,
+            name: 'changepassword'
         },
         {
             path: "/error",
