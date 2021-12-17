@@ -1,5 +1,5 @@
 <template>
-	<input :type="$props.type" :name="$props.name" :placeholder="$props.placeholder" v-bind="attrs" :value="value" @input="updateValue($event.target.value)" :emoji="emoji">
+	<input :type="$props.type" :name="$props.name" :placeholder="$props.placeholder" v-bind="attrs" :value="value" @input="updateValue($event.target.value)" @change="changeValue($event.target.value)">
 </template>
 
 <script>
@@ -17,6 +17,10 @@ export default {
 		updateValue(value)
 		{
 			this.$emit('input', value)
+		},
+		changeValue(value)
+		{
+			this.$emit('change', value)
 		}
 	},
 	data () {

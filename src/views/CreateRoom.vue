@@ -4,14 +4,17 @@
 			<DisplayHeader content="NEW SESSION" />
 			<form action="" class="createroom-form" @submit.prevent="generateRoom">
 				<Label for="url" content="Trello URL" />
-				<Input id="url" type="text" name="link" placeholder="eg. https://trello.com/b/12345678/project-name" v-model="url" ref="url"/>
-
-				<Label for="coffee" content="Coffee Timeout Length" />
-				<Input id="coffee" value="coffee-timeout" type="number" placeholder="Coffee-timeout minutes" v-model="coffee" />
-
+				<Input id="url" type="text" name="link" placeholder="eg. https://trello.com/b/12345678/project-name" v-model="url" ref="url" @change="urlChanged"/>
+				
+				<Label for="board" content="Select board" />
+				<Select id="board" name="selectedBoard" :options="selectedBoard" @updateSelect="updateBoard"/>
+				
 				<Label for="rules" content="Admin rules" />
 				<Select id="rules" name="adminRules" :options="adminRules" @updateSelect="updateSelect" />
 
+				<Label for="coffee" content="Coffee Timeout Length" />
+				<Input id="coffee" value="coffee-timeout" type="number" placeholder="Coffee-timeout minutes" v-model="coffee" />
+				
 				<p class="error">{{error}}</p>
 				<Button content="Generate link"/>
 			</form>
@@ -47,7 +50,8 @@ export default
 			token: '',
 			error: '',
 			settings : {
-				assignMethod : 'lowest'
+				assignMethod : 'lowest',
+				board : 'backlog'
 			},
 			adminRules: [
 				{
@@ -61,6 +65,12 @@ export default
 				{
 					content: 'Admin decides',
 					value: 'admin'
+				},
+			],
+			selectedBoard: [
+				{
+					content: 'Please enter your trello URL first',
+					value: 'backlog'
 				},
 			]
 		}
@@ -112,20 +122,41 @@ export default
 				token   : this.token,
 				settings: this.settings
 			});
-
-			SOCKET.on('urlError', args => {
-				this.error = args.error;
-				url.style.border = '2px solid #A03A3C';
-			})
-
-			SOCKET.on('createRoom', data => {
-				this.$router.push({name: 'sharelink', params: {key: data.key}});
-			})
 		},
 		updateSelect(value)
 		{
 			this.settings.assignMethod = value;
+		},
+		
+		urlChanged(value)
+		{
+			SOCKET.emit('session', {
+				event : 'checkURL',
+				url   : value,
+				token : this.token
+			})
+		},
+		
+		updateBoard(value)
+		{
+			this.settings.board = value
 		}
+	},
+	mounted()
+	{
+		SOCKET.on('urlError', args => {
+			this.error = args.error;
+			url.style.border = '2px solid #A03A3C';
+		})
+		
+		SOCKET.on('createRoom', data => {
+			this.$router.push({name: 'sharelink', params: {key: data.key}});
+		})
+		
+		SOCKET.on('checkURL', data => {
+			this.selectedBoard = data
+			this.settings.board = data[0].value
+		})
 	}
 }
 </script>
