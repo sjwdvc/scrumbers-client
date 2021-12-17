@@ -20,7 +20,7 @@
 					<div class="feature-content" v-for="(feature, featureindex) in featureArray.features" v-bind:key="feature._id">
 						<h2 class="feature-content-title center">Title: {{ feature.title }}</h2>
 						<div class="feature-content-votes">
-							<div class="feature-content-votes-header" @click="ToggleVotes(featureindex)">
+							<div class="feature-content-votes-header" @click="ToggleVotes(featureindex,index)">
 								<p>Votes</p>
 								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="chevron bi bi-chevron-down" viewBox="0 0 16 16">
 									<path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
@@ -32,7 +32,7 @@
 									<h3>Round: 1</h3>
 									<h3>Round: 2</h3>
 								</div>
-								<div class="flex space-around" v-for="player in featureArray.players" :key="player._id">
+								<div class="flex" v-for="player in featureArray.players" :key="player._id">
 									<div class="vote-content sub-title" v-for="(vote) in test(feature.votes, player)" v-bind:key="vote._id" >
 										<div class="message-wrapper">
 											<!-- <h3>Round: {{ vote.round }}</h3> -->
@@ -44,7 +44,7 @@
 							</div>
 						</div>
 						<div class="feature-content-chats">
-							<div class="feature-content-chats-header" @click="toggleChats(featureindex)">
+							<div class="feature-content-chats-header" @click="toggleChats(featureindex, index)">
 								<p>Chats</p>
 								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="chevron bi bi-chevron-down" viewBox="0 0 16 16">
 									<path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
@@ -113,18 +113,25 @@ export default {
 			wrapper.toggle(400);
 			chevron.toggleClass('open');
 		},
-		ToggleVotes(i)
+		ToggleVotes(i,session)
 		{
-			let voteswrapper = $($('.feature-content-votes-content')[i])
-			voteswrapper.toggle(400)
-			$($('.feature-content-votes-header')[i]).toggleClass('open')
-		},
-		toggleChats(i)
-		{
-			let wrapper = $($('.feature-content-chats-content')[i])
-			wrapper.toggle(400)
-			$($('.feature-content-chats-header')[i]).toggleClass('open')
+			let featureVotesIndex = $($( '.feature-wrapper' )[session])
 
+			let voteElement = featureVotesIndex.children().eq(i).children('.feature-content-votes').children('.feature-content-votes-content');
+			let voteElementHeader = featureVotesIndex.children().eq(i).children('.feature-content-votes').children('.feature-content-votes-header');
+
+			voteElement.toggle(400);
+			voteElementHeader.toggleClass('open');
+		},
+		toggleChats(i, session)
+		{
+			let featureChatsIndex = $($( '.feature-wrapper' )[session])
+
+			let chatElement = featureChatsIndex.children().eq(i).children('.feature-content-chats').children('.feature-content-chats-content');
+			let chatElementHeader = featureChatsIndex.children().eq(i).children('.feature-content-chats').children('.feature-content-chats-header');
+
+			chatElement.toggle(400);
+			chatElementHeader.toggleClass('open');
 		},
 		togglePopup()
 		{

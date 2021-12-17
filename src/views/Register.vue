@@ -32,7 +32,7 @@ import axios from "axios";
 import DisplayHeader from "../components/text/DisplayHeader";
 import Input from "../components/Input";
 import Button from "../components/Button";
-import {SERVER} from "../constants";
+import {SERVER} from "../constants-example";
 
 export default {
 	name: "Register",
