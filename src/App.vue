@@ -35,6 +35,31 @@
 						</div>
 					</div>
 				</div>
+
+				<h2>Attachments</h2>
+				<div class="info-content-feature-checklists">
+					<div :id="'attachment-' + index" class="info-content-feature-checklists-checklist" v-for="(attachment, index) in attachments" :key="index" :class="{'checklist-open': attachment.open}">
+						<dir v-if="attachment.mimeType.startsWith('image/')" @click="openAttachment(index)">
+							<div class="checklist-header">
+								<h3>{{attachment.name}}</h3>
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+									<g id="Icon_feather-plus" data-name="Icon feather-plus" transform="translate(-6 -6)">
+										<path id="Path_57" data-name="Path 57" d="M18,7.5v21" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" v-if="!attachments[index].open"/>
+										<path id="Path_58" data-name="Path 58" d="M7.5,18h21" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+									</g>
+								</svg>
+							</div>
+							<div class="checklist-content">
+								<img style="width: 90%" v-bind:src="attachment.url" alt="Card">
+							</div>
+						</dir>
+						<div v-else>
+							<div class="checklist-header">
+								<h3><a :href="attachment.url" target="blank">{{attachment.name}}</a></h3>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class="info-content-chat" v-if="chatOpen && sessionStatus === 2">
 				<h2>Chats</h2>
@@ -84,6 +109,7 @@
 			<router-view
 				@session:status="updateSessionStatus"
 				@session:checklists="updateSessionChecklists"
+				@session:attachments="updateSessionAttachments"
 				@session:description="updateSessionDescription"
 				@session:chat:clear="clearChats"
 				@session:chat:update="updateChats"
@@ -122,6 +148,7 @@ export default {
 			votes			: [],
 			chatmessage		: "",
 			checklists 		: null,
+			attachments		: null,
 			description 	: "",
 			chatround 		: 0,
 			menuLinks 		:
@@ -165,7 +192,18 @@ export default {
 			// Set reactive property with $set
 			this.checklists.forEach((list, index) => {
 				this.$set(this.checklists[index], 'open', false);
-			})
+			});
+		},
+
+		updateSessionAttachments(data)
+		{
+			this.attachments = data;
+
+			// Set reactive property with $set
+			this.attachments.forEach((list, index) => {
+				this.attachments[index].open = false;
+				this.$set(this.attachments[index], 'open', false);
+			});
 		},
 
 		updateSessionDescription(data)
@@ -336,8 +374,20 @@ export default {
 		},
 		openChecklist(index)
 		{
-			index = parseInt(index)
-			this.checklists[index].open = !this.checklists[index].open
+			index = parseInt(index);
+			this.checklists[index].open = !this.checklists[index].open;
+		},
+		openAttachment(index)
+		{
+			index = parseInt(index);
+			this.attachments[index].open = !this.attachments[index].open;
+
+			console.log(this.attachments[index].open);
+			let element = document.getElementById('attachment-' + index);
+			if (element.classList.contains('checklist-open'))
+				element.classList.remove('checklist-open');
+			else 
+				element.classList.add('checklist-open');
 		}
 	},
 	mounted()

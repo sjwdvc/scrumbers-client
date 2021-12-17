@@ -204,8 +204,10 @@ export default {
 	        this.refreshUserList(data.data);
 	        
 	        // Emit session data to App.vue to update the config menu
+            console.log("Session: ", this.session.feature);
 	        this.$emit("session:status", { status: data.toLoad });
 	        this.$emit("session:checklists", this.session.feature.checklists);
+            this.$emit("session:attachments", this.session.feature.attachments);
 	        this.$emit("session:description", this.session.feature.desc);
         }
 
