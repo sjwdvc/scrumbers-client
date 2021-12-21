@@ -14,7 +14,8 @@
 @import "components/sessionhistory";
 @import "components/votespopup";
 @import "components/choicepopup";
-@import "src/scss/components/cardtemplates";
+@import "components/cardtemplates";
+@import "components/createtemplate";
 
 // Import views & components
 @import "views/session";

@@ -36,6 +36,20 @@
             color: $white;
         }
 
+        &-add{
+            width: 25px;
+            height: 25px;
+        }
+
     }
 
+    &-wrapper{
+        transition: 0.3s ease;
+    }
+}
+
+.addtemplate{
+    .createroom-wrapper{
+        transform: translateX(-150%);
+    }
 }

@@ -46,7 +46,7 @@
                             </svg>
                         </div>
                     </h1>
-	                <Cards v-on:select="session.decision.number = $event" ref="cards"/>
+	                <Cards v-on:select="session.decision.number = $event" ref="cards" :cards="template"/>
                     <div class="session-game-features-reason">
                         <div class="relative">
                             <TextArea name="description" placeholder="Explain your choice (max. 250 chars)" class="animate__animated" v-model="session.decision.desc" max="200" required
@@ -112,6 +112,7 @@ export default {
             timeOutLength: 0,
             timeOutMinutes: 0,
             timeOutSeconds: 0,
+	        template : [],
          
 	        session: {
                 status: "round1",
@@ -220,6 +221,10 @@ export default {
 
                 // Sets all users their status to the correct status responded from the server
                 data.data.users.forEach((user) => this.users.find((client) => client.name === user.name).status = user.status);
+	            
+	            this.template = data.template
+		
+		        console.log(data)
 
                 switch (data.toLoad) {
                     case 0: // WAITING

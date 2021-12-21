@@ -21,13 +21,20 @@ export default {
 		data : Array
 	},
 	methods : {
+		/**
+		 *
+		 * @param {Event} e The click event fired from the input node
+		 */
 		selectTemplate(e)
 		{
+			// Toggle the checked attribute on the input
 			document.querySelectorAll('input[type=radio]').forEach(input => {
 				input.setAttribute('checked', false)
 			})
-
 			e.target.setAttribute('checked', true)
+			
+			// Emit the results back to the Createroom component
+			this.$emit('selectTemplate', e.target.value)
 		}
 	}
 }

@@ -1,0 +1,61 @@
+.createtemplate{
+    .interface{
+        position: absolute;
+        left: 150%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+        background-color: $blue-dark;
+        max-width: 500px!important;
+        transition: 0.3s ease;
+    }
+
+    &-addnumber{
+        input{
+            margin-bottom: 0px;
+        }
+        svg{
+            width: 40px;
+            height: auto;
+            margin-left: 25px;
+        }
+    }
+
+    &-cardwrapper{
+        padding: 25px 0;
+        overflow-x: scroll;
+        margin-bottom: 25px;
+        &-card {
+            margin-right: 25px;
+            font-size: 42px;
+            min-width: 75px;
+            max-width: 75px;
+            padding: 25px 0;
+            color: $blue-dark;
+            border-radius: 10px;
+            font-weight: 900;
+            background-color: $white;
+            text-align: center;
+            transition: 0.3s ease;
+            border-bottom: 5px solid darken($white, 25%);
+
+            p, img {
+                pointer-events: none;
+            }
+        }
+    }
+
+    &-buttons{
+        button{
+            width: 45%;
+        }
+    }
+}
+
+.addtemplate{
+    .createtemplate{
+        .interface{
+            left: 50%;
+        }
+    }
+}
