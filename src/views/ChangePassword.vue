@@ -28,6 +28,7 @@
                     placeholder="Password"
                     ref="password"
                     required
+                    v-model="form.password"
                 />
 
                 <input
@@ -37,6 +38,7 @@
                     placeholder="Confirm password"
                     ref="confirmPassword"
                     required
+                    v-model="form.confirmpassword"
                 />
 
                 <div v-if="this.spinner === true" class="loader"></div>
@@ -62,7 +64,7 @@ import Button from "../components/Button";
 import DisplayHeader from "../components/text/DisplayHeader";
 
 export default {
-    name: "Profile",
+    name: "Change password",
     components: {
         DisplayHeader,
         Button,
@@ -72,14 +74,29 @@ export default {
             profile: {},
             featureData: {},
             form: {
-                name: "",
-                age: "",
+                password: "",
+                confirmpassword: "",
             },
             error: "",
             chatround: true,
             spinner: {},
         };
     },
+    methods: {
+        submitData () {
+            if (this.password === this.confirmpassword) {
+                axios.post(SERVER + 'user/updatepassword', { password: this.form.password })
+                .then(res => {
+                    if (res.data.error !== "") {
+                        this.error = res.data.error;
+                    }
+                });
+            } else {
+                this.error = "Confirmation needs to be the same";
+            }
+
+        }
+    }
 };
 </script>
 
