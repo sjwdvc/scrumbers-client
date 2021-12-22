@@ -140,7 +140,7 @@ export default
 	{
 		generateRoom()
 		{
-			if(this.selectedTemplate === [])
+			if(this.selectedTemplate.length === 0)
 			{
 				this.$toast.open({message: "Please select a card template", type: "error", position: "top-right"});
 			}
