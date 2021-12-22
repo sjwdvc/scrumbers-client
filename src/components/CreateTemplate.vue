@@ -72,6 +72,12 @@ export default {
 				return
 			}
 			
+			if(this.number < 0)
+			{
+				this.$toast.open({message: "No negative numbers allowed. Use the coffee / question cards for alternatives", type: "error", position: "top-right"});
+				return
+			}
+			
 			num = parseInt(this.number)
 			
 			
