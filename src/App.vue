@@ -219,7 +219,8 @@ export default {
 			data['chat'].forEach(chat => {
 				this.chats.push({
 					sender: chat.sender,
-					message: chat.value
+					message: chat.value,
+					round: chat.round
 				})
 			})
 
@@ -254,8 +255,10 @@ export default {
 			this.votes.forEach(vote => {
 
 				this.chats.forEach(chat => {
-					if(chat.sender === vote.sender)
-						chat.vote = vote.value
+					if( chat.round == vote.round){
+						if(chat.sender === vote.sender)
+							chat.vote = vote.value
+					}
 				})
 			})
 		},
