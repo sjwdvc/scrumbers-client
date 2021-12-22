@@ -10,6 +10,18 @@
         transition: 0.3s ease;
     }
 
+    &-alternatives{
+        div{
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            color: $white;
+            background: $blue-light;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+    }
+
     &-addnumber{
         input{
             margin-bottom: 0px;
@@ -19,6 +31,12 @@
             height: auto;
             margin-left: 25px;
         }
+    }
+
+    &-emptynotice{
+        padding: 25px 0;
+        color: $white;
+        font-size: 20px;
     }
 
     &-cardwrapper{
@@ -38,9 +56,38 @@
             text-align: center;
             transition: 0.3s ease;
             border-bottom: 5px solid darken($white, 25%);
+            position: relative;
+
+            .remove{
+                content: "x";
+                width: 100%;
+                height: 0;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                font-size: 60px;
+                border-radius: 10px;
+                transform: translate(-50%, -50%);
+                background-color: rgba(darken($white, 25%), 0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+                transition: 0.3s ease;
+                overflow: hidden;
+                path{
+                    transform: scale(0.5) translate(12px, 10px)
+                }
+            }
 
             p, img {
                 pointer-events: none;
+            }
+        }
+
+        .activeremove{
+            .remove{
+                height: 100%;
             }
         }
     }

@@ -1,8 +1,9 @@
 <template>
 	<div class="session-game-features-cards custom-scrollbar">
 		<div class="session-game-features-cards-card" v-for="(card, index) in cards" :data-card="card" @mouseenter="activeCard" @mouseleave="staticCard" @click="selectCard" :key="index" >
-			<p v-if="card !== 'coffee'">{{ card }}</p>
-			<img src="/img/coffee.svg" alt="" v-else />
+			<p v-if="card == -1">☕</p>
+			<p v-else-if="card == -2">❓</p>
+			<p v-else>{{ card }}</p>
 		</div>
 	</div>
 </template>

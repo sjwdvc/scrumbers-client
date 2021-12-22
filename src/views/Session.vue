@@ -247,6 +247,9 @@ export default {
 
                         // Set the chosen number to the card in the name list
                         this.users.forEach((user) => (user.icon = this.$parent["votes"].find((vote) => vote.sender === user.name).value));
+                        
+                        // Set -2 to question mark quick fix
+	                    this.users.forEach(user => user.icon == -2 ? user.icon = "❓" : user.icon = user.icon)
 
                         // Scroll down the chat window
                         setTimeout(() => {
@@ -324,9 +327,7 @@ export default {
         SOCKET.on("admin", (args) => {
 	        this.choice.members = [];
             roundSetup(args)
-
-            console.log('admin args : ')
-            console.log(args)
+	        
         
 	        args.members.forEach((member) => {
 		        this.choice.members.push(

@@ -50,6 +50,7 @@ import Select from "../components/Select";
 import {CLIENT, SOCKET, USER} from "../constants";
 import CardTemplates from "../components/CardTemplates"
 import CreateTemplate from "../components/CreateTemplate"
+import EVENTBUS from "../eventbus"
 
 export default
 {
@@ -195,13 +196,13 @@ export default
 			this.settings.board = data[0].value
 		})
 		
-		SOCKET.emit('profile', {event: 'loadCardTemplates', email : USER.email})
+		SOCKET.emit('templates', {event: 'load', email : USER.email})
 		
-		SOCKET.on('loadCardTemplates', data => {
-			console.log('card templates : ')
-			console.log(data)
+		SOCKET.on('templates:load', data => {
 			this.cardTemplates = data
 		})
+		
+		EVENTBUS.$on('templates:reload', () => SOCKET.emit('templates', {event: 'load', email : USER.email}))
 	}
 }
 </script>

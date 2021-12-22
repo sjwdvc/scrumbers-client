@@ -6,7 +6,9 @@
 					<input type="radio" name="templates" :value="cards.cards" @click="selectTemplate">
 					<div class="flex items-center justify-start cardtemplates-wrapper custom-scrollbar">
 						<div class="cardtemplates-card" v-for="(card, index) in cards.cards" :key="index" >
-							<p>{{ card }}</p>
+							<p v-if="card === -1">☕</p>
+							<p v-else-if="card === -2">❓</p>
+							<p v-else>{{ card }}</p>
 						</div>
 					</div>
 				</div>
