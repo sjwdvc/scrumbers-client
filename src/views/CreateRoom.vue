@@ -140,16 +140,23 @@ export default
 	{
 		generateRoom()
 		{
-			SOCKET.emit('session', {
-				url             : this.url,
-				coffee          : this.coffee,
-				event           : 'create',
-				name            : USER.name,
-				email           : USER.email,
-				token           : this.token,
-				settings        : this.settings,
-				cardtemplate    : this.selectedTemplate
-			});
+			if(this.selectedTemplate === [])
+			{
+				this.$toast.open({message: "Please select a card template", type: "error", position: "top-right"});
+			}
+			else
+			{
+				SOCKET.emit('session', {
+					url             : this.url,
+					coffee          : this.coffee,
+					event           : 'create',
+					name            : USER.name,
+					email           : USER.email,
+					token           : this.token,
+					settings        : this.settings,
+					cardtemplate    : this.selectedTemplate
+				});
+			}
 		},
 		updateSelect(value)
 		{
