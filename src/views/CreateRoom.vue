@@ -31,6 +31,7 @@
 					
 					<div class="createroom-templates">
 						<CardTemplates :data="cardTemplates" @selectTemplate="selectTemplate"/>
+						<p v-if="cardTemplates.length === 0" class="text-white">No templates found yet. Create one by clicking +</p>
 					</div>
 				</div>
 			</div>
