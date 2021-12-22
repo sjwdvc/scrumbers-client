@@ -9,6 +9,10 @@ section{
     }
 }
 
+.mb-25{
+    margin-bottom: 25px;
+}
+
 .d-none{
     display: none;
 }
@@ -40,6 +44,14 @@ section{
 
 .space-around{
     justify-content: space-around;
+}
+
+.justify-start{
+    justify-content: flex-start;
+}
+
+.justify-end{
+    justify-content: flex-end;
 }
 
 .items-center{
