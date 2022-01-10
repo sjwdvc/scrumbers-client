@@ -118,7 +118,13 @@ export default
 
 					// Redirect after 2 seconds
 					setTimeout(() => {
-						this.session === null || this.session === undefined ? this.$router.push({name : 'home'}) : this.$router.push({name : 'session', params: {key: this.session}})
+						if (res.data.data[0].resetPassword === true) {
+							this.$router.push({name: 'changepassword'});
+						} else if (this.session === null || this.session === undefined) {
+							this.$router.push({name : 'home'});
+						} else {
+							this.$router.push({name : 'session', params: {key: this.session}});
+						}
 					}, 2000);
 				}
 			})
