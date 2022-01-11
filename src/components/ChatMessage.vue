@@ -33,7 +33,9 @@ export default {
 
 		// Quick fix coffee card
 		this.voteData = this.$props.vote
-		this.voteData === -1 ? this.voteData = "☕" : ''
+		this.voteData === -2 ? this.voteData = "❓" : ''
+		
+		
 	},
 	methods :
 	{

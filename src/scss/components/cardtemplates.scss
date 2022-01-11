@@ -1,0 +1,68 @@
+.cardtemplates{
+    padding-right: 15px;
+    max-height: 315px;
+    overflow-y: scroll;
+    input {
+        position: relative;
+        min-width: 25px;
+        max-width: 25px;
+        margin-right: 25px;
+        &:before{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            content: "✓";
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            transform: scale(0) translate(-50%, -50%);
+            transition: 120ms transform ease-in-out;
+            background: $blue-light;
+            text-align: center;
+            font-size: 35px;
+            line-height: 18px;
+            color: $gold;
+        }
+    }
+
+    input[checked=true]{
+        &:before{
+            transform: scale(1) translate(-50%, -50%);
+        }
+    }
+
+    &-template{
+        margin-bottom: 10px;
+    }
+
+    &-title{
+        text-align: left;
+        color: $white;
+        margin-bottom: 5px;
+    }
+
+    &-wrapper{
+        //max-width: 50px;
+        overflow-x: scroll;
+        padding-bottom: 10px;
+    }
+
+    &-card {
+        margin-right: 25px;
+        font-size: 42px;
+        min-width: 75px;
+        max-width: 75px;
+        padding: 25px 0;
+        color: $blue-dark;
+        border-radius: 10px;
+        font-weight: 900;
+        background-color: $white;
+        text-align: center;
+        transition: 0.3s ease;
+        border-bottom: 5px solid darken($white, 25%);
+
+        p, img {
+            pointer-events: none;
+        }
+    }
+}
