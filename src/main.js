@@ -37,14 +37,25 @@ router.beforeEach((to, from, next) => {
 
             switch(true)
             {
+                // If user should update their password, route them to /changepassword
+                case (data.data.login && data.data.resetPassword === true && (to.name !== 'changepassword')):
+                    Vue.$toast.open({
+                        message: "<h1>Please change your password</h1><p>Your password has expired</p>",
+                        type: "error",
+                        position: "top-right",
+                        duration: 10000
+                    });
+                    next({ name: 'changepassword' });
+                    break;
+
                 // If user is not logged in, and next route is not login or register
                 case (!data.data.login && to.name !== 'login' && to.name !== 'register'):
-                    to.name === 'session' ? next({name: 'login', params: {key: to.params.key}}) : next({name: 'login'})
+                    to.name === 'session' ? next({ name: 'login', params: { key: to.params.key } }) : next({ name: 'login' });
                     break;
 
                 // If user logged in and trying to access login screen
                 case (data.data.login && to.name === 'login'):
-                    next({name: 'home'})
+                    next({ name: 'home' });
                     break;
 
                 default: next()

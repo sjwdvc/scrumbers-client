@@ -64,7 +64,7 @@ import Button from "../components/Button";
 import DisplayHeader from "../components/text/DisplayHeader";
 
 export default {
-    name: "Change password",
+    name: "Changepassword",
     components: {
         DisplayHeader,
         Button,
