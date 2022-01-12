@@ -271,7 +271,6 @@ export default {
                     break;
                         
                     case 5: // END
-                        console.log("END CONSOLE LOG");
 	                    
                     	// Hide the result / admin popup and the session interface
                     	this.votes.visible       = false;
@@ -364,7 +363,6 @@ export default {
         SOCKET.on("startTimer", () => this.timer());
         
 		SOCKET.on("results", result => {
-			console.log("results");
 			this.votes.member = result.member
 			this.votes.number = result.number
 			this.votes.feature = result.feature.name
