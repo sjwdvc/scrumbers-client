@@ -247,6 +247,7 @@ export default {
                         this.$emit("session:chat:updateround", 2);
                         this.$emit("openInfo");
 
+
                         // Set the chosen number to the card in the name list
                         this.users.forEach((user) => (user.icon = this.$parent["votes"].find((vote) => vote.sender === user.name).value));
                         
@@ -270,11 +271,12 @@ export default {
                     break;
                         
                     case 5: // END
+                        console.log("END CONSOLE LOG");
 	                    
                     	// Hide the result / admin popup and the session interface
-                    	votes.visible       = false;
-                    	choice.visible      = false;
-                    	session.visible     = false;
+                    	this.votes.visible       = false;
+                    	this.choice.visible      = false;
+                    	this.session.visible     = false;
 	                    
 	                    // Query the history data and open the popup
                         SOCKET.emit("session", {event: "history", config: "single", key: this.sessionId});
@@ -362,7 +364,7 @@ export default {
         SOCKET.on("startTimer", () => this.timer());
         
 		SOCKET.on("results", result => {
-			
+			console.log("results");
 			this.votes.member = result.member
 			this.votes.number = result.number
 			this.votes.feature = result.feature.name
