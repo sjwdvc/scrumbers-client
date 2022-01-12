@@ -28,7 +28,7 @@
 				</div>
 			</form>
 			<div class='flex space-between'>
-				<a>Change password</a>
+				<router-link to="/changepassword">Change password</router-link>
 				<a @click="$refs.history.togglePopup()" >History</a>
 			</div>
 
