@@ -83,7 +83,21 @@ export default {
 			
 			if(this.cardTemplate.some(card => card === num))
 			{
-				this.$toast.open({message: num+ " is already added to the template", type: "error", position: "top-right"});
+				switch(num)
+				{
+					case -1:
+						this.$toast.open({message: "coffee card is already added to the template", type: "error", position: "top-right"});
+						break;
+						
+						case -2:
+							this.$toast.open({message: "question card is already added to the template", type: "error", position: "top-right"});
+							break;
+					
+						default:
+							this.$toast.open({message: num+ " is already added to the template", type: "error", position: "top-right"});
+							break;
+				}
+				
 			} else this.cardTemplate.push(num)
 			
 			this.number = ""
