@@ -198,12 +198,17 @@ export default {
 		updateSessionAttachments(data)
 		{
 			this.attachments = data;
+			
+			console.log(data)
 
 			// Set reactive property with $set
-			this.attachments.forEach((list, index) => {
-				this.attachments[index].open = false;
-				this.$set(this.attachments[index], 'open', false);
-			});
+			if(data != undefined)
+			{
+				this.attachments.forEach((list, index) => {
+					this.attachments[index].open = false;
+					this.$set(this.attachments[index], 'open', false);
+				});
+			}
 		},
 
 		updateSessionDescription(data)
