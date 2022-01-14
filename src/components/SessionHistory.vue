@@ -19,6 +19,15 @@
 				<div class="feature-wrapper">
 					<div class="feature-content" v-for="(feature, featureindex) in featureArray.features" v-bind:key="feature._id">
 						<h2 class="feature-content-title center">Title: {{ feature.title }}</h2>
+						<div class="flex justify-center">
+							<p class="chosenUser"> {{ feature.chosenUser }}</p>
+							<span class="chosenNumberCard" >{{ feature.chosenNumber }}</span>
+							
+						</div>
+						
+<!-- 
+						<p>Number: {{ feature.chosenUser }}</p>
+						<p>User: {{ feature.chosenUser }}</p> -->
 						<div class="feature-content-votes">
 							<div class="feature-content-votes-header" @click="ToggleVotes(featureindex,index)">
 								<p>Votes</p>
