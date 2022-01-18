@@ -15,7 +15,7 @@
 						<Select id="rules" name="adminRules" :options="adminRules" @updateSelect="updateSelect" />
 						
 						<Label for="coffee" content="Coffee Timeout Length" />
-						<Input id="coffee" value="coffee-timeout" type="number" placeholder="Coffee-timeout minutes" v-model="coffee" />
+						<Input id="coffee" value="coffee-timeout" type="number" placeholder="Coffee-timeout minutes" v-model="coffee" ref="coffeeinput"/>
 						
 						<p class="error">{{error}}</p>
 					</form>
@@ -143,6 +143,12 @@ export default
 			if(this.selectedTemplate.length === 0)
 			{
 				this.$toast.open({message: "Please select a card template", type: "error", position: "top-right"});
+			}
+			else if(this.coffee <= 0)
+			{
+				this.$toast.open({message: "Coffee timeout cannot be zero or negative", type: "error", position: "top-right"});
+				this.coffee = ""
+				
 			}
 			else
 			{
