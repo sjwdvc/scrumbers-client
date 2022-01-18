@@ -54,17 +54,25 @@ export default {
     components: {
         DisplayHeader,
     },
+    data() {
+        return {
+            interval: null,
+        }
+    },
     methods: {
         startTimer() {
             let timer = 1000;
-            let interval = setInterval(() => {
+            
+            this.interval = setInterval(() => {
                 timer--;
+
                 this.updateProgressBar(timer);
 
                 if (timer <= 0) {
+                    clearInterval(this.interval);
+                    this.updateProgressBar(1000);
                     this.$parent.votes.visible = false;
                     this.$parent.session.visible = true;
-                    clearInterval(interval);
                 }
             }, 60);
         },
@@ -75,6 +83,7 @@ export default {
         },
 
 		dismissVotesPopup() {
+            clearInterval(this.interval);
 			this.$parent.votes.visible = false;
 			this.$parent.session.visible = true;
 		}
@@ -82,6 +91,7 @@ export default {
     mounted() {
         EVENTBUS.$on("results", () => {
             this.startTimer();
+            this.updateProgressBar(1000);
             this.$parent.votes.visible = true;
             this.$parent.session.visible = false;
         });
