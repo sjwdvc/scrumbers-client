@@ -87,8 +87,17 @@ export default {
             if (this.form.password === this.form.confirmpassword) {
                 axios.post(SERVER + 'user/updatepassword', { password: this.form.password })
                 .then(res => {
-                    if (res.data.error !== "") {
+                    if (res.data.error !== "" && res.data.error !== undefined) {
                         this.error = res.data.error;
+                    } else if (res.data.changed === true) {
+                        this.$toast.open({
+                                message:
+                                    "Password has been changed",
+                                type: "success",
+                                position: "top-right",
+                                duration: 10000,
+                            });
+                            this.$router.push('profile');
                     }
                 });
             } else {

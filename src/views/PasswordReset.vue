@@ -153,7 +153,6 @@ export default {
                         if (res.data.error !== "" && res.data.error !== undefined) {
                             this.error = res.data.error;
                         } else if (res.data.status === true) {
-                            console.log(res.data.status);
                             this.$toast.open({
                                 message:
                                     "Password has been changed",
