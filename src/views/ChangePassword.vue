@@ -84,7 +84,7 @@ export default {
     },
     methods: {
         submitData () {
-            if (this.password === this.confirmpassword) {
+            if (this.form.password === this.form.confirmpassword) {
                 axios.post(SERVER + 'user/updatepassword', { password: this.form.password })
                 .then(res => {
                     if (res.data.error !== "") {
