@@ -121,23 +121,49 @@ export default {
     methods: {
         requestReset() {
             if (this.email) {
-                axios.post(SERVER + 'user/requestResetPassword', { email: this.email })
-                .then(res => {
-                    if (res.data.error !== "") {
-                        this.error = res.data.error;
-                    }
-                });
+                axios
+                    .post(SERVER + "user/requestResetPassword", {
+                        email: this.email,
+                    })
+                    .then((res) => {
+                        if (res.data.error !== "" && res.data.error !== undefined) {
+                            this.error = res.data.error;
+                        } else if (res.data.status === true) {
+                            this.$toast.open({
+                                message:
+                                    "An email has been sent to your email address",
+                                type: "success",
+                                position: "top-right",
+                                duration: 10000,
+                            });
+                            this.$router.push('login');
+                        }
+                    });
             }
         },
 
         resetPassword() {
             if (this.form.password === this.form.confirmpassword) {
-                axios.post(SERVER + 'user/resetPassword', { password: this.form.password, token: this.token })
-                .then(res => {
-                    if (res.data.error !== "") {
-                        this.error = res.data.error;
-                    }
-                });
+                axios
+                    .post(SERVER + "user/resetPassword", {
+                        password: this.form.password,
+                        token: this.token,
+                    })
+                    .then((res) => {
+                        if (res.data.error !== "" && res.data.error !== undefined) {
+                            this.error = res.data.error;
+                        } else if (res.data.status === true) {
+                            console.log(res.data.status);
+                            this.$toast.open({
+                                message:
+                                    "Password has been changed",
+                                type: "success",
+                                position: "top-right",
+                                duration: 10000,
+                            });
+                            this.$router.push('login');
+                        }
+                    });
             } else {
                 this.error = "Confirmation needs to be the same";
             }
@@ -145,12 +171,12 @@ export default {
     },
     mounted() {
         // get the reset token from get parameters
-        if (location.hash !== '') {
+        if (location.hash !== "") {
             this.token = location.hash.substring(1);
             // Remove the hash(token) for security
             history.pushState("", document.title, window.location.pathname);
         }
-    }
+    },
 };
 </script>
 
