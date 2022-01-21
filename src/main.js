@@ -49,7 +49,7 @@ router.beforeEach((to, from, next) => {
                     break;
 
                 // If user is not logged in, and next route is not login or register
-                case (!data.data.login && to.name !== 'login' && to.name !== 'register'):
+                case (!data.data.login && to.name !== 'login' && to.name !== 'register' && to.name !== 'passwordreset'):
                     to.name === 'session' ? next({ name: 'login', params: { key: to.params.key } }) : next({ name: 'login' });
                     break;
 

@@ -12,6 +12,7 @@
 				<Button type="submit" content="Login" class="login-form-button" />
 			</form>
 			<Button @click.native="loginMicrosoft" content="Login with Microsoft" class="login-microsoft-button" />
+			<p><router-link to="passwordreset">Forgot password?</router-link></p>
 		</div>
 		<p> No account yet?
 			<router-link to="register">Click here to register</router-link>
