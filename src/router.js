@@ -2,6 +2,7 @@ import Vue from "vue";
 import Router from "vue-router";
 import Home from "./views/Home";
 import Register from "./views/Register";
+import PasswordReset from "./views/PasswordReset";
 import Login from "./views/Login";
 import CreateRoom from "./views/CreateRoom";
 import ShareLink from "./views/ShareLink";
@@ -30,6 +31,11 @@ export default new Router({
             path: "/login/:key?",
             component: Login,
             name: 'login'
+        },
+        {
+            path: "/passwordreset",
+            component: PasswordReset,
+            name: 'passwordreset'
         },
         {
             path: "/create-room",
