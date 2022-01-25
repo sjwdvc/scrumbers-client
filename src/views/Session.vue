@@ -351,7 +351,7 @@ export default {
 	        		break;
 	        		
                 case 'chooseboth':
-	                this.choice.cards   = args.cards
+	                this.choice.cards   = [...new Set(args.cards)];
 	                this.choice.card    = args.cards[0]
                 	break;
 	        }
