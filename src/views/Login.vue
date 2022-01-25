@@ -12,6 +12,7 @@
 				<Button type="submit" content="Login" class="login-form-button" />
 			</form>
 			<Button @click.native="loginMicrosoft" content="Login with Microsoft" class="login-microsoft-button" />
+			<p><router-link to="passwordreset">Forgot password?</router-link></p>
 		</div>
 		<p> No account yet?
 			<router-link to="register">Click here to register</router-link>
@@ -118,7 +119,13 @@ export default
 
 					// Redirect after 2 seconds
 					setTimeout(() => {
-						this.session === null || this.session === undefined ? this.$router.push({name : 'home'}) : this.$router.push({name : 'session', params: {key: this.session}})
+						if (this.session === null || this.session === undefined) {
+							// .catch() bacause .push has a callback. To avoid error loggin in console,
+							// bacause the middleware will redirect to /changepassword when necessary
+							this.$router.push({name : 'home'}).catch(() => {});
+						} else {
+							this.$router.push({name : 'session', params: {key: this.session}});
+						}
 					}, 2000);
 				}
 			})

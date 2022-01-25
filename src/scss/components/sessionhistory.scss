@@ -19,6 +19,9 @@
         &-content{
             &-title{
                 color: $gold;
+                border: $gold 1px solid;
+                border-radius: 1rem;
+                margin: 1rem;
             }
             &-votes{
                 &-header{
@@ -26,7 +29,7 @@
                     flex-direction: row;
                     justify-content: space-evenly;
                     width: 200px;
-                    margin: 0 auto;
+                    margin: 0.5rem auto;
                     cursor: pointer;
                     border: 1px solid $blue-light;
                     padding: 0.5rem;
@@ -112,7 +115,7 @@
     .sessionTitle{
      font-size: 1.3rem;
     }
-
+    
     .vote-content{
         margin-bottom: 0.5rem;
         width: 50%;
@@ -218,5 +221,35 @@
     .feature-content{
      padding: 0rem 2rem 0rem 2rem;
 
+    }
+
+    .chosenNumberCard{
+        background: #DBDBDD;
+        border-bottom: 3px solid #99999f;
+        border-radius: 10px;
+        -webkit-transform: rotate(5deg);
+        transform: rotate(5deg);
+        color: #151C23;
+        padding: 10px 15px;
+        font-size: 25px;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        width: 2.5rem;
+        margin: 5px;
+    }
+
+    .chosenUser{
+        display: inherit;
+        color: $white;
+        font-size: 20px;
+        font-weight: 700;
+        align-items: center;
     }
  }

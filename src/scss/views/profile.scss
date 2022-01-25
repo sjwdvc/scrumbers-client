@@ -21,6 +21,10 @@
 
     .interface {
         text-align: left;
+        a
+        {
+            cursor: pointer;
+        }
     }
 
     .closepopup{
@@ -68,7 +72,7 @@
     .popup-content{
 		overflow-y: scroll;
         // overflow: hidden;
-        max-height: 78vh;
+        max-height: 85%;
     }
 
     .sessionTitle{

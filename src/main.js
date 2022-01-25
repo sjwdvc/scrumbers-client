@@ -37,14 +37,25 @@ router.beforeEach((to, from, next) => {
 
             switch(true)
             {
+                // If user should update their password, route them to /changepassword
+                case (data.data.login && data.data.resetPassword === true && (to.name !== 'changepassword')):
+                    Vue.$toast.open({
+                        message: "<h1>Please change your password</h1><p>Your password has expired</p>",
+                        type: "error",
+                        position: "top-right",
+                        duration: 10000
+                    });
+                    next({ name: 'changepassword' });
+                    break;
+
                 // If user is not logged in, and next route is not login or register
-                case (!data.data.login && to.name !== 'login' && to.name !== 'register'):
-                    to.name === 'session' ? next({name: 'login', params: {key: to.params.key}}) : next({name: 'login'})
+                case (!data.data.login && to.name !== 'login' && to.name !== 'register' && to.name !== 'passwordreset'):
+                    to.name === 'session' ? next({ name: 'login', params: { key: to.params.key } }) : next({ name: 'login' });
                     break;
 
                 // If user logged in and trying to access login screen
                 case (data.data.login && to.name === 'login'):
-                    next({name: 'home'})
+                    next({ name: 'home' });
                     break;
 
                 default: next()
@@ -52,24 +63,6 @@ router.beforeEach((to, from, next) => {
         })
         .catch(err => console.log(err))
 })
-
-/**
- * Runs when the window resizes and applying scaling to fit the game window onto smaller screens
- * Runs once on load
- */
-window.addEventListener('resize', e => {
-    let scaling = e.target.innerHeight / 1000
-    let session = document.querySelector('.session')
-    let nav     = document.querySelector('.nav')
-
-    if(scaling < 1 && scaling > 0.5 && session)
-    {
-        session.style.transform = 'scale(' + scaling + ')'
-        nav.style.transform     = session.style.transform
-    }
-
-});
-
 
 // Global capitalize filter -- example: {{ value | capitalize }}
 Vue.filter('capitalize', value => value.toUpperCase())
