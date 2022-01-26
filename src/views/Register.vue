@@ -16,7 +16,7 @@
 					<li>At least 1 capital letter</li>
 					<li>Atleast 1 number</li>
 				</ul>
-				<Button type="submit" content="Register" ref="button" />
+				<Button type="submit" content="Register" ref="registerbutton" id="registerbutton"/>
 			</form>
 		</div>
 
@@ -73,7 +73,7 @@ export default {
 					 this.error = res.data.error;
 				 } else {
 					 // Disable submit button to prevent double submits
-					 document.querySelector('button').setAttribute('disabled', '');
+					 document.querySelector('#registerbutton').setAttribute('disabled', '');
 
 					 this.$toast.open({message: 'Registration successful', type: "success", position: "top-right"});
 
