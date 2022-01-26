@@ -325,10 +325,8 @@ export default {
         SOCKET.on("admin", (args) => {
 	        this.choice.members = [];
             roundSetup(args)
-	        
+	        this.choice.members.push({content: "Select a user to assign (Optional)", value: -1})
 	        args.members.forEach((member) => {
-	        	this.choice.members.push({content: "Select a user to assign (Optional)", value: -1})
-	        	
 		        this.choice.members.push(
 			        {
 				        content : member.fullName,
