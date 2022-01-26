@@ -142,7 +142,7 @@ export default {
             	cards   : [],
 		        card    : 0,
 		        members : [],
-		        member  : '',
+		        member  : -1,
 		        visible : false
 	        }
         };
@@ -205,7 +205,6 @@ export default {
 	        this.refreshUserList(data.data);
 	        
 	        // Emit session data to App.vue to update the config menu
-            console.log("Session: ", this.session.feature);
 	        this.$emit("session:status", { status: data.toLoad });
 	        this.$emit("session:checklists", this.session.feature.checklists);
             this.$emit("session:attachments", this.session.feature.attachments);
@@ -225,29 +224,24 @@ export default {
                 data.data.users.forEach((user) => this.users.find((client) => client.name === user.name).status = user.status);
 	            
 	            this.template = data.template
-		
-		        console.log(data)
 
                 switch (data.toLoad) {
                     case 0: // WAITING
                         break;
 	                
                     case 1: // ROUND1
-	                    
                         roundSetup(data)
                         this.$emit("closeInfo");
                         this.$emit("session:chat:updateround", 1);
                     break;
 
                     case 2: // ROUND2
-                    	
                         roundSetup(data)
                         this.$emit("session:chat:update", data.chats);
                         this.$emit("session:chat:votes", data.chats.votes);
                         this.$emit("session:chat:updateround", 2);
                         this.$emit("openInfo");
-
-
+	                    
                         // Set the chosen number to the card in the name list
                         this.users.forEach((user) => (user.icon = this.$parent["votes"].find((vote) => vote.sender === user.name).value));
                         
@@ -267,6 +261,7 @@ export default {
 	                    this.$emit("session:chat:votes", data.chats.votes);
 	                    this.$emit("openInfo");
 	                    
+	                    // Activates the popup
 	                    EVENTBUS.$emit('adminchoice');
                     break;
                         
@@ -299,7 +294,7 @@ export default {
          */
         SOCKET.on("started", () => {
             this.session.started = true;
-            this.session.status = "round1";
+            this.session.status = 1;
         });
 
         /**
@@ -331,8 +326,9 @@ export default {
 	        this.choice.members = [];
             roundSetup(args)
 	        
-        
 	        args.members.forEach((member) => {
+	        	this.choice.members.push({content: "Select a user to assign (Optional)", value: -1})
+	        	
 		        this.choice.members.push(
 			        {
 				        content : member.fullName,
@@ -363,6 +359,10 @@ export default {
         SOCKET.on("startTimer", () => this.timer());
         
 		SOCKET.on("results", result => {
+			
+			console.log('results socket event')
+			console.log(result  )
+			
 			this.votes.member = result.member
 			this.votes.number = result.number
 			this.votes.feature = result.feature.name
@@ -371,6 +371,8 @@ export default {
 			this.choice.visible = false
 			
 			result.event === 'chooseboth' ? this.votes.number = result.cards[0] : ''
+			
+			
 			
 			EVENTBUS.$emit('results')
 		});
@@ -494,10 +496,10 @@ export default {
 		        });
 		
 		        switch (this.session.status) {
-			        case "round1":
+			        case 1:
 				        break;
 			
-			        case "round2":
+			        case 2:
 				        this.resetChoices();
 				        this.$emit("closeInfo");
 				        this.$emit("hideChat");
