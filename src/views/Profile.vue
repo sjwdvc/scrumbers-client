@@ -67,10 +67,12 @@ export default {
 			chatround: true,
 			spinner: {},
 			token: localStorage.getItem('TOKEN')
+
 		}
 	},
 	mounted()
 	{
+		
 		axios.defaults.headers = { Authorization: this.token };
 
 		axios.get(SERVER + 'user/profile', {
@@ -84,6 +86,17 @@ export default {
 		SOCKET.on('history', data => {
 			this.featureData = data.sessions
 		})
+	
+
+		// If history link in nav gets clicked
+		if(this.$route.params.key){
+
+			this.$nextTick(()=>{
+				let self = this;
+				self.$refs.history.displayHistory();
+
+			});
+		}
 
 
 	},

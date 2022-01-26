@@ -144,7 +144,16 @@ export default {
 		},
 		togglePopup()
 		{
+			if(this.$route.name == "openhistory"){
+				this.$router.push({path: '/profile'});
+			}
+			// if route is this then redirect to profile
 			this.visible = !this.visible;
+		},
+
+		displayHistory()
+		{
+			this.visible = true;
 		},
 		ToggleChatRound()
 		{

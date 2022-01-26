@@ -58,6 +58,11 @@ export default new Router({
             name: 'profile'
         },
         {
+            path: "/openhistory/:key",
+            component: Profile,
+            name: 'openhistory'
+        },
+        {
             path: "/changepassword",
             component: ChangePassword,
             name: 'changepassword'
