@@ -22,7 +22,6 @@
 						<div class="flex justify-center">
 							<p class="chosenUser" v-if="feature.chosenUser !== '-1'"> {{ feature.chosenUser }}</p>
 							<span class="chosenNumberCard" >{{ feature.chosenNumber }}</span>
-							
 						</div>
 						
 <!-- 
