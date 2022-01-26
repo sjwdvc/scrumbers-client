@@ -104,7 +104,6 @@
 						</div>
 					</div>
 				</div>
-
 			</div>
 			<router-view
 				@session:status="updateSessionStatus"
@@ -120,6 +119,7 @@
 				@closeInfo="closeInfo"
 				@hideChat="hideChat"
 			/>
+			<AVG />
 		</div>
 	</main>
 </template>
@@ -133,6 +133,7 @@ import Button from "./components/Button";
 import axios from "axios";
 import {SERVER, SOCKET, TOKEN, USER} from "./constants";
 import ChatMessage from "./components/ChatMessage";
+import AVG from "./components/AVG"
 
 export default {
 	data()
@@ -168,6 +169,7 @@ export default {
 	},
 	components :
 	{
+		AVG,
 		ChatMessage,
 		Button,
 		Logo,
@@ -421,6 +423,13 @@ export default {
 					break;
 			}
 		});
+		
+		if(!localStorage.getItem("AVGConsent") === null)
+		{
+		
+		}
+		
+		
 	}
 }
 </script>
