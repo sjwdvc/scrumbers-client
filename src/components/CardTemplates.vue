@@ -31,7 +31,7 @@ export default {
 		{
 			// Toggle the checked attribute on the input
 			document.querySelectorAll('input[type=radio]').forEach(input => {
-				input.setAttribute('checked', false)
+				input.removeAttribute('checked')
 			})
 			e.target.setAttribute('checked', true)
 			
