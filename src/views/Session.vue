@@ -49,7 +49,7 @@
                     </div>
                 </div>
             </div>
-	        <div class="info-toggle" @click="$emit('toggleInfo')" v-if="($parent.sessionStatus == 1 || $parent.sessionStatus == 2) && toggle.visible">
+	        <div class="info-toggle" @click="$emit('toggleInfo')" v-if="($parent.sessionStatus == 1 || $parent.sessionStatus == 2) && toggle.visible && session.started">
 		        <!--Close icon-->
 		        <svg xmlns="http://www.w3.org/2000/svg" width="17.947" height="33.551" viewBox="0 0 17.947 33.551" v-if="$parent.info">
 			        <path id="Icon_metro-chevron-thin-right" data-name="Icon metro-chevron-thin-right" d="M26,20.477,12.075,6a1.359,1.359,0,0,1,0-1.91,1.328,1.328,0,0,1,1.89,0L29.239,19.52a1.359,1.359,0,0,1,0,1.91L13.966,36.854a1.326,1.326,0,0,1-1.89,0,1.359,1.359,0,0,1,0-1.91L26,20.477Z" transform="translate(-11.683 -3.699)" fill="#d0bb7e"/>
