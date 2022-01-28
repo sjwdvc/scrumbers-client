@@ -37,13 +37,6 @@
                         {{ session.feature.name }}
                         <div class="session-game-features-feature-controls flex flex-rowspace-between">
                             <span>{{ featuresIndex }}/{{ featuresLength }}</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" @click="$emit('toggleInfo')">
-                                <g id="Icon_feather-info" data-name="Icon feather-info" transform="translate(-1.5 -1.5)">
-                                    <path id="Path_54" data-name="Path 54" d="M33,18A15,15,0,1,1,18,3,15,15,0,0,1,33,18Z" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
-                                    <path id="Path_55" data-name="Path 55" d="M18,24V18" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
-                                    <path id="Path_56" data-name="Path 56" d="M18,12h0" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
-                                </g>
-                            </svg>
                         </div>
                     </h1>
 	                <Cards v-on:select="session.decision.number = $event" ref="cards" :cards="template"/>
@@ -56,6 +49,29 @@
                     </div>
                 </div>
             </div>
+	        <div class="info-toggle" @click="$emit('toggleInfo')" v-if="($parent.sessionStatus == 1 || $parent.sessionStatus == 2) && toggle.visible && session.started">
+		        <!--Close icon-->
+		        <svg xmlns="http://www.w3.org/2000/svg" width="17.947" height="33.551" viewBox="0 0 17.947 33.551" v-if="$parent.info">
+			        <path id="Icon_metro-chevron-thin-right" data-name="Icon metro-chevron-thin-right" d="M26,20.477,12.075,6a1.359,1.359,0,0,1,0-1.91,1.328,1.328,0,0,1,1.89,0L29.239,19.52a1.359,1.359,0,0,1,0,1.91L13.966,36.854a1.326,1.326,0,0,1-1.89,0,1.359,1.359,0,0,1,0-1.91L26,20.477Z" transform="translate(-11.683 -3.699)" fill="#d0bb7e"/>
+		        </svg>
+		
+		        <!--Chat bubble-->
+		        <svg xmlns="http://www.w3.org/2000/svg" width="30.368" height="30.368" viewBox="0 0 30.368 30.368" v-if="$parent.sessionStatus == 2 && !$parent.info">
+			        <g id="Icon_ionic-ios-chatbubbles" data-name="Icon ionic-ios-chatbubbles" transform="translate(-3.375 -3.375)">
+				        <path id="Path_59" data-name="Path 59" d="M31.15,23.275a1.769,1.769,0,0,1,.241-.891,2.458,2.458,0,0,1,.153-.226,11.828,11.828,0,0,0,2.015-6.592A12.418,12.418,0,0,0,20.879,3.375a12.593,12.593,0,0,0-12.432,9.7,11.731,11.731,0,0,0-.27,2.5A12.383,12.383,0,0,0,20.66,27.917a15.034,15.034,0,0,0,3.446-.562c.825-.226,1.642-.526,1.854-.606a1.93,1.93,0,0,1,.679-.124,1.9,1.9,0,0,1,.737.146l4.139,1.467a.987.987,0,0,0,.285.073.581.581,0,0,0,.584-.584.938.938,0,0,0-.036-.2Z" transform="translate(0.184 0)" fill="#d0bb7e"/>
+				        <path id="Path_60" data-name="Path 60" d="M23.121,28.159c-.263.073-.6.153-.964.234a13.473,13.473,0,0,1-2.482.328A12.383,12.383,0,0,1,7.193,16.377,13.8,13.8,0,0,1,7.3,14.815c.044-.314.095-.628.168-.934.073-.328.161-.657.255-.978l-.584.518a10.864,10.864,0,0,0-3.767,8.169,10.743,10.743,0,0,0,1.81,5.986c.168.255.263.453.234.584s-.869,4.526-.869,4.526a.586.586,0,0,0,.2.562.6.6,0,0,0,.372.131.524.524,0,0,0,.212-.044l4.1-1.613a1.141,1.141,0,0,1,.876.015,12.286,12.286,0,0,0,4.431.876A11.465,11.465,0,0,0,23.5,28.59s.234-.321.5-.7C23.734,27.984,23.428,28.079,23.121,28.159Z" transform="translate(0 0.364)" fill="#d0bb7e"/>
+			        </g>
+		        </svg>
+		
+		        <!--Info icon-->
+		        <svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" v-if="$parent.sessionStatus == 1 && !$parent.info">
+			        <g id="Icon_feather-info" data-name="Icon feather-info" transform="translate(-1.5 -1.5)">
+				        <path id="Path_54" data-name="Path 54" d="M33,18A15,15,0,1,1,18,3,15,15,0,0,1,33,18Z" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+				        <path id="Path_55" data-name="Path 55" d="M18,24V18" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+				        <path id="Path_56" data-name="Path 56" d="M18,12h0" fill="none" stroke="#d0bb7e" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+			        </g>
+		        </svg>
+	        </div>
             <SessionHistory :feature-data="history" ref="history" />
 	        <CoffeeTimer />
 	        <ChoicePopup @choiceSubmit="adminChoiceSubmit" />
@@ -144,6 +160,11 @@ export default {
 		        members : [],
 		        member  : -1,
 		        visible : false
+	        },
+	        
+	        // Togglebutton for the info/chats
+	        toggle : {
+            	visible : true
 	        }
         };
     },

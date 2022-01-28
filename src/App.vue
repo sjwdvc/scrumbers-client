@@ -120,6 +120,7 @@
 				@hideChat="hideChat"
 			/>
 			<AVG />
+
 		</div>
 	</main>
 </template>
@@ -142,6 +143,7 @@ export default {
 			shareLink		: store.shareLink,
 			menu			: false,
 			info 			: false,
+			peek            : false,
 			chatOpen 		: false,
 			menuUser 		: USER,
 			sessionStatus 	: '',
@@ -429,13 +431,6 @@ export default {
 					break;
 			}
 		});
-		
-		if(!localStorage.getItem("AVGConsent") === null)
-		{
-		
-		}
-		
-		
 	}
 }
 </script>

@@ -26,6 +26,13 @@ axios.defaults.headers = { Authorization: TOKEN }
 
 // // Method to run before visiting any route ( Middleware )
 router.beforeEach((to, from, next) => {
+
+    if(from.name === 'session')
+    {
+        document.querySelector('main').classList.remove("info", "menu")
+    }
+
+
     
     check()
         .then(data => {

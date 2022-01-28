@@ -63,7 +63,7 @@ export default {
     },
     methods: {
         startTimer() {
-	        console.log('results started')
+	        
             let timer = 1000;
             
             this.interval = setInterval(() => {
@@ -86,10 +86,10 @@ export default {
         },
 
 		dismissVotesPopup() {
-			console.log('results dismissed')
             clearInterval(this.interval);
 			this.$parent.votes.visible = false;
 			this.$parent.session.visible = true;
+			this.$parent.toggle.visible = true;
 		}
     },
     mounted() {
@@ -100,6 +100,7 @@ export default {
             this.$parent.votes.visible = true;
             this.$parent.session.visible = false;
             this.$parent.choice.visible = false;
+            this.$parent.toggle.visible = false;
         });
     },
 };
