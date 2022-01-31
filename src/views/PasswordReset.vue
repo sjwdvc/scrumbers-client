@@ -1,7 +1,7 @@
 <template>
     <section class="passwordreset">
         <div class="interface">
-            <router-link to="/profile" id="backButton"
+            <router-link to="/login" id="backButton"
                 ><svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="32"
