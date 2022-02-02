@@ -79,6 +79,10 @@ export default
 				board : 'backlog'
 			},
 			adminRules: [
+                {
+                    content: 'Admin decides',
+                    value: 'admin'
+                },
 				{
 					content: 'Lowest number',
 					value: 'lowest'
@@ -86,11 +90,7 @@ export default
 				{
 					content: 'Most common',
 					value: 'mostcommon'
-				},
-				{
-					content: 'Admin decides',
-					value: 'admin'
-				},
+				}
 			],
 			selectedBoard: [
 				{
