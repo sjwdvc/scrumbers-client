@@ -6,7 +6,7 @@ import check from './middleware/auth'
 import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
 import VueLottiePlayer from "vue-lottie-player";
-import {TOKEN, USER} from "./constants";
+import {SOCKET, TOKEN, USER} from "./constants"
 import axios from "axios";
 
 // Vue configuration
@@ -30,8 +30,8 @@ router.beforeEach((to, from, next) => {
     if(from.name === 'session')
     {
         document.querySelector('main').classList.remove("info", "menu")
+        SOCKET.emit('session', {event: 'leave', email: USER.email, name: USER.name, key: from.path.replace('/session/', '')})
     }
-
 
     
     check()
@@ -40,7 +40,6 @@ router.beforeEach((to, from, next) => {
 
             if(data.data.login)
             {
-                console.log(data)
                 USER.name = data.data.name;
                 USER.email = data.data.email;
             }
