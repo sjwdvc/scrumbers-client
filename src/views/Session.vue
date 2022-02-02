@@ -492,20 +492,41 @@ export default {
 	        }
 	        else
 	        {
-		        this.$refs.submitbutton.disableButton();
-		
-		        // Set your own status icon to a checkmark
-		        this.users.find((user) => user.name === USER.name).icon =
-			        this.userStatusIcon(USER.name, "ready");
-		
-		        //quick fix for the coffee card
-		        this.session.decision.number === "coffee"
-			        ? (this.session.decision.number = -1)
-			        : "";
-		        if (this.session.decision.number == "1/2") {
-			        this.session.decision.number = 0.5;
-		        }
-		
+                // For 1 time listen for error or success
+                SOCKET.once('error', args => {
+                    this.$toast.open({
+                        message: args.error,
+                        type: "error",
+                        position: "top-right",
+                    });
+                });
+                SOCKET.once('success', () => {
+                    this.$refs.submitbutton.disableButton();
+            
+                    // Set your own status icon to a checkmark
+                    this.users.find((user) => user.name === USER.name).icon =
+                        this.userStatusIcon(USER.name, "ready");
+            
+                    //quick fix for the coffee card
+                    this.session.decision.number === "coffee"
+                        ? (this.session.decision.number = -1)
+                        : "";
+                    if (this.session.decision.number == "1/2") {
+                        this.session.decision.number = 0.5;
+                    }
+                    switch (this.session.status) {
+                        case 1:
+                            break;
+                
+                        case 2:
+                            this.resetChoices();
+                            this.$emit("closeInfo");
+                            this.$emit("hideChat");
+                            break;
+                    }
+                });
+
+                // Submit our data
 		        SOCKET.emit("feature", {
 			        key: this.$route.params.key,
 			        event: "submit",
@@ -513,17 +534,7 @@ export default {
 			        desc: this.session.decision.desc,
 			        email: USER.email,
 		        });
-		
-		        switch (this.session.status) {
-			        case 1:
-				        break;
-			
-			        case 2:
-				        this.resetChoices();
-				        this.$emit("closeInfo");
-				        this.$emit("hideChat");
-				        break;
-		        }
+
 	        }
         },
 	    
