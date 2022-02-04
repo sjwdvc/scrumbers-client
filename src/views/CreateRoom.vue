@@ -75,7 +75,7 @@ export default
 			token: '',
 			error: '',
 			settings : {
-				assignMethod : 'lowest',
+				assignMethod : 'admin',
 				board : 'backlog'
 			},
 			adminRules: [
