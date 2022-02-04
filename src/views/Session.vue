@@ -206,6 +206,8 @@ export default {
         });
         
         const roundSetup = data => {
+            this.toggle.visible = true;
+            
 	        // set coffee time out
 	        this.timeOutLength = data.data.coffee;
 	        

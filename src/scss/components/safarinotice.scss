@@ -1,0 +1,53 @@
+.safari-notice{
+    display: none;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    background-color: $blue-dark!important;
+    svg{
+        transform: scale(1.5);
+        margin: 2em;
+    }
+    
+    p{
+        color: $white;
+    }
+    
+    &-content{
+        
+        font-size: 1.5em;
+        margin-bottom: 1.5em;
+    }
+    
+    .browser{
+        justify-content: space-between;
+        align-items: center;
+        &-item{
+            a{
+                display: flex;
+                justify-content: flex-end;
+                align-content: flex-end;
+                flex-direction: column;
+            }
+            width: 30%;
+        }
+    }
+}
+
+.safari{
+    .safari-notice{
+        display: flex !important;
+    }
+    
+    section{
+        display: none;
+    }
+}
+
+
+
