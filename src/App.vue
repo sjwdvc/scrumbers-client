@@ -120,7 +120,6 @@
 				@hideChat="hideChat"
 			/>
 			<AVG />
-
 		</div>
 	</main>
 </template>
@@ -418,6 +417,12 @@ export default {
 				this.chatmessage !== "" ? this.sendChat() : ''
 			}
 		})
+        
+        // Check if user uses Safari and activate notice for full user experience
+        if(/^((?!chrome|android).)*safari/i.test(navigator.userAgent))
+        {
+            document.querySelector('body').classList.add("safari")
+        }
 
 		SOCKET.on("chat", args => {
 			switch (args.event) {

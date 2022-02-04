@@ -22,31 +22,29 @@ Vue.config.devtools     = true
 axios.defaults.withCredentials = true
 axios.defaults.headers = { Authorization: TOKEN }
 
-
-
 // // Method to run before visiting any route ( Middleware )
-router.beforeEach((to, from, next) => {
+router.beforeEach(function (to, from, next) {
 
-    if(from.name === 'session')
-    {
+    if (from.name === 'session') {
         document.querySelector('main').classList.remove("info", "menu")
-        SOCKET.emit('session', {event: 'leave', email: USER.email, name: USER.name, key: from.path.replace('/session/', '')})
+        SOCKET.emit('session', {
+            event: 'leave',
+            email: USER.email,
+            name: USER.name,
+            key: from.path.replace('/session/', '')
+        })
     }
-
     
     check()
         .then(data => {
             Vue.prototype.login = !!data.data.login
 
-            if(data.data.login)
-            {
+            if (data.data.login) {
                 USER.name = data.data.name;
                 USER.email = data.data.email;
             }
             
-
-            switch(true)
-            {
+            switch (true) {
                 // If user should update their password, route them to /changepassword
                 case (data.data.login && data.data.resetPassword === true && (to.name !== 'changepassword')):
                     Vue.$toast.open({
@@ -55,23 +53,24 @@ router.beforeEach((to, from, next) => {
                         position: "top-right",
                         duration: 10000
                     });
-                    next({ name: 'changepassword' });
+                    next({name: 'changepassword'});
                     break;
 
                 // If user is not logged in, and next route is not login or register
                 case (!data.data.login && to.name !== 'login' && to.name !== 'register' && to.name !== 'passwordreset'):
-                    to.name === 'session' ? next({ name: 'login', params: { key: to.params.key } }) : next({ name: 'login' });
+                    to.name === 'session' ? next({name: 'login', params: {key: to.params.key}}) : next({name: 'login'});
                     break;
 
                 // If user logged in and trying to access login screen
                 case (data.data.login && to.name === 'login'):
-                    next({ name: 'home' });
+                    next({name: 'home'});
                     break;
 
-                default: next()
+                default:
+                    next()
             }
             // Reload page to toggle the history popup
-            if(from.name == 'openhistory' && to.name == 'profile' || from.name == 'profile' && to.name=="openhistory" ){
+            if (from.name == 'openhistory' && to.name == 'profile' || from.name == 'profile' && to.name == "openhistory") {
                 window.location.reload();
             }
         })
@@ -80,6 +79,11 @@ router.beforeEach((to, from, next) => {
 
 // Global capitalize filter -- example: {{ value | capitalize }}
 Vue.filter('capitalize', value => value.toUpperCase())
+
+// Dismiss safari notice
+document.querySelector('.dismiss-safari-notice').addEventListener("click", () => {
+    document.querySelector('body').classList.remove("safari")
+})
 
 // Create the VUE instance
 const app = new Vue({

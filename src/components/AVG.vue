@@ -5,13 +5,14 @@
 			<div class="avg-content">
 				
 				<br><br>
-				This application processes your data so we can provide a service to you. By using this application to plan a lesson you consent with the processing of your data.
+				This application processes your data so we can provide a service to you. By using this application you consent with the processing of your data.
 				<br><br>
 				Below you can find out what data we collect and store when you plan a lesson.
 				<br><br>
 				<ul>
 					<li>Email</li>
 					<li>Full name</li>
+					<li>Age</li>
 					<li>Job / Career</li>
 					<li>Trello boards/cards</li>
 				</ul>
