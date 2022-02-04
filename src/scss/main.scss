@@ -16,6 +16,7 @@
 @import "components/choicepopup";
 @import "components/cardtemplates";
 @import "components/createtemplate";
+@import "components/avg";
 
 // Import views & components
 @import "views/session";
@@ -94,6 +95,29 @@ body{
     #app{
         transform: scale(0.8) translateX(-35%);
     }
+    &-toggle{
+        cursor: pointer;
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%) rotate(0deg);
+        border-radius: 100%;
+        width: 60px;
+        height: 60px;
+        background-color: $blue-dark;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: 1s ease
+    }
+
+    .info-toggle
+    {
+        margin-right: -30px;
+    }
+
+
+
     .info-content{
         right: 0;
         transition: 0.75s ease;

@@ -6,7 +6,7 @@ import check from './middleware/auth'
 import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
 import VueLottiePlayer from "vue-lottie-player";
-import {TOKEN, USER} from "./constants";
+import {SOCKET, TOKEN, USER} from "./constants"
 import axios from "axios";
 
 // Vue configuration
@@ -22,18 +22,28 @@ Vue.config.devtools     = true
 axios.defaults.withCredentials = true
 axios.defaults.headers = { Authorization: TOKEN }
 
+
+
 // // Method to run before visiting any route ( Middleware )
 router.beforeEach((to, from, next) => {
+
+    if(from.name === 'session')
+    {
+        document.querySelector('main').classList.remove("info", "menu")
+        SOCKET.emit('session', {event: 'leave', email: USER.email, name: USER.name, key: from.path.replace('/session/', '')})
+    }
+
+    
     check()
         .then(data => {
             Vue.prototype.login = !!data.data.login
 
             if(data.data.login)
             {
-                console.log(data)
                 USER.name = data.data.name;
                 USER.email = data.data.email;
             }
+            
 
             switch(true)
             {
@@ -59,6 +69,10 @@ router.beforeEach((to, from, next) => {
                     break;
 
                 default: next()
+            }
+            // Reload page to toggle the history popup
+            if(from.name == 'openhistory' && to.name == 'profile' || from.name == 'profile' && to.name=="openhistory" ){
+                window.location.reload();
             }
         })
         .catch(err => console.log(err))

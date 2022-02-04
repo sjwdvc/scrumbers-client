@@ -2,7 +2,7 @@
 	<main :class="{'menu': menu, 'info': info}">
 		<nav class="menu-content">
 			<ul>
-				<li v-for="(link, index) in menuLinks" :key="index" @click="closeMenu"><router-link :to="{name: link.link}"><img :src="'/img/' + link.icon + '.svg'" alt="">{{ link.text }}</router-link></li>
+				<li v-for="(link, index) in menuLinks" :key="index" @click="closeMenu"><router-link :to="{name: link.link, params: {key: link.param }}"><img :src="'/img/' + link.icon + '.svg'" alt="">{{ link.text }}</router-link></li>
 			</ul>
 			<div class="flex flex-col space-between button-container">
 				<Button content="Leave session" @click.native="leaveSession" v-if="currentComponent() === 'session'"/>
@@ -104,7 +104,6 @@
 						</div>
 					</div>
 				</div>
-
 			</div>
 			<router-view
 				@session:status="updateSessionStatus"
@@ -120,6 +119,8 @@
 				@closeInfo="closeInfo"
 				@hideChat="hideChat"
 			/>
+			<AVG />
+
 		</div>
 	</main>
 </template>
@@ -133,6 +134,7 @@ import Button from "./components/Button";
 import axios from "axios";
 import {SERVER, SOCKET, TOKEN, USER} from "./constants";
 import ChatMessage from "./components/ChatMessage";
+import AVG from "./components/AVG"
 
 export default {
 	data()
@@ -141,6 +143,7 @@ export default {
 			shareLink		: store.shareLink,
 			menu			: false,
 			info 			: false,
+			peek            : false,
 			chatOpen 		: false,
 			menuUser 		: USER,
 			sessionStatus 	: '',
@@ -162,12 +165,19 @@ export default {
 					icon: 'ace',
 					text: 'Create room',
 					link: 'createroom'
+				},
+				{
+					icon: 'history',
+					text: 'History',
+					link: 'openhistory',
+					param: true,
 				}
 			],
 		}
 	},
 	components :
 	{
+		AVG,
 		ChatMessage,
 		Button,
 		Logo,

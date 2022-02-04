@@ -20,9 +20,8 @@
 					<div class="feature-content" v-for="(feature, featureindex) in featureArray.features" v-bind:key="feature._id">
 						<h2 class="feature-content-title center">Title: {{ feature.title }}</h2>
 						<div class="flex justify-center">
-							<p class="chosenUser"> {{ feature.chosenUser }}</p>
+							<p class="chosenUser" v-if="feature.chosenUser !== '-1'"> {{ feature.chosenUser }}</p>
 							<span class="chosenNumberCard" >{{ feature.chosenNumber }}</span>
-							
 						</div>
 						
 <!-- 
@@ -144,7 +143,16 @@ export default {
 		},
 		togglePopup()
 		{
+			if(this.$route.name == "openhistory"){
+				this.$router.push({path: '/profile'});
+			}
+			// if route is this then redirect to profile
 			this.visible = !this.visible;
+		},
+
+		displayHistory()
+		{
+			this.visible = true;
 		},
 		ToggleChatRound()
 		{
